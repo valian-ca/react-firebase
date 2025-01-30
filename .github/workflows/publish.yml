@@ -1,0 +1,26 @@
+name: Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # needed for provenance data generation
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup pnpm
+        uses: ./.github/workflows/actions/setup-pnpm
+
+      - name: Publish packages
+        run: pnpm nx release publish
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
