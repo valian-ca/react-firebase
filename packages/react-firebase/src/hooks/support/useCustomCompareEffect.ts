@@ -6,7 +6,7 @@ export const useCustomCompareEffect = <Deps extends DependencyList>(
   callback: EffectCallback,
   deps: Deps,
   comparator: Comparator<Deps>,
-  ...otherDependencies: DependencyList
+  otherDependencies: DependencyList,
 ): void => {
   const dependencies = useRef<Deps>(undefined)
 
