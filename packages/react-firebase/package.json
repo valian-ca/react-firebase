@@ -1,0 +1,63 @@
+{
+  "name": "@valian/react-firestore",
+  "description": "firestore react hooks",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valian-ca/react-firebase.git"
+  },
+  "author": {
+    "name": "Valian",
+    "organization": true,
+    "url": "https://valian.ca"
+  },
+  "contributors": [
+    {
+      "name": "Julien Marcil",
+      "email": "julien@valian.ca"
+    }
+  ],
+  "keywords": [
+    "zod",
+    "schema",
+    "firestore",
+    "firebase"
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "firebase": "11.1.0",
+    "jest-mock-extended": "3.0.7",
+    "nanoid": "3.3.8",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "typescript": "5.7.2"
+  },
+  "peerDependencies": {
+    "@firebase/firestore": "^4.7.0",
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.mts",
+      "require": "./lib/index.cjs",
+      "default": "./lib/index.mjs"
+    }
+  },
+  "type": "module",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
+  "engines": {
+    "node": ">= 22"
+  },
+  "scripts": {
+    "build": "rm -rf ./lib && rollup -c",
+    "prepack": "pnpm run build",
+    "test": "jest --coverage --passWithNoTests",
+    "eslint": "eslint .",
+    "type-check": "tsc"
+  }
+}
