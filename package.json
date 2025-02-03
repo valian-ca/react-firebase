@@ -42,7 +42,7 @@
     "markdownlint-cli2": "0.17.2",
     "nx": "20.4.0",
     "prettier": "3.4.2",
-    "rollup": "4.32.1",
+    "rollup": "4.34.0",
     "rollup-plugin-dts": "6.1.1",
     "ts-jest": "29.2.5",
     "ts-node": "10.9.2",
@@ -51,5 +51,5 @@
   "engines": {
     "node": ">= 22"
   },
-  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a"
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }
