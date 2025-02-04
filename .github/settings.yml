@@ -59,6 +59,6 @@ branches:
       required_signatures: true
       required_conversation_resolution: true
       restrictions:
-        apps: [ ]
-        users: [ ]
-        teams: [ ]
+        apps: []
+        users: []
+        teams: []
