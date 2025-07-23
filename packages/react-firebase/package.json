@@ -30,11 +30,11 @@
   "devDependencies": {
     "firebase": "11.10.0",
     "jest-mock-extended": "4.0.0",
-    "lerna": "8.1.9",
-    "nanoid": "5.0.9",
+    "lerna": "8.2.3",
+    "nanoid": "5.1.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "typescript": "5.7.3"
+    "typescript": "5.8.3"
   },
   "peerDependencies": {
     "@firebase/firestore": "^4.7.0",
