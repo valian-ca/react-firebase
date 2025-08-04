@@ -1,0 +1,61 @@
+{
+  "name": "@valian/rxjs-firebase",
+  "description": "rxjs firebase utilities",
+  "version": "1.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valian-ca/react-firebase.git"
+  },
+  "author": {
+    "name": "Valian",
+    "organization": true,
+    "url": "https://valian.ca"
+  },
+  "contributors": [
+    {
+      "name": "Julien Marcil",
+      "email": "julien@valian.ca"
+    }
+  ],
+  "keywords": [
+    "rxjs",
+    "firestore",
+    "firebase"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "firebase": "^11.10.0",
+    "jest-mock-extended": "^4.0.0",
+    "rxjs": "^7.8.2"
+  },
+  "peerDependencies": {
+    "@firebase/firestore": "^4.7.0",
+    "rxjs": "^7.8.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.mts",
+      "require": "./lib/index.cjs",
+      "default": "./lib/index.mjs"
+    }
+  },
+  "type": "module",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
+  "engines": {
+    "node": ">= 22"
+  },
+  "scripts": {
+    "build": "rm -rf ./lib && rollup -c",
+    "prepack": "pnpm run build",
+    "test": "jest --coverage --passWithNoTests",
+    "eslint": "eslint .",
+    "type-check": "tsc"
+  }
+}

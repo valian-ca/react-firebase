@@ -1,3 +1,8 @@
+config:
+  MD013: false
+  MD024:
+    siblings_only: true
 ignores:
   - CHANGELOG.md
-  - packages/react-firebase/CHANGELOG.md
+  - packages/**/CHANGELOG.md
+  - packages/**/node_modules/**/*.md
