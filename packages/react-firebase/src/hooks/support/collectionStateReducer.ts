@@ -49,6 +49,11 @@ export type CollectionReducerState<AppModelType = DocumentData, DbModelType exte
 interface CollectionDisableAction {
   type: 'disable'
 }
+
+interface CollectionLoadingAction {
+  type: 'loading'
+}
+
 interface CollectionErrorAction<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
@@ -58,6 +63,7 @@ interface CollectionErrorAction<
   error: TError
   snapshot?: QuerySnapshot<AppModelType, DbModelType>
 }
+
 interface CollectionDataAction<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
   type: 'data'
   data: AppModelType[]
@@ -70,6 +76,7 @@ export type CollectionReducerAction<
   TError = unknown,
 > =
   | CollectionDisableAction
+  | CollectionLoadingAction
   | CollectionErrorAction<AppModelType, DbModelType, TError>
   | CollectionDataAction<AppModelType, DbModelType>
 
@@ -107,6 +114,15 @@ export const collectionStateReducer =
           empty: true,
           isLoading: false,
           isDisabled: true,
+          hasError: false,
+          data: [],
+        }
+      case 'loading':
+        return {
+          empty: true,
+          size: 0,
+          isLoading: true,
+          isDisabled: false,
           hasError: false,
           data: [],
         }

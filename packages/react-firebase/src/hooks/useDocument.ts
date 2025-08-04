@@ -12,6 +12,7 @@ import { useCustomCompareEffect } from './support/useCustomCompareEffect'
 export interface UseDocumentOptions<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
   ref: DocumentReference<AppModelType, DbModelType> | null | undefined
   onError?: (error: unknown) => void
+  includeMetadataChanges?: boolean
 }
 
 export type UseDocumentResult<
@@ -22,6 +23,7 @@ export type UseDocumentResult<
 export const useDocument = <AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>({
   ref,
   onError,
+  includeMetadataChanges,
 }: UseDocumentOptions<AppModelType, DbModelType>): UseDocumentResult<AppModelType, DbModelType> => {
   const [state, dispatch] = useReducer(documentStateReducer<AppModelType, DbModelType>(), DocumentReducerInitialState)
 
@@ -40,8 +42,10 @@ export const useDocument = <AppModelType = DocumentData, DbModelType extends Doc
         // eslint-disable-next-line unicorn/no-useless-undefined
         return undefined
       }
+      dispatch({ type: 'loading' })
       return onSnapshot(
         ref,
+        { includeMetadataChanges },
         (snapshot) => {
           const exists = snapshot.exists()
           if (!exists) {

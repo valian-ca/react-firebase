@@ -42,3 +42,6 @@ export const deleteDoc = jest.fn().mockResolvedValue(undefined!)
 
 export const getAggregateFromServer = jest.fn().mockReturnValue(mock())
 export const count = jest.fn().mockReturnValue(mock())
+
+export const onSnapshot = jest.fn().mockReturnValue(jest.fn())
+export const queryEqual = jest.fn()

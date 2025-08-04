@@ -13,6 +13,7 @@ import { useCustomCompareEffect } from './support/useCustomCompareEffect'
 export interface UseCollectionOptions<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
   query: Query<AppModelType, DbModelType> | null
   onError?: (error: unknown) => void
+  includeMetadataChanges?: boolean
 }
 
 export type UseCollectionResult<
@@ -23,6 +24,7 @@ export type UseCollectionResult<
 export const useCollection = <AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>({
   query,
   onError,
+  includeMetadataChanges,
 }: UseCollectionOptions<AppModelType, DbModelType>): UseCollectionResult<AppModelType, DbModelType> => {
   const [state, dispatch] = useReducer(
     collectionStateReducer<AppModelType, DbModelType>(),
@@ -44,8 +46,10 @@ export const useCollection = <AppModelType = DocumentData, DbModelType extends D
         // eslint-disable-next-line unicorn/no-useless-undefined
         return undefined
       }
+      dispatch({ type: 'loading' })
       return onSnapshot(
         query,
+        { includeMetadataChanges },
         (snapshot) => {
           try {
             const data = snapshot.docs.map((doc) => doc.data())

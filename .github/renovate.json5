@@ -1,5 +1,5 @@
 {
-  extends: ['config:recommended', ':semanticCommits', ':semanticCommitTypeAll(chore)'],
+  extends: ['config:js-lib', ':semanticCommits', ':configMigration'],
   labels: ['dependencies'],
   packageRules: [
     {
@@ -22,6 +22,14 @@
     {
       groupName: 'main dependencies',
       matchPackageNames: ['firebase', '/react/'],
+    },
+    {
+      groupName: 'Typescript',
+      matchPackageNames: ['/^@types/'],
+    },
+    {
+      groupName: 'Typescript',
+      matchPackageNames: ['typescript', 'ts-node', 'type-fest'],
     },
     {
       groupName: 'Tests',

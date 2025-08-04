@@ -5,7 +5,6 @@ export default [
   ...config.typescript,
   ...config.importSort,
   ...config.jest,
-  ...config.react,
   {
     ignores: ['coverage/', 'dist/', 'lib/'],
   },
@@ -23,9 +22,18 @@ export default [
     },
   },
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.ts'],
     rules: {
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+      'unicorn/filename-case': ['error', { cases: { camelCase: true, pascalCase: true } }],
+    },
+  },
+  {
+    files: ['**/*.test.ts'],
+    rules: {
+      'jest/no-done-callback': 'off',
+      'jest/no-conditional-expect': 'off',
+      'jest/expect-expect': ['error', { assertFunctionNames: ['expect', 'expectObservable'] }],
     },
   },
 ]

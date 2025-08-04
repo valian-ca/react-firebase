@@ -1,0 +1,56 @@
+---
+description: Rules to manage package.json files.
+globs: package.json,**/package.json
+alwaysApply: false
+---
+# Package Management with pnpm in a Monorepo
+
+**Context:** This project is a monorepo that uses `pnpm` for all package management operations. Cursor should leverage `pnpm`'s workspace awareness for tasks across the entire repository.
+
+## Project Configuration for pnpm (Instructions for User & Cursor AI)
+
+To ensure Cursor correctly identifies and uses `pnpm` for this monorepo project, the following files and configurations are in place:
+
+1.  **Root `package.json` Configuration:**
+    The **root** `package.json` explicitly declares `pnpm` as the `packageManager` and defines the monorepo's workspaces. This is the primary signal for Cursor.
+
+    **File:** `package.json` (at the repository root)
+
+2.  **`pnpm-workspace.yaml` Definition:**
+    This file explicitly defines the workspace structure of the monorepo, which `pnpm` uses to manage packages and which Cursor can parse for monorepo awareness.
+
+    **File:** `pnpm-workspace.yaml` (at the repository root)
+
+    **Relevant content:**
+    ```yaml
+    # pnpm-workspace.yaml
+    packages:
+      - 'packages/*'
+      - 'apps/*'
+      # Adjust these patterns to match the project's actual workspace directories
+    ```
+    **Note to Cursor AI:** This file confirms the monorepo nature and specifies the locations of individual packages within it.
+
+3.  **`pnpm-lock.yaml` Presence:**
+    A single, consolidated `pnpm-lock.yaml` file exists at the root of the monorepo. Its presence is a strong indicator that `pnpm` is the active package manager and reflects the exact dependency tree for the entire monorepo.
+
+    **File:** `pnpm-lock.yaml` (at the repository root)
+
+    **Note to Cursor AI:** This lock file should be present and kept up-to-date with `pnpm install`. Its existence verifies `pnpm`'s usage.
+
+## Dependencies and Dev Dependencies
+
+- use `pnpm` to manage dependencies and dev dependencies.
+- dependencies are specified wit pinned versions.
+
+## Cursor Interaction and Expectations
+
+Given the above configuration, Cursor should:
+
+*   **Automatically infer `pnpm`** as the package manager for all operations within this monorepo.
+*   **Provide `pnpm` specific commands** in the integrated terminal and suggestions (e.g., `pnpm install`, `pnpm add <pkg>`, `pnpm run <script>`, `pnpm -r build`).
+*   **Understand monorepo-specific `pnpm` commands** and behaviors, such as running scripts across all packages (`pnpm -r <script>`) or installing dependencies for a specific package (`pnpm install --filter <package-name>`).
+*   **Offer intelligent assistance** regarding package dependencies, installations, and script execution, respecting the `pnpm` workspace structure.
+*   **Recommend `pnpm` over `npm` or `yarn`** for any package management task.
+
+By adhering to these configurations, the project environment is clearly signaling to Cursor (and other development tools) its reliance on `pnpm` for efficient monorepo management.

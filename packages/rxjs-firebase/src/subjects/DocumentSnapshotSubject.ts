@@ -13,7 +13,7 @@ export class DocumentSnapshotSubject<
 
   constructor(
     snapshot$: Observable<DocumentSnapshot<AppModelType, DbModelType>>,
-    options: DocumentStateOptions<AppModelType, DbModelType>,
+    options?: DocumentStateOptions<AppModelType, DbModelType>,
   ) {
     super({ ...DocumentSnapshotInitialState })
     snapshot$.pipe(takeUntil(this.notification$), documentSnapshotState(options)).subscribe(this)

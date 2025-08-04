@@ -56,6 +56,9 @@ interface DocumentDisableAction {
   type: 'disable'
 }
 
+interface DocumentLoadingAction {
+  type: 'loading'
+}
 interface DocumentErrorAction<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
@@ -83,6 +86,7 @@ export type DocumentReducerAction<
   TError = unknown,
 > =
   | DocumentDisableAction
+  | DocumentLoadingAction
   | DocumentErrorAction<AppModelType, DbModelType, TError>
   | DocumentDoesNotExistAction<AppModelType, DbModelType>
   | DocumentDataAction<AppModelType, DbModelType>
@@ -124,6 +128,13 @@ export const documentStateReducer =
           snapshot: undefined,
           isLoading: false,
           isDisabled: true,
+          hasError: false,
+        }
+      case 'loading':
+        return {
+          snapshot: undefined,
+          isLoading: true,
+          isDisabled: false,
           hasError: false,
         }
       default:
