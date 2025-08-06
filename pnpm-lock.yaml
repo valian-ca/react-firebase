@@ -9,10 +9,10 @@ importers:
   .:
     devDependencies:
       '@commitlint/cli':
-        specifier: ^19.8.1
+        specifier: 19.8.1
         version: 19.8.1(@types/node@22.10.2)(typescript@5.8.3)
       '@commitlint/config-conventional':
-        specifier: ^19.8.1
+        specifier: 19.8.1
         version: 19.8.1
       '@nx/js':
         specifier: 21.3.11
@@ -36,7 +36,7 @@ importers:
         specifier: 1.5.2
         version: 1.5.2(@typescript-eslint/utils@8.38.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint-plugin-import@2.29.1(@typescript-eslint/parser@8.38.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.31.0(jiti@2.4.2)))(eslint@9.31.0(jiti@2.4.2))(jest@30.0.5(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.8.3)))(typescript@5.8.3)
       eslint:
-        specifier: ^9.31.0
+        specifier: 9.31.0
         version: 9.31.0(jiti@2.4.2)
       husky:
         specifier: 9.1.7
@@ -57,7 +57,7 @@ importers:
         specifier: 21.3.11
         version: 21.3.11
       prettier:
-        specifier: ^3.6.2
+        specifier: 3.6.2
         version: 3.6.2
       rollup:
         specifier: 4.46.2
