@@ -30,7 +30,7 @@
   "devDependencies": {
     "firebase": "^11.10.0",
     "jest-mock-extended": "^4.0.0",
-    "rxjs": "^7.8.2"
+    "rxjs": "7.8.2"
   },
   "peerDependencies": {
     "@firebase/firestore": "^4.7.0",

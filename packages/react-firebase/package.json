@@ -32,7 +32,7 @@
     "firebase": "^11.10.0",
     "jest-environment-jsdom": "^30.0.5",
     "jest-mock-extended": "^4.0.0",
-    "nanoid": "^5.1.5",
+    "nanoid": "5.1.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
