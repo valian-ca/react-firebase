@@ -12,8 +12,8 @@ jobs:
         uses: valian-ca/github-workflows/.github/actions/setup-pnpm@main
       - name: eslint
         run: pnpm eslint
-      - name: pettier
-        run: pnpm prettier
+      - name: prettier
+        run: pnpm lint:prettier
 
   type-check:
     name: type check
