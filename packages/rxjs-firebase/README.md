@@ -465,25 +465,6 @@ function getUserWithTodos(userId: string) {
 }
 ```
 
-### Error Recovery
-
-```typescript
-import { catchError, retry } from 'rxjs/operators'
-import { fromQuery, queryState } from '@valian/rxjs-firebase'
-
-const todos$ = fromQuery(todosQuery).pipe(
-  queryState({
-    onError: (error) => console.error('Query error:', error),
-  }),
-  catchError((error) => {
-    console.error('Recovering from error:', error)
-    // Return a default state or re-throw
-    return of({ data: [], isLoading: false, hasError: true, empty: true, size: 0 })
-  }),
-  retry(3), // Retry up to 3 times
-)
-```
-
 ## License
 
 MIT © [Valian](https://valian.ca)
