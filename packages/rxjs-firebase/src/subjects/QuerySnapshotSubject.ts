@@ -13,7 +13,7 @@ export class QuerySnapshotSubject<
 
   constructor(
     snapshot$: Observable<QuerySnapshot<AppModelType, DbModelType>>,
-    options: QueryStateOptions<AppModelType, DbModelType>,
+    options?: QueryStateOptions<AppModelType, DbModelType>,
   ) {
     super({ ...QuerySnapshotInitialState })
     snapshot$.pipe(takeUntil(this.notification$), querySnapshotState(options)).subscribe(this)
