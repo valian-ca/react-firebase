@@ -85,10 +85,10 @@ importers:
         specifier: ^6.6.3
         version: 6.6.4
       '@testing-library/react':
-        specifier: ^16.3.0
+        specifier: 16.3.0
         version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       firebase:
-        specifier: ^12.0.0
+        specifier: 12.0.0
         version: 12.0.0
       jest-environment-jsdom:
         specifier: ^30.0.5
@@ -100,10 +100,10 @@ importers:
         specifier: 5.1.5
         version: 5.1.5
       react:
-        specifier: ^19.1.0
+        specifier: 19.1.0
         version: 19.1.0
       react-dom:
-        specifier: ^19.1.0
+        specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
 
   packages/rxjs-firebase:
@@ -113,7 +113,7 @@ importers:
         version: 4.8.0(@firebase/app@0.14.0)
     devDependencies:
       firebase:
-        specifier: ^12.0.0
+        specifier: 12.0.0
         version: 12.0.0
       jest-mock-extended:
         specifier: ^4.0.0
