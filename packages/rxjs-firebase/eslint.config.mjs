@@ -1,10 +1,11 @@
 import { config } from '@valian/eslint-config'
+// eslint-disable-next-line import-x/no-rename-default
+import vitest from '@vitest/eslint-plugin'
 
 export default [
   ...config.base,
   ...config.typescript,
   ...config.importSort,
-  ...config.jest,
   {
     ignores: ['coverage/', 'dist/', 'lib/'],
   },
@@ -30,10 +31,13 @@ export default [
   },
   {
     files: ['**/*.test.ts'],
+    ...vitest.configs.recommended,
+  },
+  {
+    files: ['**/*.test.ts'],
     rules: {
-      'jest/no-done-callback': 'off',
-      'jest/no-conditional-expect': 'off',
-      'jest/expect-expect': ['error', { assertFunctionNames: ['expect', 'expectObservable'] }],
+      'vitest/no-conditional-expect': 'off',
+      'vitest/expect-expect': ['error', { assertFunctionNames: ['expect', 'expectObservable'] }],
     },
   },
 ]

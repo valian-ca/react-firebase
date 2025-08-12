@@ -8,9 +8,12 @@ import {
   type Unsubscribe,
 } from '@firebase/firestore'
 import { renderHook, waitFor } from '@testing-library/react'
-import { anyFunction, mock, type MockProxy } from 'jest-mock-extended'
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
+import { anyFunction, mock, type MockProxy } from 'vitest-mock-extended'
 
 import { useDocument, type UseDocumentOptions } from '../useDocument'
+
+vi.mock('@firebase/firestore')
 
 interface TestDocument {
   id: string
@@ -26,14 +29,16 @@ type OnTestDocumentSnapshot<AppModelType = DocumentData, DbModelType extends Doc
   onCompletion?: () => void,
 ) => Unsubscribe
 
+const onSnapshotMock = <AppModelType = DocumentData>() => vi.mocked<OnTestDocumentSnapshot<AppModelType>>(onSnapshot)
+
 describe('useDocument', () => {
   let mockRef: MockProxy<DocumentReference<TestDocument>>
-  let onErrorCallback: jest.Mock
+  let onErrorCallback: Mock
 
   beforeEach(() => {
     // Setup mocks
     mockRef = mock<DocumentReference<TestDocument>>()
-    onErrorCallback = jest.fn()
+    onErrorCallback = vi.fn()
 
     // Reset mocks
     onErrorCallback.mockReset()
@@ -124,9 +129,9 @@ describe('useDocument', () => {
       mockSnapshot.data.mockReturnValue(testData)
 
       // Setup onSnapshot to call the success callback
-      jest.mocked<OnTestDocumentSnapshot>(onSnapshot).mockImplementation((ref, options, successCallback) => {
+      onSnapshotMock<TestDocument>().mockImplementation((ref, options, successCallback) => {
         successCallback(mockSnapshot)
-        return jest.fn() // Return unsubscribe function
+        return vi.fn() // Return unsubscribe function
       })
 
       const options: UseDocumentOptions<TestDocument> = {
@@ -164,9 +169,9 @@ describe('useDocument', () => {
       mockSnapshot.exists.mockReturnValue(true)
       mockSnapshot.data.mockReturnValue(testData)
 
-      jest.mocked<OnTestDocumentSnapshot>(onSnapshot).mockImplementation((ref, options, successCallback) => {
+      onSnapshotMock<TestDocument>().mockImplementation((ref, options, successCallback) => {
         successCallback(mockSnapshot)
-        return jest.fn()
+        return vi.fn()
       })
 
       const options: UseDocumentOptions<TestDocument> = {
@@ -180,7 +185,12 @@ describe('useDocument', () => {
         expect(result.current.isLoading).toBe(false)
       })
 
-      expect(onSnapshot).toHaveBeenCalledWith(mockRef, { includeMetadataChanges: true }, anyFunction(), anyFunction())
+      expect(onSnapshot).toHaveBeenCalledWith(
+        mockRef,
+        { includeMetadataChanges: true },
+        expect.any(Function),
+        expect.any(Function),
+      )
     })
 
     it('should handle document that does not exist', async () => {
@@ -188,12 +198,12 @@ describe('useDocument', () => {
 
       mockSnapshot.exists.mockReturnValue(false)
 
-      jest
-        .mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot)
-        .mockImplementation((ref, options, successCallback) => {
+      vi.mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot).mockImplementation(
+        (ref, options, successCallback) => {
           successCallback(mockSnapshot)
-          return jest.fn()
-        })
+          return vi.fn()
+        },
+      )
 
       const options: UseDocumentOptions<TestDocument> = {
         ref: mockRef,
@@ -220,12 +230,10 @@ describe('useDocument', () => {
     it('should handle errors from onSnapshot', async () => {
       const testError = new Error('Firestore error') as FirestoreError
 
-      jest
-        .mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot)
-        .mockImplementation((ref, options, successCallback, errorCallback) => {
-          errorCallback?.(testError)
-          return jest.fn()
-        })
+      vi.mocked(onSnapshot).mockImplementation((ref, options, successCallback, errorCallback) => {
+        errorCallback?.(testError)
+        return vi.fn()
+      })
 
       const options: UseDocumentOptions<TestDocument> = {
         ref: mockRef,
@@ -261,12 +269,10 @@ describe('useDocument', () => {
         },
       } as unknown as DocumentSnapshot<TestDocument>
 
-      jest
-        .mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot)
-        .mockImplementation((ref, options, successCallback) => {
-          successCallback(mockSnapshot)
-          return jest.fn()
-        })
+      onSnapshotMock<TestDocument>().mockImplementation((ref, options, successCallback) => {
+        successCallback(mockSnapshot)
+        return vi.fn()
+      })
 
       const options: UseDocumentOptions<TestDocument> = {
         ref: mockRef,
@@ -294,12 +300,10 @@ describe('useDocument', () => {
     it('should handle errors when onError callback is not provided', async () => {
       const testError = new Error('Firestore error') as FirestoreError
 
-      jest
-        .mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot)
-        .mockImplementation((ref, options, successCallback, errorCallback) => {
-          errorCallback?.(testError)
-          return jest.fn()
-        })
+      vi.mocked(onSnapshot).mockImplementation((ref, options, successCallback, errorCallback) => {
+        errorCallback?.(testError)
+        return vi.fn()
+      })
 
       const options: UseDocumentOptions<TestDocument> = {
         ref: mockRef,
@@ -319,8 +323,8 @@ describe('useDocument', () => {
 
   describe('ref changes', () => {
     it('should resubscribe when ref changes', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const initialRef = mock<DocumentReference<TestDocument>>({
         path: '/documents/doc1',
@@ -360,8 +364,8 @@ describe('useDocument', () => {
     })
 
     it('should not resubscribe when ref path is the same', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const ref1 = mock<DocumentReference<TestDocument>>({
         path: '/documents/doc1',
@@ -388,8 +392,8 @@ describe('useDocument', () => {
     })
 
     it('should handle change from valid ref to null', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const options: UseDocumentOptions<TestDocument> = {
         ref: mockRef,
@@ -431,8 +435,8 @@ describe('useDocument', () => {
 
   describe('cleanup', () => {
     it('should unsubscribe when component unmounts', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked<OnTestDocumentSnapshot<TestDocument>>(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const options: UseDocumentOptions<TestDocument> = {
         ref: mockRef,
@@ -461,12 +465,10 @@ describe('useDocument', () => {
       customSnapshot.exists.mockReturnValue(true)
       customSnapshot.data.mockReturnValue(customData)
 
-      jest
-        .mocked<OnTestDocumentSnapshot<CustomDocument>>(onSnapshot)
-        .mockImplementation((ref, options, successCallback) => {
-          successCallback(customSnapshot)
-          return jest.fn()
-        })
+      onSnapshotMock<CustomDocument>().mockImplementation((ref, options, successCallback) => {
+        successCallback(customSnapshot)
+        return vi.fn()
+      })
 
       const customRef = mock<DocumentReference<CustomDocument>>()
 
@@ -491,9 +493,9 @@ describe('useDocument', () => {
       snapshot.exists.mockReturnValue(true)
       snapshot.data.mockReturnValue(documentData)
 
-      jest.mocked<OnTestDocumentSnapshot>(onSnapshot).mockImplementation((ref, options, successCallback) => {
+      onSnapshotMock().mockImplementation((ref, options, successCallback) => {
         successCallback(snapshot)
-        return jest.fn()
+        return vi.fn()
       })
 
       const ref = mock<DocumentReference>()

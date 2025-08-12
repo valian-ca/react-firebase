@@ -1,4 +1,5 @@
 import { type QuerySnapshot } from '@firebase/firestore'
+import { describe, expect, it } from 'vitest'
 
 import {
   type CollectionReducerAction,

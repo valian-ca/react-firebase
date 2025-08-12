@@ -1,4 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "../react-kitchen-sink/src/hooks"]
+  "include": ["src"]
 }

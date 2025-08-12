@@ -1,6 +1,7 @@
 import { type DocumentSnapshot } from '@firebase/firestore'
-import { mock } from 'jest-mock-extended'
 import { Subject } from 'rxjs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 
 import { DocumentSnapshotSubject } from '../DocumentSnapshotSubject'
 
@@ -46,6 +47,7 @@ describe('DocumentSnapshotSubject', () => {
         exists: true,
         isLoading: false,
         hasError: false,
+        disabled: false,
         data: testData,
       })
     })
@@ -59,6 +61,7 @@ describe('DocumentSnapshotSubject', () => {
         exists: false,
         isLoading: false,
         hasError: false,
+        disabled: false,
       })
     })
 
@@ -71,6 +74,7 @@ describe('DocumentSnapshotSubject', () => {
       expect(subject.value).toEqual({
         isLoading: false,
         hasError: true,
+        disabled: false,
       })
     })
   })
@@ -211,7 +215,7 @@ describe('DocumentSnapshotSubject', () => {
 
   describe('options handling', () => {
     it('should call onSnapshot callback when provided', () => {
-      const onSnapshot = jest.fn()
+      const onSnapshot = vi.fn()
       const subject = new DocumentSnapshotSubject(snapshot$, { onSnapshot })
 
       snapshot$.next(mockDocumentSnapshot)
@@ -222,12 +226,13 @@ describe('DocumentSnapshotSubject', () => {
         exists: true,
         isLoading: false,
         hasError: false,
+        disabled: false,
         data: testData,
       })
     })
 
     it('should call onError callback when error occurs', () => {
-      const onError = jest.fn()
+      const onError = vi.fn()
 
       const subject = new DocumentSnapshotSubject(snapshot$, { onError })
       const error = new Error('Test error')
@@ -239,7 +244,7 @@ describe('DocumentSnapshotSubject', () => {
     })
 
     it('should call onComplete callback when stream completes', () => {
-      const onComplete = jest.fn()
+      const onComplete = vi.fn()
 
       const subject = new DocumentSnapshotSubject(snapshot$, { onComplete })
 
@@ -258,7 +263,7 @@ describe('DocumentSnapshotSubject', () => {
 
       snapshot$.next(mockDocumentSnapshot)
 
-      const subscriber = jest.fn()
+      const subscriber = vi.fn()
       subject.subscribe(subscriber)
 
       expect(subscriber).toHaveBeenCalledWith(
@@ -275,7 +280,7 @@ describe('DocumentSnapshotSubject', () => {
     it('should maintain subscription behavior', () => {
       const subject = new DocumentSnapshotSubject(snapshot$)
 
-      const subscriber = jest.fn()
+      const subscriber = vi.fn()
 
       const subscription = subject.subscribe(subscriber)
 

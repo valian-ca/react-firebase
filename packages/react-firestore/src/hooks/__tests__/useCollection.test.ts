@@ -7,9 +7,12 @@ import {
   type QuerySnapshot,
 } from '@firebase/firestore'
 import { renderHook, waitFor } from '@testing-library/react'
-import { anyFunction, mock, type MockProxy } from 'jest-mock-extended'
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest'
+import { anyFunction, mock, type MockProxy } from 'vitest-mock-extended'
 
 import { useCollection, type UseCollectionOptions } from '../useCollection'
+
+vi.mock('@firebase/firestore')
 
 interface TestDocument {
   id: string
@@ -19,18 +22,18 @@ interface TestDocument {
 
 describe('useCollection', () => {
   let mockQuery: MockProxy<Query<TestDocument>>
-  let onErrorCallback: jest.Mock
+  let onErrorCallback: Mock
 
   beforeEach(() => {
     // Setup mocks
     mockQuery = mock<Query<TestDocument>>()
-    onErrorCallback = jest.fn()
+    onErrorCallback = vi.fn()
 
     // Reset mocks
     onErrorCallback.mockReset()
 
     // Setup default behavior
-    jest.mocked(queryEqual).mockReturnValue(false)
+    vi.mocked(queryEqual).mockReturnValue(false)
   })
 
   describe('initial state', () => {
@@ -140,9 +143,9 @@ describe('useCollection', () => {
       })
 
       // Setup onSnapshot to call the success callback
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
         successCallback(mockSnapshot)
-        return jest.fn() // Return unsubscribe function
+        return vi.fn() // Return unsubscribe function
       })
 
       const options: UseCollectionOptions<TestDocument> = {
@@ -186,9 +189,9 @@ describe('useCollection', () => {
         empty: false,
       })
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
         successCallback(mockSnapshot)
-        return jest.fn()
+        return vi.fn()
       })
 
       const options: UseCollectionOptions<TestDocument> = {
@@ -212,9 +215,9 @@ describe('useCollection', () => {
         empty: true,
       } as unknown as QuerySnapshot<TestDocument>
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
         successCallback(mockSnapshot)
-        return jest.fn()
+        return vi.fn()
       })
 
       const options: UseCollectionOptions<TestDocument> = {
@@ -243,9 +246,9 @@ describe('useCollection', () => {
     it('should handle errors from onSnapshot', async () => {
       const testError = mock<FirestoreError>()
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback, errorCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback, errorCallback) => {
         errorCallback?.(testError)
-        return jest.fn()
+        return vi.fn()
       })
 
       const options: UseCollectionOptions<TestDocument> = {
@@ -275,9 +278,9 @@ describe('useCollection', () => {
     it('should handle errors during data processing', async () => {
       const testError = new Error('Data processing error')
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback, errorCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback, errorCallback) => {
         errorCallback?.(testError as unknown as FirestoreError)
-        return jest.fn()
+        return vi.fn()
       })
 
       const options: UseCollectionOptions<TestDocument> = {
@@ -307,9 +310,9 @@ describe('useCollection', () => {
     it('should handle errors when onError callback is not provided', async () => {
       const testError = new Error('Firestore error')
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback, errorCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback, errorCallback) => {
         errorCallback?.(testError as FirestoreError)
-        return jest.fn()
+        return vi.fn()
       })
 
       const options: UseCollectionOptions<TestDocument> = {
@@ -340,9 +343,9 @@ describe('useCollection', () => {
         empty: false,
       })
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
         successCallback(mockSnapshot)
-        return jest.fn()
+        return vi.fn()
       })
 
       const options: UseCollectionOptions<TestDocument> = {
@@ -362,13 +365,13 @@ describe('useCollection', () => {
 
   describe('query changes', () => {
     it('should resubscribe when query changes', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const initialQuery = mock<Query<TestDocument>>()
       const newQuery = mock<Query<TestDocument>>()
 
-      jest.mocked(queryEqual).mockReturnValue(false) // Queries are different
+      vi.mocked(queryEqual).mockReturnValue(false) // Queries are different
 
       const options: UseCollectionOptions<TestDocument> = {
         query: initialQuery,
@@ -401,13 +404,13 @@ describe('useCollection', () => {
     })
 
     it('should not resubscribe when query is equivalent', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const query1 = mock<Query<TestDocument>>()
       const query2 = mock<Query<TestDocument>>()
 
-      jest.mocked(queryEqual).mockReturnValue(true) // Queries are equivalent
+      vi.mocked(queryEqual).mockReturnValue(true) // Queries are equivalent
 
       const options: UseCollectionOptions<TestDocument> = {
         query: query1,
@@ -427,8 +430,8 @@ describe('useCollection', () => {
     })
 
     it('should handle change from valid query to null', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const options: UseCollectionOptions<TestDocument> = {
         query: mockQuery,
@@ -447,8 +450,8 @@ describe('useCollection', () => {
     })
 
     it('should handle change from valid query to null with includeMetadataChanges', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const options: UseCollectionOptions<TestDocument> = {
         query: mockQuery,
@@ -478,7 +481,7 @@ describe('useCollection', () => {
       expect(result.current.isDisabled).toBe(true)
       expect(onSnapshot).not.toHaveBeenCalled()
 
-      jest.mocked(queryEqual).mockReturnValue(false)
+      vi.mocked(queryEqual).mockReturnValue(false)
       // Change to valid query
       options.query = mockQuery
       rerender({ query: mockQuery })
@@ -491,8 +494,8 @@ describe('useCollection', () => {
     })
 
     it('should handle multiple query changes to ensure effect callback execution', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const options: UseCollectionOptions<TestDocument> = {
         query: mockQuery,
@@ -528,8 +531,8 @@ describe('useCollection', () => {
 
   describe('cleanup', () => {
     it('should unsubscribe when component unmounts', () => {
-      const unsubscribeMock = jest.fn()
-      jest.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
+      const unsubscribeMock = vi.fn()
+      vi.mocked(onSnapshot).mockReturnValue(unsubscribeMock)
 
       const options: UseCollectionOptions<TestDocument> = {
         query: mockQuery,
@@ -564,9 +567,9 @@ describe('useCollection', () => {
         empty: false,
       } as unknown as QuerySnapshot<CustomDocument>
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
         successCallback(customSnapshot)
-        return jest.fn()
+        return vi.fn()
       })
 
       const customQuery = mock<Query<CustomDocument>>()
@@ -598,10 +601,10 @@ describe('useCollection', () => {
         empty: false,
       } as unknown as QuerySnapshot
 
-      jest.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
+      vi.mocked(onSnapshot).mockImplementation((query, options, successCallback) => {
         successCallback(snapshot)
-        return jest.fn()
-      }) as jest.Mock
+        return vi.fn()
+      })
 
       const query = mock<Query>()
 

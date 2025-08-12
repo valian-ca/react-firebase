@@ -1,6 +1,7 @@
 import { type QuerySnapshot } from '@firebase/firestore'
-import { mock } from 'jest-mock-extended'
 import { TestScheduler } from 'rxjs/testing'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 
 import { type QuerySnapshotState } from '../../states'
 import { querySnapshotState, type QuerySnapshotStateListener } from '../querySnapshotState'
@@ -40,6 +41,7 @@ describe('querySnapshotState', () => {
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [
             { id: '1', name: 'Test 1' },
             { id: '2', name: 'Test 2' },
@@ -64,6 +66,7 @@ describe('querySnapshotState', () => {
           empty: true,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [],
         },
       })
@@ -103,6 +106,7 @@ describe('querySnapshotState', () => {
           empty: true,
           isLoading: false,
           hasError: true,
+          disabled: false,
           data: [],
         },
       })
@@ -111,7 +115,7 @@ describe('querySnapshotState', () => {
 
   it('should call onSnapshot callback when provided', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onSnapshot = jest.fn()
+      const onSnapshot = vi.fn()
       const options: QuerySnapshotStateListener = { onSnapshot }
 
       const mockDocs = [{ data: () => ({ id: '1', name: 'Test 1' }) }, { data: () => ({ id: '2', name: 'Test 2' }) }]
@@ -151,7 +155,7 @@ describe('querySnapshotState', () => {
 
   it('should call onError callback when error occurs', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onError = jest.fn()
+      const onError = vi.fn()
       const options: QuerySnapshotStateListener = { onError }
 
       const error = new Error('Test error')
@@ -165,6 +169,7 @@ describe('querySnapshotState', () => {
           empty: true,
           isLoading: false,
           hasError: true,
+          disabled: false,
           data: [],
         },
       })
@@ -177,7 +182,7 @@ describe('querySnapshotState', () => {
 
   it('should call onComplete callback when stream completes', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onComplete = jest.fn()
+      const onComplete = vi.fn()
       const options: QuerySnapshotStateListener = { onComplete }
 
       const mockDocs = [{ data: () => ({ id: '1', name: 'Test 1' }) }, { data: () => ({ id: '2', name: 'Test 2' }) }]
@@ -193,6 +198,7 @@ describe('querySnapshotState', () => {
           snapshot: mockQuerySnapshot,
           isLoading: false,
           hasError: false,
+          disabled: false,
         }),
       })
 
@@ -227,6 +233,7 @@ describe('querySnapshotState', () => {
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [
             { id: '1', name: 'Test 1' },
             { id: '2', name: 'Test 2' },
@@ -256,6 +263,7 @@ describe('querySnapshotState', () => {
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [
             { id: '1', name: 'Test 1' },
             { id: '2', name: 'Test 2' },
@@ -267,6 +275,7 @@ describe('querySnapshotState', () => {
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [{ id: '3', name: 'Test 3' }],
         },
       })
@@ -275,9 +284,9 @@ describe('querySnapshotState', () => {
 
   it('should handle all callbacks together', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onSnapshot = jest.fn()
-      const onError = jest.fn()
-      const onComplete = jest.fn()
+      const onSnapshot = vi.fn()
+      const onError = vi.fn()
+      const onComplete = vi.fn()
       const options: QuerySnapshotStateListener = { onSnapshot, onError, onComplete }
 
       const mockDocs = [{ data: () => ({ id: '1', name: 'Test 1' }) }, { data: () => ({ id: '2', name: 'Test 2' }) }]
@@ -293,6 +302,7 @@ describe('querySnapshotState', () => {
           snapshot: mockQuerySnapshot,
           isLoading: false,
           hasError: false,
+          disabled: false,
         }),
       })
 
