@@ -1,2 +1,9 @@
 packages:
   - packages/*
+
+onlyBuiltDependencies:
+  - '@firebase/util'
+  - '@valian/eslint-config'
+  - nx
+  - protobufjs
+  - unrs-resolver

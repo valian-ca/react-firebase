@@ -2,7 +2,6 @@ import { type DocumentSnapshot } from '@firebase/firestore'
 import { mock } from 'jest-mock-extended'
 import { Subject } from 'rxjs'
 
-import { DocumentSnapshotInitialState } from '../../states/DocumentSnapshotInitialState'
 import { DocumentSnapshotSubject } from '../DocumentSnapshotSubject'
 
 const testData = { id: '1', name: 'Test Document' }
@@ -30,7 +29,11 @@ describe('DocumentSnapshotSubject', () => {
     it('should initialize with initial state', () => {
       const subject = new DocumentSnapshotSubject(snapshot$)
 
-      expect(subject.value).toEqual(DocumentSnapshotInitialState)
+      expect(subject.value).toEqual({
+        isLoading: true,
+        hasError: false,
+        disabled: false,
+      })
     })
 
     it('should subscribe to snapshot observable and update state', () => {

@@ -2,7 +2,6 @@ import { type QueryDocumentSnapshot, type QuerySnapshot } from '@firebase/firest
 import { mock } from 'jest-mock-extended'
 import { Subject } from 'rxjs'
 
-import { QuerySnapshotInitialState } from '../../states/QuerySnapshotInitialState'
 import { QuerySnapshotSubject } from '../QuerySnapshotSubject'
 
 interface TestData {
@@ -35,7 +34,14 @@ describe('QuerySnapshotSubject', () => {
     it('should initialize with initial state', () => {
       const subject = new QuerySnapshotSubject(snapshot$)
 
-      expect(subject.value).toEqual(QuerySnapshotInitialState)
+      expect(subject.value).toEqual({
+        empty: true,
+        size: 0,
+        isLoading: true,
+        hasError: false,
+        disabled: false,
+        data: [],
+      })
     })
 
     it('should subscribe to snapshot observable and update state', () => {

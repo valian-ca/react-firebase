@@ -23,16 +23,13 @@
     "firebase"
   ],
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "firebase": "^12.0.0",
     "jest-environment-jsdom": "^30.0.5",
     "jest-mock-extended": "^4.0.0",
-    "nanoid": "5.1.5",
+    "nanoid": "^5.1.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -41,18 +38,25 @@
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19"
   },
-  "exports": {
-    ".": {
-      "import": "./lib/index.mjs",
-      "types": "./lib/index.d.mts",
-      "require": "./lib/index.cjs",
-      "default": "./lib/index.mjs"
-    }
-  },
   "type": "module",
-  "main": "./lib/index.cjs",
-  "module": "./lib/index.mjs",
-  "types": "./lib/index.d.ts",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./lib/index.d.mts",
+        "import": "./lib/index.mjs",
+        "require": "./lib/index.cjs",
+        "default": "./lib/index.mjs"
+      }
+    },
+    "main": "./lib/index.cjs",
+    "module": "./lib/index.mjs",
+    "types": "./lib/index.d.ts"
+  },
+  "exports": "./src/index.ts",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
   "engines": {
     "node": ">= 22"
   },

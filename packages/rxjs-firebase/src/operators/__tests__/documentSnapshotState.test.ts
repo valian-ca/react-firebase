@@ -2,7 +2,7 @@ import { type DocumentSnapshot } from '@firebase/firestore'
 import { mock } from 'jest-mock-extended'
 import { TestScheduler } from 'rxjs/testing'
 
-import { documentSnapshotState, type DocumentStateOptions } from '../documentSnapshotState'
+import { documentSnapshotState, type DocumentSnapshotStateListener } from '../documentSnapshotState'
 
 const testData = { id: '1', name: 'Test Document' }
 
@@ -133,7 +133,7 @@ describe('documentSnapshotState', () => {
   it('should call onError callback when error occurs', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
       const onError = jest.fn()
-      const options: DocumentStateOptions = { onError }
+      const options: DocumentSnapshotStateListener = { onError }
 
       const error = new Error('Test error')
       const source$ = cold<DocumentSnapshot>('#', {}, error)
@@ -156,7 +156,7 @@ describe('documentSnapshotState', () => {
   it('should call onComplete callback when stream completes', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
       const onComplete = jest.fn()
-      const options: DocumentStateOptions = { onComplete }
+      const options: DocumentSnapshotStateListener = { onComplete }
       const mockDocumentSnapshot = mock<DocumentSnapshot>()
       mockDocumentSnapshot.exists.mockReturnValue(true)
       mockDocumentSnapshot.data.mockReturnValue(testData)
@@ -282,7 +282,7 @@ describe('documentSnapshotState', () => {
       const onSnapshot = jest.fn()
       const onError = jest.fn()
       const onComplete = jest.fn()
-      const options: DocumentStateOptions = { onSnapshot, onError, onComplete }
+      const options: DocumentSnapshotStateListener = { onSnapshot, onError, onComplete }
       const mockDocumentSnapshot = mock<DocumentSnapshot>()
       mockDocumentSnapshot.exists.mockReturnValue(true)
       mockDocumentSnapshot.data.mockReturnValue(testData)

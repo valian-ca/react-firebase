@@ -1,0 +1,11 @@
+/coverage/
+/src/
+!/lib/
+/tsconfig.json
+/tsconfig.*.json
+tsconfig.tsbuildinfo
+jest.*.cjs
+rollup.config.js
+eslint.config.mjs
+.gitignore
+firebase.json

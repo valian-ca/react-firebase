@@ -30,7 +30,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@nx/js": "21.3.11",
     "@rollup/plugin-typescript": "12.1.4",
-    "@tsconfig/node22": "22.0.2",
+    "@tsconfig/vite-react": "7.0.0",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",

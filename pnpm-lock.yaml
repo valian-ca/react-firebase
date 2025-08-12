@@ -20,9 +20,9 @@ importers:
       '@rollup/plugin-typescript':
         specifier: 12.1.4
         version: 12.1.4(rollup@4.46.2)(tslib@2.7.0)(typescript@5.8.3)
-      '@tsconfig/node22':
-        specifier: 22.0.2
-        version: 22.0.2
+      '@tsconfig/vite-react':
+        specifier: 7.0.0
+        version: 7.0.0
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
@@ -75,11 +75,11 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
-  packages/react-firebase:
+  packages/react-firestore:
     dependencies:
       '@firebase/firestore':
         specifier: ^4.7.0
-        version: 4.8.0(@firebase/app@0.14.0)
+        version: 4.9.0(@firebase/app@0.14.0)
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.6.3
@@ -97,8 +97,69 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@jest/globals@30.0.5)(jest@30.0.5(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.8.3)))(typescript@5.8.3)
       nanoid:
-        specifier: 5.1.5
+        specifier: ^5.1.5
         version: 5.1.5
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
+
+  packages/react-kitchen-sink:
+    dependencies:
+      '@firebase/firestore':
+        specifier: ^4.7.0
+        version: 4.9.0(@firebase/app@0.14.0)
+      '@sentry/core':
+        specifier: ^10.1.0
+        version: 10.1.0
+      '@sentry/react':
+        specifier: ^10.1.0
+        version: 10.1.0(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.84.2
+        version: 5.84.2(react@19.1.0)
+      '@valian/react-firestore':
+        specifier: workspace:*
+        version: link:../react-firestore
+      '@valian/rxjs-firebase':
+        specifier: workspace:*
+        version: link:../rxjs-firebase
+      '@valian/zustand-firestore':
+        specifier: workspace:*
+        version: link:../zustand-firestore
+      observable-hooks:
+        specifier: ^4.2.4
+        version: 4.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      type-fest:
+        specifier: ^4.41.0
+        version: 4.41.0
+      zod-firebase:
+        specifier: ^1.7.0
+        version: 1.7.0(@firebase/firestore@4.9.0(@firebase/app@0.14.0))(zod@3.25.76)
+      zustand:
+        specifier: ^5.0.7
+        version: 5.0.7(@types/react@19.1.8)(react@19.1.0)
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: ^6.6.3
+        version: 6.6.4
+      '@testing-library/react':
+        specifier: ^16.3.0
+        version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      firebase:
+        specifier: ^12.0.0
+        version: 12.0.0
+      jest-environment-jsdom:
+        specifier: ^30.0.5
+        version: 30.0.5
+      jest-mock-extended:
+        specifier: ^4.0.0
+        version: 4.0.0(@jest/globals@30.0.5)(jest@30.0.5(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.8.3)))(typescript@5.8.3)
       react:
         specifier: ^19.1.0
         version: 19.1.0
@@ -110,7 +171,7 @@ importers:
     dependencies:
       '@firebase/firestore':
         specifier: ^4.7.0
-        version: 4.8.0(@firebase/app@0.14.0)
+        version: 4.9.0(@firebase/app@0.14.0)
     devDependencies:
       firebase:
         specifier: ^12.0.0
@@ -119,8 +180,48 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(@jest/globals@30.0.5)(jest@30.0.5(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.8.3)))(typescript@5.8.3)
       rxjs:
-        specifier: 7.8.2
+        specifier: ^7.8.2
         version: 7.8.2
+
+  packages/zustand-firestore:
+    dependencies:
+      '@firebase/firestore':
+        specifier: ^4.7.0
+        version: 4.9.0(@firebase/app@0.14.0)
+      '@valian/rxjs-firebase':
+        specifier: workspace:*
+        version: link:../rxjs-firebase
+      observable-hooks:
+        specifier: ^4.2.4
+        version: 4.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      zustand:
+        specifier: ^5.0.7
+        version: 5.0.7(@types/react@19.1.8)(react@19.1.0)
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: ^6.6.3
+        version: 6.6.4
+      '@testing-library/react':
+        specifier: ^16.3.0
+        version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      firebase:
+        specifier: ^12.0.0
+        version: 12.0.0
+      jest-environment-jsdom:
+        specifier: ^30.0.5
+        version: 30.0.5
+      jest-mock-extended:
+        specifier: ^4.0.0
+        version: 4.0.0(@jest/globals@30.0.5)(jest@30.0.5(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.10.2)(typescript@5.8.3)))(typescript@5.8.3)
+      react:
+        specifier: ^19.1.0
+        version: 19.1.0
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.1.0(react@19.1.0)
 
 packages:
 
@@ -998,10 +1099,6 @@ packages:
       '@react-native-async-storage/async-storage':
         optional: true
 
-  '@firebase/component@0.6.18':
-    resolution: {integrity: sha512-n28kPCkE2dL2U28fSxZJjzPPVpKsQminJ6NrzcKXAI0E/lYC8YhfwpyllScqVEvAI3J2QgJZWYgrX+1qGI+SQQ==}
-    engines: {node: '>=18.0.0'}
-
   '@firebase/component@0.7.0':
     resolution: {integrity: sha512-wR9En2A+WESUHexjmRHkqtaVH94WLNKt6rmeqZhSLBybg4Wyf0Umk04SZsS6sBq4102ZsDBFwoqMqJYj2IoDSg==}
     engines: {node: '>=20.0.0'}
@@ -1033,12 +1130,6 @@ packages:
     peerDependencies:
       '@firebase/app-types': 0.x
       '@firebase/util': 1.x
-
-  '@firebase/firestore@4.8.0':
-    resolution: {integrity: sha512-QSRk+Q1/CaabKyqn3C32KSFiOdZpSqI9rpLK5BHPcooElumOBooPFa6YkDdiT+/KhJtel36LdAacha9BptMj2A==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@firebase/app': 0.x
 
   '@firebase/firestore@4.9.0':
     resolution: {integrity: sha512-5zl0+/h1GvlCSLt06RMwqFsd7uqRtnNZt4sW99k2rKRd6k/ECObIWlEnvthm2cuOSnUmwZknFqtmd1qyYSLUuQ==}
@@ -1075,10 +1166,6 @@ packages:
     resolution: {integrity: sha512-nGDmiwKLI1lerhwfwSHvMR9RZuIH5/8E3kgUWnVRqqL7kGVSktjLTWEMva7oh5yxQ3zXfIlIwJwMcaM5bK5j8Q==}
     peerDependencies:
       '@firebase/app': 0.x
-
-  '@firebase/logger@0.4.4':
-    resolution: {integrity: sha512-mH0PEh1zoXGnaR8gD1DeGeNZtWFKbnz9hDO91dIml3iou1gpOnLqXQ2dJfB71dj6dpmUjcQ6phY3ZZJbjErr9g==}
-    engines: {node: '>=18.0.0'}
 
   '@firebase/logger@0.5.0':
     resolution: {integrity: sha512-cGskaAvkrnh42b3BA3doDWeBmuHFO/Mx5A83rbRDYakPjO9bJtRL3dX7javzc2Rr/JHZf4HlterTW2lUkfeN4g==}
@@ -1141,16 +1228,9 @@ packages:
     peerDependencies:
       '@firebase/app': 0.x
 
-  '@firebase/util@1.12.1':
-    resolution: {integrity: sha512-zGlBn/9Dnya5ta9bX/fgEoNC3Cp8s6h+uYPYaDieZsFOAdHP/ExzQ/eaDgxD3GOROdPkLKpvKY0iIzr9adle0w==}
-    engines: {node: '>=18.0.0'}
-
   '@firebase/util@1.13.0':
     resolution: {integrity: sha512-0AZUyYUfpMNcztR5l09izHwXkZpghLgCUaAGjtMwXnCg3bj4ml5VgiwqOMOxJ+Nw4qN/zJAaOQBcJ7KGkWStqQ==}
     engines: {node: '>=20.0.0'}
-
-  '@firebase/webchannel-wrapper@1.0.3':
-    resolution: {integrity: sha512-2xCRM9q9FlzGZCdgDMJwc0gyUkWFtkosy7Xxr6sFgQwn+wMNIWd7xIvYNauU1r64B5L5rsGKy/n9TKJ0aAFeqQ==}
 
   '@firebase/webchannel-wrapper@1.0.4':
     resolution: {integrity: sha512-6m8+P+dE/RPl4OPzjTxcTbQ0rGeRyeTvAi9KwIffBVCiAMKrfXfLZaqD1F+m8t4B5/Q5aHsMozOgirkH1F5oMQ==}
@@ -1745,6 +1825,36 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@sentry-internal/browser-utils@10.1.0':
+    resolution: {integrity: sha512-9g9EOlCcBtGipCQKF3Y+8Z+GQFLrc2NxOr7sYnys0uELtcYE4AxZsyHKERz5VNb/sjpNuAscL1i2YBykKp2QeA==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/feedback@10.1.0':
+    resolution: {integrity: sha512-u4Y3ZBAWbx3UZXOcfMCFR3Qzqozxuj1eQLLURlUTj+jKtCuWrqSYvb5CynuRgo+EDwPFdc5DA8PmNXjGJgvkkA==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/replay-canvas@10.1.0':
+    resolution: {integrity: sha512-mfdG6bHqVkvQlcYSlHh72UScJjZdLUqkf0fW4T5qyrK8b4omWX/ieFmr8DwtUdOu0iArr1kN4E/83WFVpRhJfg==}
+    engines: {node: '>=18'}
+
+  '@sentry-internal/replay@10.1.0':
+    resolution: {integrity: sha512-gfuWCCslNg80XMcKFCV8RU14MR06XrUbJ3CsxrOD4cx9biA5EfBdy06AeA5Q3l3KCYzVzLAZH2rS/Pdvr2hrPA==}
+    engines: {node: '>=18'}
+
+  '@sentry/browser@10.1.0':
+    resolution: {integrity: sha512-KevWtdmcxjREOVkfGUlXhB7Yj2K5AZwIDvdyQg9044MM5M2hxMWWIpsJewF+f2V0rZN4QYgxscpe4NKXg5GBYQ==}
+    engines: {node: '>=18'}
+
+  '@sentry/core@10.1.0':
+    resolution: {integrity: sha512-sda76pKjgEgh6VNRNJa9P0WG2egA7N85dTQ8wS/QZ6rD/dNXQZ+ITfL99Jb0b6WhTgvzspJq8bNSl/nRUdbwbQ==}
+    engines: {node: '>=18'}
+
+  '@sentry/react@10.1.0':
+    resolution: {integrity: sha512-1ehlqWoUzGKTnrQiLqrtumSCcjIZwwircf0SYpT89W16h1AhYlEXS4WvBaef68+EYdsZ840hU8zCCUpOdpwdeA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: ^16.14.0 || 17.x || 18.x || 19.x
+
   '@sigstore/bundle@2.3.2':
     resolution: {integrity: sha512-wueKWDk70QixNLB363yHc2D2ItTgYiMTdPwK8D9dKQMR3ZQ0c35IxP5xnwQ8cNLoCgCRcHf14kE+CLIvNX1zmA==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -1791,6 +1901,14 @@ packages:
     peerDependencies:
       eslint: '>=9.0.0'
 
+  '@tanstack/query-core@5.83.1':
+    resolution: {integrity: sha512-OG69LQgT7jSp+5pPuCfzltq/+7l2xoweggjme9vlbCPa/d7D7zaqv5vN/S82SzSYZ4EDLTxNO1PWrv49RAS64Q==}
+
+  '@tanstack/react-query@5.84.2':
+    resolution: {integrity: sha512-cZadySzROlD2+o8zIfbD978p0IphuQzRWiiH3I2ugnTmz4jbjc0+TdibpwqxlzynEen8OulgAg+rzdNF37s7XQ==}
+    peerDependencies:
+      react: ^18 || ^19
+
   '@testing-library/dom@10.4.1':
     resolution: {integrity: sha512-o4PXJQidqJl82ckFaXUeoAW+XysPLauYI43Abki5hABd853iMhitooc6znOnczgbTYmEP6U6/y1ZyKAIsvMKGg==}
     engines: {node: '>=18'}
@@ -1826,8 +1944,8 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
-  '@tsconfig/node22@22.0.2':
-    resolution: {integrity: sha512-Kmwj4u8sDRDrMYRoN9FDEcXD8UpBSaPQQ24Gz+Gamqfm7xxn+GBR7ge/Z7pK8OXNGyUzbSwJj+TH6B+DS/epyA==}
+  '@tsconfig/vite-react@7.0.0':
+    resolution: {integrity: sha512-fiuTviENxttMlo8BHuVWgPe/DRwcuU722oVvQ/HLfI3pxXfX4uBjvj9tHm1fbj5+iYbcPmdGENXOUks6yKF2Ug==}
 
   '@tufjs/canonical-json@2.0.0':
     resolution: {integrity: sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA==}
@@ -3441,6 +3559,9 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
+  hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+
   hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
 
@@ -4628,6 +4749,13 @@ packages:
   object.values@1.2.1:
     resolution: {integrity: sha512-gXah6aZrcUxjWg2zR2MwouP2eHlCBzdV4pygudehaKXSGW4v2AsRQUK+lwwXhii6KFZcunEnmSUoYp5CXibxtA==}
     engines: {node: '>= 0.4'}
+
+  observable-hooks@4.2.4:
+    resolution: {integrity: sha512-FdTQgyw1h5bG/QHCBIqctdBSnv9VARJCEilgpV6L2qlw1yeLqFIwPm4U15dMtl5kDmNN0hSt+Nl6iYbLFwEcQA==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      rxjs: '>=6.0.0'
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
@@ -5875,6 +6003,34 @@ packages:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
 
+  zod-firebase@1.7.0:
+    resolution: {integrity: sha512-OaltBtjUrWotJUyVQctGzATGJCpV9KImS0BV7+dXr4v9TjMkOXnf3uLmISmR8zehSL9XI3CPcYNwYBpOdJCr8g==}
+    engines: {node: '>= 22.0.0'}
+    peerDependencies:
+      '@firebase/firestore': ^4.7.0
+      zod: ^3.23.0 || ^4.0.0
+
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
+  zustand@5.0.7:
+    resolution: {integrity: sha512-Ot6uqHDW/O2VdYsKLLU8GQu8sCOM1LcoE8RwvLv9uuRT9s6SOHCKs0ZEOhxg+I1Ld+A1Q5lwx+UlKXXUoCZITg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+
 snapshots:
 
   '@aashutoshrathi/word-wrap@1.2.6': {}
@@ -6988,11 +7144,6 @@ snapshots:
       '@firebase/util': 1.13.0
       tslib: 2.7.0
 
-  '@firebase/component@0.6.18':
-    dependencies:
-      '@firebase/util': 1.12.1
-      tslib: 2.7.0
-
   '@firebase/component@0.7.0':
     dependencies:
       '@firebase/util': 1.13.0
@@ -7047,17 +7198,6 @@ snapshots:
     dependencies:
       '@firebase/app-types': 0.9.3
       '@firebase/util': 1.13.0
-
-  '@firebase/firestore@4.8.0(@firebase/app@0.14.0)':
-    dependencies:
-      '@firebase/app': 0.14.0
-      '@firebase/component': 0.6.18
-      '@firebase/logger': 0.4.4
-      '@firebase/util': 1.12.1
-      '@firebase/webchannel-wrapper': 1.0.3
-      '@grpc/grpc-js': 1.9.15
-      '@grpc/proto-loader': 0.7.13
-      tslib: 2.7.0
 
   '@firebase/firestore@4.9.0(@firebase/app@0.14.0)':
     dependencies:
@@ -7115,10 +7255,6 @@ snapshots:
       '@firebase/component': 0.7.0
       '@firebase/util': 1.13.0
       idb: 7.1.1
-      tslib: 2.7.0
-
-  '@firebase/logger@0.4.4':
-    dependencies:
       tslib: 2.7.0
 
   '@firebase/logger@0.5.0':
@@ -7218,15 +7354,9 @@ snapshots:
       '@firebase/util': 1.13.0
       tslib: 2.7.0
 
-  '@firebase/util@1.12.1':
-    dependencies:
-      tslib: 2.7.0
-
   '@firebase/util@1.13.0':
     dependencies:
       tslib: 2.7.0
-
-  '@firebase/webchannel-wrapper@1.0.3': {}
 
   '@firebase/webchannel-wrapper@1.0.4': {}
 
@@ -8038,6 +8168,41 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.46.2':
     optional: true
 
+  '@sentry-internal/browser-utils@10.1.0':
+    dependencies:
+      '@sentry/core': 10.1.0
+
+  '@sentry-internal/feedback@10.1.0':
+    dependencies:
+      '@sentry/core': 10.1.0
+
+  '@sentry-internal/replay-canvas@10.1.0':
+    dependencies:
+      '@sentry-internal/replay': 10.1.0
+      '@sentry/core': 10.1.0
+
+  '@sentry-internal/replay@10.1.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 10.1.0
+      '@sentry/core': 10.1.0
+
+  '@sentry/browser@10.1.0':
+    dependencies:
+      '@sentry-internal/browser-utils': 10.1.0
+      '@sentry-internal/feedback': 10.1.0
+      '@sentry-internal/replay': 10.1.0
+      '@sentry-internal/replay-canvas': 10.1.0
+      '@sentry/core': 10.1.0
+
+  '@sentry/core@10.1.0': {}
+
+  '@sentry/react@10.1.0(react@19.1.0)':
+    dependencies:
+      '@sentry/browser': 10.1.0
+      '@sentry/core': 10.1.0
+      hoist-non-react-statics: 3.3.2
+      react: 19.1.0
+
   '@sigstore/bundle@2.3.2':
     dependencies:
       '@sigstore/protobuf-specs': 0.3.3
@@ -8096,6 +8261,13 @@ snapshots:
       - supports-color
       - typescript
 
+  '@tanstack/query-core@5.83.1': {}
+
+  '@tanstack/react-query@5.84.2(react@19.1.0)':
+    dependencies:
+      '@tanstack/query-core': 5.83.1
+      react: 19.1.0
+
   '@testing-library/dom@10.4.1':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -8135,7 +8307,7 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@tsconfig/node22@22.0.2': {}
+  '@tsconfig/vite-react@7.0.0': {}
 
   '@tufjs/canonical-json@2.0.0': {}
 
@@ -10007,6 +10179,10 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
+  hoist-non-react-statics@3.3.2:
+    dependencies:
+      react-is: 16.13.1
+
   hosted-git-info@2.8.9: {}
 
   hosted-git-info@4.1.0:
@@ -11684,6 +11860,12 @@ snapshots:
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
 
+  observable-hooks@4.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      rxjs: 7.8.2
+
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
@@ -13022,3 +13204,16 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.1.1: {}
+
+  zod-firebase@1.7.0(@firebase/firestore@4.9.0(@firebase/app@0.14.0))(zod@3.25.76):
+    dependencies:
+      '@firebase/firestore': 4.9.0(@firebase/app@0.14.0)
+      type-fest: 4.41.0
+      zod: 3.25.76
+
+  zod@3.25.76: {}
+
+  zustand@5.0.7(@types/react@19.1.8)(react@19.1.0):
+    optionalDependencies:
+      '@types/react': 19.1.8
+      react: 19.1.0
