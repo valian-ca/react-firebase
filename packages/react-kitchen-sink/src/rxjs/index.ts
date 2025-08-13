@@ -1,8 +1,11 @@
+export * from './documentSnapshotSubject'
+export * from './schemaQuerySnapshotSubject'
+export * from './schemaTypes'
+export * from './sentryDocumentSnapshotListener'
+export * from './sentrySchemaQuerySnapshotListener'
 export {
   type DocumentSnapshotState,
-  type DocumentSnapshotStateListener as DocumentSnapshotStateOptions,
-  DocumentSnapshotSubject,
+  type DocumentSnapshotStateListener,
   type QuerySnapshotState,
-  type QuerySnapshotStateListener as QuerySnapshotStateOptions,
-  QuerySnapshotSubject,
+  type QuerySnapshotStateListener,
 } from '@valian/rxjs-firebase'

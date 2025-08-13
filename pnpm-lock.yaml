@@ -114,15 +114,6 @@ importers:
       '@firebase/firestore':
         specifier: ^4.7.0
         version: 4.9.0(@firebase/app@0.14.0)
-      '@sentry/core':
-        specifier: ^10.1.0
-        version: 10.1.0
-      '@sentry/react':
-        specifier: ^10.1.0
-        version: 10.1.0(react@19.1.0)
-      '@tanstack/react-query':
-        specifier: ^5.84.2
-        version: 5.84.2(react@19.1.0)
       '@valian/react-firestore':
         specifier: workspace:*
         version: link:../react-firestore
@@ -135,19 +126,16 @@ importers:
       observable-hooks:
         specifier: ^4.2.4
         version: 4.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)
-      rxjs:
-        specifier: ^7.8.2
-        version: 7.8.2
-      type-fest:
-        specifier: ^4.41.0
-        version: 4.41.0
-      zod-firebase:
-        specifier: ^1.7.0
-        version: 1.7.0(@firebase/firestore@4.9.0(@firebase/app@0.14.0))(zod@3.25.76)
-      zustand:
-        specifier: ^5.0.7
-        version: 5.0.7(@types/react@19.1.8)(react@19.1.0)
     devDependencies:
+      '@sentry/core':
+        specifier: ^10.1.0
+        version: 10.1.0
+      '@sentry/react':
+        specifier: ^10.1.0
+        version: 10.1.0(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^5.84.2
+        version: 5.84.2(react@19.1.0)
       firebase:
         specifier: ^12.0.0
         version: 12.0.0
@@ -157,6 +145,15 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      zod-firebase:
+        specifier: ^1.7.0
+        version: 1.7.0(@firebase/firestore@4.9.0(@firebase/app@0.14.0))(zod@3.25.76)
+      zustand:
+        specifier: ^5
+        version: 5.0.7(@types/react@19.1.8)(react@19.1.0)
 
   packages/rxjs-firebase:
     dependencies:
@@ -185,12 +182,6 @@ importers:
       observable-hooks:
         specifier: ^4.2.4
         version: 4.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)
-      rxjs:
-        specifier: ^7.8.2
-        version: 7.8.2
-      zustand:
-        specifier: ^5.0.7
-        version: 5.0.7(@types/react@19.1.8)(react@19.1.0)
     devDependencies:
       firebase:
         specifier: ^12.0.0
@@ -201,6 +192,12 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      zustand:
+        specifier: ^5.0.7
+        version: 5.0.7(@types/react@19.1.8)(react@19.1.0)
 
 packages:
 
