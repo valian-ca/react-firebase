@@ -13,8 +13,9 @@ import {
   type SchemaDocumentOutput,
   type SchemaFirestoreQueryFactory,
 } from 'zod-firebase'
+import { type StoreApi } from 'zustand'
 
-import { type SchemaQuerySnapshotStateListener } from '../rxjs/schemaTypes'
+import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/schemaTypes'
 import { sentrySchemaQuerySnapshotListener } from '../rxjs/sentrySchemaQuerySnapshotListener'
 
 export interface UseSchemaQueryStoreOptions<
@@ -27,11 +28,16 @@ export interface UseSchemaQueryStoreOptions<
   metaOptions?: TOptions
 }
 
+export type SchemaQueryStoreApi<
+  TCollectionSchema extends CollectionSchema,
+  TOptions extends MetaOutputOptions,
+> = StoreApi<SchemaQuerySnapshotState<TCollectionSchema, TOptions>>
+
 export const useSchemaQueryStore = <TCollectionSchema extends CollectionSchema, TOptions extends MetaOutputOptions>({
   factory,
   metaOptions,
   ...options
-}: UseSchemaQueryStoreOptions<TCollectionSchema, TOptions>) => {
+}: UseSchemaQueryStoreOptions<TCollectionSchema, TOptions>): SchemaQueryStoreApi<TCollectionSchema, TOptions> => {
   const snapshotListenOptions = useSnapshotListenOptions(options)
   const snapshotState$ = useObservable(
     (inputs$) =>

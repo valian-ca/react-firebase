@@ -1,6 +1,8 @@
 import typescript from '@rollup/plugin-typescript'
 import { dts } from 'rollup-plugin-dts'
 
+const external = ['firebase/firestore', '@firebase/firestore', 'react']
+
 export default [
   {
     input: 'src/index.ts',
@@ -14,7 +16,7 @@ export default [
         format: 'esm',
       },
     ],
-    external: ['firebase/firestore', '@firebase/firestore', 'type-fest', 'zod'],
+    external,
     plugins: [typescript({})],
   },
   {
@@ -30,7 +32,7 @@ export default [
         file: 'lib/index.d.mts',
       },
     ],
-    external: ['firebase/firestore', '@firebase/firestore', 'type-fest', 'zod'],
+    external,
     plugins: [
       dts({
         respectExternal: true,
