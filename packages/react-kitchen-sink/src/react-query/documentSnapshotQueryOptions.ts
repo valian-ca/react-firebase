@@ -57,7 +57,7 @@ export const documentSnapshotQueryOptions = <
         subject$.close()
       })
 
-      snapshotManager.registerSnaphot(queryKey, () => {
+      snapshotManager.registerSnapshotOnClose(queryKey, () => {
         subject$.close()
       })
 

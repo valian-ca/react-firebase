@@ -23,10 +23,10 @@ export class FirestoreSnaphotManager {
     })
   }
 
-  registerSnaphot = (queryKey: QueryKey, onCloseSnaphot: () => void) => {
+  registerSnapshotOnClose = (queryKey: QueryKey, onCloseSnapshot: () => void) => {
     const snapshotId = hashKey(queryKey)
     const closeSnapshot = this.#onClose.get(snapshotId)
     closeSnapshot?.()
-    this.#onClose.set(snapshotId, onCloseSnaphot)
+    this.#onClose.set(snapshotId, onCloseSnapshot)
   }
 }
