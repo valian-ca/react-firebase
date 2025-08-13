@@ -1,9 +1,19 @@
 import { type QuerySnapshot } from '@firebase/firestore'
-import { mock } from 'jest-mock-extended'
 import { TestScheduler } from 'rxjs/testing'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 
-import { QuerySnapshotInitialState } from '../../states/QuerySnapshotInitialState'
-import { querySnapshotState, type QueryStateOptions } from '../querySnapshotState'
+import { type QuerySnapshotState } from '../../states'
+import { querySnapshotState, type QuerySnapshotStateListener } from '../querySnapshotState'
+
+const QuerySnapshotLoadingState = {
+  empty: true,
+  size: 0,
+  isLoading: true,
+  hasError: false,
+  disabled: false,
+  data: [],
+} as const satisfies QuerySnapshotState
 
 describe('querySnapshotState', () => {
   let testScheduler: TestScheduler
@@ -24,13 +34,14 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState())
 
       expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: {
           snapshot: mockQuerySnapshot,
           size: 2,
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [
             { id: '1', name: 'Test 1' },
             { id: '2', name: 'Test 2' },
@@ -48,13 +59,14 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState())
 
       expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: {
           snapshot: emptySnapshot,
           size: 0,
           empty: true,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [],
         },
       })
@@ -71,7 +83,7 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState())
 
       expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,
@@ -88,12 +100,13 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState())
 
       expectObservable(result$).toBe('(se|)', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         e: {
           size: 0,
           empty: true,
           isLoading: false,
           hasError: true,
+          disabled: false,
           data: [],
         },
       })
@@ -102,8 +115,8 @@ describe('querySnapshotState', () => {
 
   it('should call onSnapshot callback when provided', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onSnapshot = jest.fn()
-      const options: QueryStateOptions = { onSnapshot }
+      const onSnapshot = vi.fn()
+      const options: QuerySnapshotStateListener = { onSnapshot }
 
       const mockDocs = [{ data: () => ({ id: '1', name: 'Test 1' }) }, { data: () => ({ id: '2', name: 'Test 2' }) }]
 
@@ -113,7 +126,7 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState(options))
 
       expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,
@@ -142,20 +155,21 @@ describe('querySnapshotState', () => {
 
   it('should call onError callback when error occurs', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onError = jest.fn()
-      const options: QueryStateOptions = { onError }
+      const onError = vi.fn()
+      const options: QuerySnapshotStateListener = { onError }
 
       const error = new Error('Test error')
       const source$ = cold<QuerySnapshot>('#', {}, error)
       const result$ = source$.pipe(querySnapshotState(options))
 
       expectObservable(result$).toBe('(se|)', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         e: {
           size: 0,
           empty: true,
           isLoading: false,
           hasError: true,
+          disabled: false,
           data: [],
         },
       })
@@ -168,8 +182,8 @@ describe('querySnapshotState', () => {
 
   it('should call onComplete callback when stream completes', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onComplete = jest.fn()
-      const options: QueryStateOptions = { onComplete }
+      const onComplete = vi.fn()
+      const options: QuerySnapshotStateListener = { onComplete }
 
       const mockDocs = [{ data: () => ({ id: '1', name: 'Test 1' }) }, { data: () => ({ id: '2', name: 'Test 2' }) }]
 
@@ -179,11 +193,12 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState(options))
 
       expectObservable(result$).toBe('(sx)|', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,
           hasError: false,
+          disabled: false,
         }),
       })
 
@@ -211,13 +226,14 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState<TestData, TestData>())
 
       expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: {
           snapshot: typedSnapshot,
           size: 2,
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [
             { id: '1', name: 'Test 1' },
             { id: '2', name: 'Test 2' },
@@ -240,13 +256,14 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState())
 
       expectObservable(result$).toBe('(sx)y', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: {
           snapshot: firstSnapshot,
           size: 2,
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [
             { id: '1', name: 'Test 1' },
             { id: '2', name: 'Test 2' },
@@ -258,6 +275,7 @@ describe('querySnapshotState', () => {
           empty: false,
           isLoading: false,
           hasError: false,
+          disabled: false,
           data: [{ id: '3', name: 'Test 3' }],
         },
       })
@@ -266,10 +284,10 @@ describe('querySnapshotState', () => {
 
   it('should handle all callbacks together', () => {
     testScheduler.run(({ expectObservable, cold, flush }) => {
-      const onSnapshot = jest.fn()
-      const onError = jest.fn()
-      const onComplete = jest.fn()
-      const options: QueryStateOptions = { onSnapshot, onError, onComplete }
+      const onSnapshot = vi.fn()
+      const onError = vi.fn()
+      const onComplete = vi.fn()
+      const options: QuerySnapshotStateListener = { onSnapshot, onError, onComplete }
 
       const mockDocs = [{ data: () => ({ id: '1', name: 'Test 1' }) }, { data: () => ({ id: '2', name: 'Test 2' }) }]
 
@@ -279,11 +297,12 @@ describe('querySnapshotState', () => {
       const result$ = source$.pipe(querySnapshotState(options))
 
       expectObservable(result$).toBe('(sx)|', {
-        s: QuerySnapshotInitialState,
+        s: QuerySnapshotLoadingState,
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,
           hasError: false,
+          disabled: false,
         }),
       })
 

@@ -1,26 +1,27 @@
 import { onSnapshot, type Query, type QuerySnapshot, type SnapshotListenOptions } from '@firebase/firestore'
-import { anyFunction, mock } from 'jest-mock-extended'
 import { Observable } from 'rxjs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { anyFunction, mock } from 'vitest-mock-extended'
 
 import { fromQuery } from '../fromQuery'
 
-jest.mock('@firebase/firestore', () => ({
-  onSnapshot: jest.fn(),
+vi.mock('@firebase/firestore', () => ({
+  onSnapshot: vi.fn(),
 }))
 
 describe('fromQuery', () => {
   let mockQuery: Query
   let mockSnapshot: QuerySnapshot
-  let mockUnsubscribe: jest.Mock
+  let mockUnsubscribe: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
-    mockUnsubscribe = jest.fn()
+    mockUnsubscribe = vi.fn()
     mockQuery = mock<Query>()
     mockSnapshot = mock<QuerySnapshot>()
 
-    jest.mocked(onSnapshot).mockReturnValue(mockUnsubscribe)
+    vi.mocked(onSnapshot).mockReturnValue(mockUnsubscribe)
   })
 
   it('should create an Observable from a Query', () => {
@@ -67,64 +68,70 @@ describe('fromQuery', () => {
     expect(onSnapshot).toHaveBeenCalledWith(mockQuery, customOptions, expect.any(Object))
   })
 
-  it('should emit snapshot data when subscribed', (done) => {
+  it('should emit snapshot data when subscribed', async () => {
     const observable = fromQuery(mockQuery)
 
-    observable.subscribe({
-      next: (snapshot) => {
-        expect(snapshot).toBe(mockSnapshot)
-        done()
-      },
-      error: done,
-    })
+    await new Promise<void>((resolve, reject) => {
+      const subscription = observable.subscribe({
+        next: (snapshot) => {
+          expect(snapshot).toBe(mockSnapshot)
+          subscription.unsubscribe()
+          resolve()
+        },
+        error: reject,
+      })
 
-    // Simulate Firebase calling the next callback
-    const callbacks = jest.mocked(onSnapshot).mock.calls[0][2] as unknown as {
-      next: (snapshot: QuerySnapshot) => void
-      error: (error: Error) => void
-      complete: () => void
-    }
-    callbacks.next(mockSnapshot)
+      const callbacks = vi.mocked(onSnapshot).mock.calls.at(-1)?.[2] as unknown as {
+        next: (snapshot: QuerySnapshot) => void
+        error: (error: Error) => void
+        complete: () => void
+      }
+      callbacks.next(mockSnapshot)
+    })
   })
 
-  it('should emit error when Firebase reports an error', (done) => {
+  it('should emit error when Firebase reports an error', async () => {
     const testError = new Error('Firebase error')
     const observable = fromQuery(mockQuery)
 
-    observable.subscribe({
-      next: () => {},
-      error: (error) => {
-        expect(error).toBe(testError)
-        done()
-      },
-    })
+    await new Promise<void>((resolve) => {
+      const subscription = observable.subscribe({
+        error: (error) => {
+          expect(error).toBe(testError)
+          subscription.unsubscribe()
+          resolve()
+        },
+      })
 
-    // Simulate Firebase calling the error callback
-    const callbacks = jest.mocked(onSnapshot).mock.calls[0][2] as unknown as {
-      next: (snapshot: QuerySnapshot) => void
-      error: (error: Error) => void
-      complete: () => void
-    }
-    callbacks.error(testError)
+      const callbacks = vi.mocked(onSnapshot).mock.calls.at(-1)?.[2] as unknown as {
+        next: (snapshot: QuerySnapshot) => void
+        error: (error: Error) => void
+        complete: () => void
+      }
+      callbacks.error(testError)
+    })
   })
 
-  it('should complete when Firebase completes', (done) => {
+  it('should complete when Firebase completes', async () => {
     const observable = fromQuery(mockQuery)
 
-    observable.subscribe({
-      complete: () => {
-        expect(1).toBe(1) // Just to ensure complete is called
-        done()
-      },
-    })
+    await new Promise<void>((resolve, reject) => {
+      const subscription = observable.subscribe({
+        complete: () => {
+          expect(1).toBe(1)
+          subscription.unsubscribe()
+          resolve()
+        },
+        error: reject,
+      })
 
-    // Simulate Firebase calling the complete callback
-    const callbacks = jest.mocked(onSnapshot).mock.calls[0][2] as unknown as {
-      next: (snapshot: QuerySnapshot) => void
-      error: (error: Error) => void
-      complete: () => void
-    }
-    callbacks.complete()
+      const callbacks = vi.mocked(onSnapshot).mock.calls.at(-1)?.[2] as unknown as {
+        next: (snapshot: QuerySnapshot) => void
+        error: (error: Error) => void
+        complete: () => void
+      }
+      callbacks.complete()
+    })
   })
 
   it('should unsubscribe from Firebase when Observable is unsubscribed', () => {
@@ -136,30 +143,33 @@ describe('fromQuery', () => {
     expect(mockUnsubscribe).toHaveBeenCalledTimes(1)
   })
 
-  it('should handle multiple emissions correctly', (done) => {
+  it('should handle multiple emissions correctly', async () => {
     const observable = fromQuery(mockQuery)
     const emissions: QuerySnapshot[] = []
 
-    observable.subscribe({
-      next: (snapshot) => {
-        emissions.push(snapshot)
-        if (emissions.length === 2) {
-          expect(emissions).toHaveLength(2)
-          expect(emissions[0]).toBe(mockSnapshot)
-          expect(emissions[1]).toBe(mockSnapshot)
-          done()
-        }
-      },
-      error: done,
-    })
+    await new Promise<void>((resolve, reject) => {
+      const subscription = observable.subscribe({
+        next: (snapshot) => {
+          emissions.push(snapshot)
+          if (emissions.length === 2) {
+            expect(emissions).toHaveLength(2)
+            expect(emissions[0]).toBe(mockSnapshot)
+            expect(emissions[1]).toBe(mockSnapshot)
+            subscription.unsubscribe()
+            resolve()
+          }
+        },
+        error: reject,
+      })
 
-    const callbacks = jest.mocked(onSnapshot).mock.calls[0][2] as unknown as {
-      next: (snapshot: QuerySnapshot) => void
-      error: (error: Error) => void
-      complete: () => void
-    }
-    callbacks.next(mockSnapshot)
-    callbacks.next(mockSnapshot)
+      const callbacks = vi.mocked(onSnapshot).mock.calls.at(-1)?.[2] as unknown as {
+        next: (snapshot: QuerySnapshot) => void
+        error: (error: Error) => void
+        complete: () => void
+      }
+      callbacks.next(mockSnapshot)
+      callbacks.next(mockSnapshot)
+    })
   })
 
   it('should work with generic types', () => {

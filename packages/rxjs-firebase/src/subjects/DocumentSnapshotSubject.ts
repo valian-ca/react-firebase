@@ -1,9 +1,8 @@
 import { type DocumentData, type DocumentSnapshot } from '@firebase/firestore'
 import { BehaviorSubject, firstValueFrom, map, type Observable, skipWhile, Subject, takeUntil, timer } from 'rxjs'
 
-import { documentSnapshotState, type DocumentStateOptions } from '../operators'
+import { documentSnapshotState, type DocumentSnapshotStateListener } from '../operators'
 import { type DocumentSnapshotState } from '../states'
-import { DocumentSnapshotInitialState } from '../states/DocumentSnapshotInitialState'
 
 export class DocumentSnapshotSubject<
   AppModelType = DocumentData,
@@ -13,10 +12,14 @@ export class DocumentSnapshotSubject<
 
   constructor(
     snapshot$: Observable<DocumentSnapshot<AppModelType, DbModelType>>,
-    options?: DocumentStateOptions<AppModelType, DbModelType>,
+    listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>,
   ) {
-    super({ ...DocumentSnapshotInitialState })
-    snapshot$.pipe(takeUntil(this.notification$), documentSnapshotState(options)).subscribe(this)
+    super({
+      isLoading: true,
+      hasError: false,
+      disabled: false,
+    })
+    snapshot$.pipe(takeUntil(this.notification$), documentSnapshotState(listener)).subscribe(this)
   }
 
   exsits(timeout = 10_000): Promise<boolean> {

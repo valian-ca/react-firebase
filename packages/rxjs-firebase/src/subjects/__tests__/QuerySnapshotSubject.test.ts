@@ -1,8 +1,8 @@
 import { type QueryDocumentSnapshot, type QuerySnapshot } from '@firebase/firestore'
-import { mock } from 'jest-mock-extended'
 import { Subject } from 'rxjs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mock } from 'vitest-mock-extended'
 
-import { QuerySnapshotInitialState } from '../../states/QuerySnapshotInitialState'
 import { QuerySnapshotSubject } from '../QuerySnapshotSubject'
 
 interface TestData {
@@ -35,7 +35,14 @@ describe('QuerySnapshotSubject', () => {
     it('should initialize with initial state', () => {
       const subject = new QuerySnapshotSubject(snapshot$)
 
-      expect(subject.value).toEqual(QuerySnapshotInitialState)
+      expect(subject.value).toEqual({
+        empty: true,
+        size: 0,
+        isLoading: true,
+        hasError: false,
+        disabled: false,
+        data: [],
+      })
     })
 
     it('should subscribe to snapshot observable and update state', () => {
@@ -49,6 +56,7 @@ describe('QuerySnapshotSubject', () => {
         empty: false,
         isLoading: false,
         hasError: false,
+        disabled: false,
         data: [
           { id: '1', name: 'Test 1' },
           { id: '2', name: 'Test 2' },
@@ -72,6 +80,7 @@ describe('QuerySnapshotSubject', () => {
         empty: true,
         isLoading: false,
         hasError: false,
+        disabled: false,
         data: [],
       })
     })
@@ -87,6 +96,7 @@ describe('QuerySnapshotSubject', () => {
         empty: true,
         isLoading: false,
         hasError: true,
+        disabled: false,
         data: [],
       })
     })
@@ -192,7 +202,7 @@ describe('QuerySnapshotSubject', () => {
 
   describe('options handling', () => {
     it('should call onSnapshot callback when provided', () => {
-      const onSnapshot = jest.fn()
+      const onSnapshot = vi.fn()
 
       const subject = new QuerySnapshotSubject(snapshot$, { onSnapshot })
       snapshot$.next(mockQuerySnapshot)
@@ -215,7 +225,7 @@ describe('QuerySnapshotSubject', () => {
     })
 
     it('should call onError callback when error occurs', () => {
-      const onError = jest.fn()
+      const onError = vi.fn()
 
       const subject = new QuerySnapshotSubject(snapshot$, { onError })
       const error = new Error('Test error')
@@ -228,7 +238,7 @@ describe('QuerySnapshotSubject', () => {
     })
 
     it('should call onComplete callback when stream completes', () => {
-      const onComplete = jest.fn()
+      const onComplete = vi.fn()
 
       const subject = new QuerySnapshotSubject(snapshot$, { onComplete })
       snapshot$.next(mockQuerySnapshot)
@@ -245,7 +255,7 @@ describe('QuerySnapshotSubject', () => {
       const subject = new QuerySnapshotSubject(snapshot$)
       snapshot$.next(mockQuerySnapshot)
 
-      const subscriber = jest.fn()
+      const subscriber = vi.fn()
       subject.subscribe(subscriber)
 
       expect(subscriber).toHaveBeenCalledWith(
@@ -265,7 +275,7 @@ describe('QuerySnapshotSubject', () => {
 
     it('should maintain subscription behavior', () => {
       const subject = new QuerySnapshotSubject(snapshot$)
-      const subscriber = jest.fn()
+      const subscriber = vi.fn()
 
       const subscription = subject.subscribe(subscriber)
 

@@ -1,0 +1,71 @@
+{
+  "name": "@valian/zustand-firestore",
+  "description": "zustand store for firestore queries and document snapshots",
+  "version": "1.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valian-ca/react-firebase.git"
+  },
+  "author": {
+    "name": "Valian",
+    "organization": true,
+    "url": "https://valian.ca"
+  },
+  "contributors": [
+    {
+      "name": "Julien Marcil",
+      "email": "julien@valian.ca"
+    }
+  ],
+  "keywords": [
+    "react",
+    "firestore",
+    "firebase",
+    "zustand"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@valian/rxjs-firebase": "workspace:*",
+    "observable-hooks": "^4.2.4",
+    "rxjs": "^7.8.2",
+    "zustand": "^5.0.7"
+  },
+  "devDependencies": {
+    "firebase": "^12.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "peerDependencies": {
+    "@firebase/firestore": "^4.7.0",
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./lib/index.d.mts",
+        "import": "./lib/index.mjs",
+        "require": "./lib/index.cjs",
+        "default": "./lib/index.mjs"
+      }
+    },
+    "main": "./lib/index.cjs",
+    "module": "./lib/index.mjs",
+    "types": "./lib/index.d.ts"
+  },
+  "exports": "./src/index.ts",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "engines": {
+    "node": ">= 22"
+  },
+  "scripts": {
+    "build": "rm -rf ./lib && rollup -c",
+    "prepack": "pnpm run build",
+    "eslint": "eslint .",
+    "type-check": "tsc"
+  }
+}

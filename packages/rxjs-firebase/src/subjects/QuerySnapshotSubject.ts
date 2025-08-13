@@ -1,9 +1,8 @@
 import { type DocumentData, type QuerySnapshot } from '@firebase/firestore'
 import { BehaviorSubject, type Observable, Subject, takeUntil } from 'rxjs'
 
-import { querySnapshotState, type QueryStateOptions } from '../operators'
+import { querySnapshotState, type QuerySnapshotStateListener } from '../operators'
 import { type QuerySnapshotState } from '../states'
-import { QuerySnapshotInitialState } from '../states/QuerySnapshotInitialState'
 
 export class QuerySnapshotSubject<
   AppModelType = DocumentData,
@@ -13,9 +12,16 @@ export class QuerySnapshotSubject<
 
   constructor(
     snapshot$: Observable<QuerySnapshot<AppModelType, DbModelType>>,
-    options?: QueryStateOptions<AppModelType, DbModelType>,
+    options?: QuerySnapshotStateListener<AppModelType, DbModelType>,
   ) {
-    super({ ...QuerySnapshotInitialState })
+    super({
+      empty: true,
+      size: 0,
+      isLoading: true,
+      hasError: false,
+      disabled: false,
+      data: [],
+    })
     snapshot$.pipe(takeUntil(this.notification$), querySnapshotState(options)).subscribe(this)
   }
 

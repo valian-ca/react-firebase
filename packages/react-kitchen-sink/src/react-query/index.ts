@@ -1,0 +1,6 @@
+export * from './documentSnapshotQueryClientObserver'
+export * from './documentSnapshotQueryOptions'
+export * from './FirestoreSnaphotManager'
+export * from './querySnapshotQueryClientObserver'
+export * from './querySnapshotQueryOptions'
+export * from './schemaQuerySnapshotQueryOptions'
