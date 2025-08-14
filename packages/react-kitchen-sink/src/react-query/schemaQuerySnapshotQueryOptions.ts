@@ -1,5 +1,11 @@
 import { type SnapshotListenOptions } from '@firebase/firestore'
-import { type DefaultError, type QueryKey, queryOptions, type UseQueryOptions } from '@tanstack/react-query'
+import {
+  type DataTag,
+  type DefaultError,
+  type QueryKey,
+  queryOptions,
+  type UnusedSkipTokenOptions,
+} from '@tanstack/react-query'
 import {
   type CollectionSchema,
   type MetaOutputOptions,
@@ -7,7 +13,7 @@ import {
   type SchemaFirestoreQueryFactory,
 } from 'zod-firebase'
 
-import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/schemaTypes'
+import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/types'
 
 import {
   queryFnFromQuerySnapshotSubjectFactory,
@@ -22,7 +28,7 @@ export interface SchemaQuerySnapshotQueryOptions<
   TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      UseQueryOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>,
+      UnusedSkipTokenOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>,
       | 'queryFn'
       | 'initialData'
       | 'staleTime'
@@ -41,6 +47,16 @@ export interface SchemaQuerySnapshotQueryOptions<
   listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>
 }
 
+export interface SchemaQuerySnapshotQueryOptionsResult<
+  TCollectionSchema extends CollectionSchema,
+  TOptions extends MetaOutputOptions,
+  TError = DefaultError,
+  TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
+  TQueryKey extends QueryKey = QueryKey,
+> extends UnusedSkipTokenOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey> {
+  queryKey: DataTag<TQueryKey, SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError>
+}
+
 export const schemaQuerySnapshotQueryOptions = <
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions,
@@ -56,7 +72,7 @@ export const schemaQuerySnapshotQueryOptions = <
     listener,
     ...props
   }: SchemaQuerySnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>,
-) =>
+): SchemaQuerySnapshotQueryOptionsResult<TCollectionSchema, TOptions, TError, TData, TQueryKey> =>
   queryOptions({
     queryFn: queryFnFromQuerySnapshotSubjectFactory(
       snapshotManager.schemaQuerySnapshotSubjectFactory(factory, query, snapshotOptions, listener),
@@ -65,14 +81,6 @@ export const schemaQuerySnapshotQueryOptions = <
     staleTime: Infinity,
     retry: false,
     gcTime: 10_000,
-    initialData: {
-      empty: true,
-      size: 0,
-      isLoading: true,
-      hasError: false,
-      disabled: false,
-      data: [],
-    },
     ...props,
     meta: {
       type: 'snapshot',

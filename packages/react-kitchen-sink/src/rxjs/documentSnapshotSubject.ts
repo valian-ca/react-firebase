@@ -7,4 +7,8 @@ export const documentSnapshotSubject = <AppModelType = DocumentData, DbModelType
   ref: DocumentReference<AppModelType, DbModelType>,
   options?: SnapshotListenOptions,
   listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>,
-) => new DocumentSnapshotSubject(fromDocumentRef(ref, options), sentryDocumentSnapshotListener(ref, listener))
+) =>
+  new DocumentSnapshotSubject<AppModelType, DbModelType>(
+    fromDocumentRef(ref, options),
+    sentryDocumentSnapshotListener(ref, listener),
+  )

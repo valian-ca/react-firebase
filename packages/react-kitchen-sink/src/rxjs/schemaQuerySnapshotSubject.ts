@@ -9,7 +9,7 @@ import {
 
 import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySnapshotListener'
 
-import { type SchemaQuerySnapshotStateListener } from './schemaTypes'
+import { type SchemaQuerySnapshotStateListener, type SchemaQuerySnapshotSubject } from './types'
 
 export const schemaQuerySnapshotSubject = <
   TCollectionSchema extends CollectionSchema,
@@ -19,7 +19,7 @@ export const schemaQuerySnapshotSubject = <
   query: QuerySpecification,
   options?: TOptions & SnapshotListenOptions,
   listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
-) => {
+): SchemaQuerySnapshotSubject<TCollectionSchema, TOptions> => {
   const schemaQuery = factory.prepare(query, options)
   const snapshot$ = fromQuery(schemaQuery, options)
   return new QuerySnapshotSubject(snapshot$, sentrySchemaQuerySnapshotListener(factory.collectionName, query, listener))

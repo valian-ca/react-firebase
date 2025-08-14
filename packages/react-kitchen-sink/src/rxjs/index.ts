@@ -1,6 +1,6 @@
 export * from './documentSnapshotSubject'
 export * from './schemaQuerySnapshotSubject'
-export * from './schemaTypes'
+export * from './types'
 export {
   type DocumentSnapshotState,
   type DocumentSnapshotStateListener,

@@ -1,8 +1,10 @@
 import {
   type DocumentSnapshotState,
   type DocumentSnapshotStateListener,
+  type DocumentSnapshotSubject,
   type QuerySnapshotState,
   type QuerySnapshotStateListener,
+  type QuerySnapshotSubject,
 } from '@valian/rxjs-firebase'
 import {
   type CollectionSchema,
@@ -20,6 +22,16 @@ export type SchemaQuerySnapshotState<
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions = MetaOutputOptions,
 > = QuerySnapshotState<SchemaDocumentOutput<TCollectionSchema, TOptions>, SchemaDocumentInput<TCollectionSchema>>
+
+export type SchemaDocumentSnapshotSubject<
+  TCollectionSchema extends CollectionSchema,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
+> = DocumentSnapshotSubject<SchemaDocumentOutput<TCollectionSchema, TOptions>, SchemaDocumentInput<TCollectionSchema>>
+
+export type SchemaQuerySnapshotSubject<
+  TCollectionSchema extends CollectionSchema,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
+> = QuerySnapshotSubject<SchemaDocumentOutput<TCollectionSchema, TOptions>, SchemaDocumentInput<TCollectionSchema>>
 
 export type SchemaDocumentSnapshotStateListener<
   TCollectionSchema extends CollectionSchema,

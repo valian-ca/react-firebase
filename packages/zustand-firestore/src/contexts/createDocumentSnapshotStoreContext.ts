@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-import { type DocumentData } from 'firebase/firestore'
+import { type DocumentData } from '@firebase/firestore'
 
 import { createDocumentSnapshotStore } from '../store/createDocumentSnapshotStore'
 

@@ -14,7 +14,7 @@ import {
 } from 'zod-firebase'
 import { type StoreApi } from 'zustand'
 
-import { type SchemaDocumentSnapshotState, type SchemaDocumentSnapshotStateListener } from '../rxjs/schemaTypes'
+import { type SchemaDocumentSnapshotState, type SchemaDocumentSnapshotStateListener } from '../rxjs/types'
 import { sentryDocumentSnapshotListener } from '../sentry/sentryDocumentSnapshotListener'
 
 export interface UseSchemaDocumentStoreOptions<

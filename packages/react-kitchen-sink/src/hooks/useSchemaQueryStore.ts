@@ -15,7 +15,7 @@ import {
 } from 'zod-firebase'
 import { type StoreApi } from 'zustand'
 
-import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/schemaTypes'
+import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/types'
 import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySnapshotListener'
 
 export interface UseSchemaQueryStoreOptions<

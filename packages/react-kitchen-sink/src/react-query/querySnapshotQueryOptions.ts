@@ -1,5 +1,11 @@
 import { type DocumentData, type Query as FirestoreQuery, type SnapshotListenOptions } from '@firebase/firestore'
-import { type DefaultError, type QueryKey, queryOptions, type UseQueryOptions } from '@tanstack/react-query'
+import {
+  type DataTag,
+  type DefaultError,
+  type QueryKey,
+  queryOptions,
+  type UnusedSkipTokenOptions,
+} from '@tanstack/react-query'
 import { type QuerySnapshotState, type QuerySnapshotStateListener } from '@valian/rxjs-firebase'
 
 import {
@@ -15,7 +21,7 @@ export interface QuerySnapshotQueryOptions<
   TData = QuerySnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      UseQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+      UnusedSkipTokenOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
       | 'queryFn'
       | 'initialData'
       | 'staleTime'
@@ -29,8 +35,18 @@ export interface QuerySnapshotQueryOptions<
     >,
     QueryFnFromQuerySnapshotSubjectFactoryOptions {
   query: FirestoreQuery<AppModelType, DbModelType>
-  snapshotOptions?: SnapshotListenOptions
+  options?: SnapshotListenOptions
   listener?: QuerySnapshotStateListener<AppModelType, DbModelType>
+}
+
+export interface QuerySnapshotQueryOptionsResult<
+  AppModelType = DocumentData,
+  DbModelType extends DocumentData = DocumentData,
+  TError = DefaultError,
+  TData = QuerySnapshotState<AppModelType, DbModelType>,
+  TQueryKey extends QueryKey = QueryKey,
+> extends UnusedSkipTokenOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey> {
+  queryKey: DataTag<TQueryKey, QuerySnapshotState<AppModelType, DbModelType>, TError>
 }
 
 export const querySnapshotQueryOptions = <
@@ -43,27 +59,20 @@ export const querySnapshotQueryOptions = <
   snapshotManager: FirestoreSnaphotManager,
   {
     query,
-    snapshotOptions,
+    options,
     listener,
     ...props
   }: QuerySnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>,
-) =>
+): QuerySnapshotQueryOptionsResult<AppModelType, DbModelType, TError, TData, TQueryKey> =>
   queryOptions({
     queryFn: queryFnFromQuerySnapshotSubjectFactory(
-      snapshotManager.querySnapshotSubjectFactory(query, snapshotOptions, listener),
+      snapshotManager.querySnapshotSubjectFactory(query, options, listener),
       props,
     ),
     staleTime: Infinity,
     retry: false,
     gcTime: 10_000,
-    initialData: {
-      empty: true,
-      size: 0,
-      isLoading: true,
-      hasError: false,
-      disabled: false,
-      data: [],
-    },
+    initialData: undefined,
     ...props,
     meta: {
       type: 'snapshot',

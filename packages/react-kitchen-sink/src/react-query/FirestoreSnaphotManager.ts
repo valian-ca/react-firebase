@@ -82,7 +82,7 @@ export class FirestoreSnaphotManager {
       listener?: SchemaDocumentSnapshotStateListener<TCollectionSchema, TOptions>,
     ) =>
     (queryKey: QueryKey) => {
-      const subject$ = schemaDocumentSnapshotSubject(factory, id, options, listener)
+      const subject$ = schemaDocumentSnapshotSubject<TCollectionSchema, TOptions>(factory, id, options, listener)
       this.registerSnapshotOnClose(queryKey, () => {
         subject$.close()
       })
@@ -95,7 +95,7 @@ export class FirestoreSnaphotManager {
       options?: SnapshotListenOptions,
       listener?: QuerySnapshotStateListener<AppModelType, DbModelType>,
     ) =>
-    (queryKey: QueryKey) => {
+    (queryKey: QueryKey): QuerySnapshotSubject<AppModelType, DbModelType> => {
       const subject$ = new QuerySnapshotSubject<AppModelType, DbModelType>(
         fromQuery<AppModelType, DbModelType>(query, options),
         listener,
@@ -114,7 +114,7 @@ export class FirestoreSnaphotManager {
       listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
     ) =>
     (queryKey: QueryKey) => {
-      const subject$ = schemaQuerySnapshotSubject(factory, query, options, listener)
+      const subject$ = schemaQuerySnapshotSubject<TCollectionSchema, TOptions>(factory, query, options, listener)
       this.registerSnapshotOnClose(queryKey, () => {
         subject$.close()
       })
