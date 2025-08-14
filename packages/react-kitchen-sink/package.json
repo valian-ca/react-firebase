@@ -43,7 +43,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "rxjs": "^7.8.2",
-    "zod-firebase": "^1.7.0",
+    "zod": "^4.0.17",
+    "zod-firebase": "^2.0.0",
     "zustand": "^5"
   },
   "peerDependencies": {
@@ -54,7 +55,8 @@
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
     "rxjs": "^7.8.0",
-    "zod-firebase": "^1.7.0"
+    "zod": "^3.23.0 || ^4.0.0",
+    "zod-firebase": "^2"
   },
   "optionalDependencies": {
     "zustand": "^5"

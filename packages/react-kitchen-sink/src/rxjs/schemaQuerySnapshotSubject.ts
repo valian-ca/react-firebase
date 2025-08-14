@@ -3,8 +3,8 @@ import { fromQuery, QuerySnapshotSubject } from '@valian/rxjs-firebase'
 import {
   type CollectionSchema,
   type MetaOutputOptions,
-  type QuerySpecification,
   type SchemaFirestoreQueryFactory,
+  type SchemaQuerySpecification,
 } from 'zod-firebase'
 
 import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySnapshotListener'
@@ -16,7 +16,7 @@ export const schemaQuerySnapshotSubject = <
   TOptions extends MetaOutputOptions,
 >(
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>,
-  query: QuerySpecification,
+  query: SchemaQuerySpecification<TCollectionSchema, TOptions>,
   options?: TOptions & SnapshotListenOptions,
   listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
 ): SchemaQuerySnapshotSubject<TCollectionSchema, TOptions> => {

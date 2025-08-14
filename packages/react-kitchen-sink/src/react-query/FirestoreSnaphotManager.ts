@@ -20,9 +20,9 @@ import {
 import {
   type CollectionSchema,
   type MetaOutputOptions,
-  type QuerySpecification,
   type SchemaFirestoreFactory,
   type SchemaFirestoreQueryFactory,
+  type SchemaQuerySpecification,
 } from 'zod-firebase'
 
 import {
@@ -109,7 +109,7 @@ export class FirestoreSnaphotManager {
   schemaQuerySnapshotSubjectFactory =
     <TCollectionSchema extends CollectionSchema, TOptions extends MetaOutputOptions>(
       factory: SchemaFirestoreQueryFactory<TCollectionSchema>,
-      query: QuerySpecification,
+      query: SchemaQuerySpecification<TCollectionSchema, TOptions>,
       options?: TOptions & SnapshotListenOptions,
       listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
     ) =>

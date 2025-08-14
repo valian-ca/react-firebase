@@ -8,10 +8,10 @@ import { of, switchMap } from 'rxjs'
 import {
   type CollectionSchema,
   type MetaOutputOptions,
-  type QuerySpecification,
   type SchemaDocumentInput,
   type SchemaDocumentOutput,
   type SchemaFirestoreQueryFactory,
+  type SchemaQuerySpecification,
 } from 'zod-firebase'
 import { type StoreApi } from 'zustand'
 
@@ -24,7 +24,7 @@ export interface UseSchemaQueryStoreOptions<
 > extends SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
     SnapshotListenOptions {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
-  query: QuerySpecification | null | undefined
+  query: SchemaQuerySpecification<TCollectionSchema, TOptions> | null | undefined
   metaOptions?: TOptions
 }
 

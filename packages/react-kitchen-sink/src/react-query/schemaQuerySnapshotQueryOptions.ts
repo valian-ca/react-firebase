@@ -9,8 +9,8 @@ import {
 import {
   type CollectionSchema,
   type MetaOutputOptions,
-  type QuerySpecification,
   type SchemaFirestoreQueryFactory,
+  type SchemaQuerySpecification,
 } from 'zod-firebase'
 
 import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/types'
@@ -42,7 +42,7 @@ export interface SchemaQuerySnapshotQueryOptions<
     >,
     QueryFnFromQuerySnapshotSubjectFactoryOptions {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
-  query: QuerySpecification
+  query: SchemaQuerySpecification<TCollectionSchema, TOptions>
   snapshotOptions?: TOptions & SnapshotListenOptions
   listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>
 }

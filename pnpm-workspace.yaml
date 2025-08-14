@@ -1,6 +1,9 @@
 packages:
   - packages/*
 
+ignoredBuiltDependencies:
+  - esbuild
+
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@valian/eslint-config'
