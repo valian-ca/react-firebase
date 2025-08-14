@@ -16,7 +16,7 @@ import {
 import { type StoreApi } from 'zustand'
 
 import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/schemaTypes'
-import { sentrySchemaQuerySnapshotListener } from '../rxjs/sentrySchemaQuerySnapshotListener'
+import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySnapshotListener'
 
 export interface UseSchemaQueryStoreOptions<
   TCollectionSchema extends CollectionSchema,

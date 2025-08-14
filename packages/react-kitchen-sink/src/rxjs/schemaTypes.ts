@@ -13,17 +13,17 @@ import {
 
 export type SchemaDocumentSnapshotState<
   TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
 > = DocumentSnapshotState<SchemaDocumentOutput<TCollectionSchema, TOptions>, SchemaDocumentInput<TCollectionSchema>>
 
 export type SchemaQuerySnapshotState<
   TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
 > = QuerySnapshotState<SchemaDocumentOutput<TCollectionSchema, TOptions>, SchemaDocumentInput<TCollectionSchema>>
 
 export type SchemaDocumentSnapshotStateListener<
   TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
 > = DocumentSnapshotStateListener<
   SchemaDocumentOutput<TCollectionSchema, TOptions>,
   SchemaDocumentInput<TCollectionSchema>
@@ -31,7 +31,7 @@ export type SchemaDocumentSnapshotStateListener<
 
 export type SchemaQuerySnapshotStateListener<
   TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
 > = QuerySnapshotStateListener<
   SchemaDocumentOutput<TCollectionSchema, TOptions>,
   SchemaDocumentInput<TCollectionSchema>

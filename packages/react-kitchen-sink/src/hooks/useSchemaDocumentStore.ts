@@ -15,7 +15,7 @@ import {
 import { type StoreApi } from 'zustand'
 
 import { type SchemaDocumentSnapshotState, type SchemaDocumentSnapshotStateListener } from '../rxjs/schemaTypes'
-import { sentryDocumentSnapshotListener } from '../rxjs/sentryDocumentSnapshotListener'
+import { sentryDocumentSnapshotListener } from '../sentry/sentryDocumentSnapshotListener'
 
 export interface UseSchemaDocumentStoreOptions<
   TCollectionSchema extends CollectionSchema,

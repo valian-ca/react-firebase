@@ -1,83 +1,71 @@
 import { type DocumentData, type DocumentReference, type SnapshotListenOptions } from '@firebase/firestore'
-import { type DefinedInitialDataOptions, type QueryKey, queryOptions } from '@tanstack/react-query'
+import { type DefaultError, type QueryKey, queryOptions, type UseQueryOptions } from '@tanstack/react-query'
 import { type DocumentSnapshotState, type DocumentSnapshotStateListener } from '@valian/rxjs-firebase'
-import { firstValueFrom, skipWhile, takeUntil, timer } from 'rxjs'
 
-import { documentSnapshotSubject } from '../rxjs/documentSnapshotSubject'
-
-import { documentSnapshotQueryClientObserver } from './documentSnapshotQueryClientObserver'
+import {
+  queryFnFromDocumentSnapshotSubjectFactory,
+  type QueryFnFromDocumentSnapshotSubjectFactoryOptions,
+} from './queryFn/queryFnFromDocumentSnapshotSubjectFactory'
 import { type FirestoreSnaphotManager } from './FirestoreSnaphotManager'
 
 export interface DocumentSnapshotQueryOptions<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
+  TError = DefaultError,
+  TData = DocumentSnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-    DefinedInitialDataOptions<
-      DocumentSnapshotState<AppModelType, DbModelType>,
-      Error,
-      DocumentSnapshotState<AppModelType, DbModelType>,
-      TQueryKey
+      UseQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+      | 'queryFn'
+      | 'initialData'
+      | 'staleTime'
+      | 'refetchInterval'
+      | 'refetchIntervalInBackground'
+      | 'refetchOnWindowFocus'
+      | 'refetchOnMount'
+      | 'refetchOnReconnect'
+      | 'retryOnMount'
+      | 'retry'
     >,
-    'queryFn'
-  > {
+    QueryFnFromDocumentSnapshotSubjectFactoryOptions {
   ref: DocumentReference<AppModelType, DbModelType>
-  options?: SnapshotListenOptions
+  snapshotOptions?: SnapshotListenOptions
   listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>
-  waitForData?: boolean
-  waitForDataTimeout?: number
 }
 
 export const documentSnapshotQueryOptions = <
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
+  TError = DefaultError,
+  TData = DocumentSnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 >(
   snapshotManager: FirestoreSnaphotManager,
   {
     ref,
-    options,
+    snapshotOptions,
     listener,
-    waitForData,
-    waitForDataTimeout = 10_000,
-    ...otherOptions
-  }: DocumentSnapshotQueryOptions<AppModelType, DbModelType, TQueryKey>,
+    ...props
+  }: DocumentSnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>,
 ) =>
-  queryOptions<
-    DocumentSnapshotState<AppModelType, DbModelType>,
-    Error,
-    DocumentSnapshotState<AppModelType, DbModelType>,
-    TQueryKey
-  >({
-    queryFn: async ({ client, queryKey, signal }) => {
-      const subject$ = documentSnapshotSubject(ref, options, listener)
-      subject$.subscribe(documentSnapshotQueryClientObserver<AppModelType, DbModelType>(client, queryKey))
-
-      signal.addEventListener('abort', () => {
-        subject$.close()
-      })
-
-      snapshotManager.registerSnapshotOnClose(queryKey, () => {
-        subject$.close()
-      })
-
-      if (waitForData) {
-        return firstValueFrom(
-          subject$.pipe(
-            takeUntil(timer(waitForDataTimeout)),
-            skipWhile(({ isLoading }) => isLoading),
-          ),
-        )
-      }
-
-      return { isLoading: true, hasError: false, disabled: false } as const
-    },
+  queryOptions({
+    queryFn: queryFnFromDocumentSnapshotSubjectFactory(
+      snapshotManager.documentSnapshotSubjectFactory(ref, snapshotOptions, listener),
+      props,
+    ),
     staleTime: Infinity,
-    ...otherOptions,
+    retry: false,
+    gcTime: 10_000,
+    initialData: {
+      isLoading: true,
+      hasError: false,
+      disabled: false,
+    },
+    ...props,
     meta: {
       type: 'snapshot',
       snapshotManager,
       documentRef: ref,
-      ...otherOptions.meta,
+      ...props.meta,
     },
   })

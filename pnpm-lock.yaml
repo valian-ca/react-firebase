@@ -145,6 +145,7 @@ importers:
       zod-firebase:
         specifier: ^1.7.0
         version: 1.7.0(@firebase/firestore@4.9.0(@firebase/app@0.14.0))(zod@3.25.76)
+    optionalDependencies:
       zustand:
         specifier: ^5
         version: 5.0.7(@types/react@19.1.8)(react@19.1.0)

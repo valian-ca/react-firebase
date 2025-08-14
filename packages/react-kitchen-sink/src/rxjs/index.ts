@@ -1,8 +1,6 @@
 export * from './documentSnapshotSubject'
 export * from './schemaQuerySnapshotSubject'
 export * from './schemaTypes'
-export * from './sentryDocumentSnapshotListener'
-export * from './sentrySchemaQuerySnapshotListener'
 export {
   type DocumentSnapshotState,
   type DocumentSnapshotStateListener,

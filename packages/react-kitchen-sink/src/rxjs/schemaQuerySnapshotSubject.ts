@@ -7,8 +7,9 @@ import {
   type SchemaFirestoreQueryFactory,
 } from 'zod-firebase'
 
+import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySnapshotListener'
+
 import { type SchemaQuerySnapshotStateListener } from './schemaTypes'
-import { sentrySchemaQuerySnapshotListener } from './sentrySchemaQuerySnapshotListener'
 
 export const schemaQuerySnapshotSubject = <
   TCollectionSchema extends CollectionSchema,
