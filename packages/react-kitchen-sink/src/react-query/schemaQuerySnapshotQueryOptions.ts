@@ -19,7 +19,7 @@ import {
   queryFnFromQuerySnapshotSubjectFactory,
   type QueryFnFromQuerySnapshotSubjectFactoryOptions,
 } from './queryFn/queryFnFromQuerySnapshotSubjectFactory'
-import { type FirestoreSnaphotManager } from './FirestoreSnaphotManager'
+import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
 
 export interface SchemaQuerySnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
@@ -64,7 +64,7 @@ export const schemaQuerySnapshotQueryOptions = <
   TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  snapshotManager: FirestoreSnaphotManager,
+  snapshotManager: FirestoreSnapshotManager,
   {
     factory,
     query,

@@ -4,6 +4,7 @@ import {
   type Query as FirestoreQuery,
   type SnapshotListenOptions,
 } from '@firebase/firestore'
+import { captureMessage } from '@sentry/react'
 import {
   hashKey,
   type Query as TanstackQuery,
@@ -33,7 +34,7 @@ import {
 } from '../rxjs'
 import { schemaDocumentSnapshotSubject } from '../rxjs/schemaDocumentSnapshotSubject'
 
-export class FirestoreSnaphotManager {
+export class FirestoreSnapshotManager {
   readonly #onClose = new Map<string, () => void>()
 
   constructor(queryClient: QueryClient) {
@@ -44,11 +45,16 @@ export class FirestoreSnaphotManager {
 
         const closeSnapshot = this.#onClose.get(snapshotId)
         if (!closeSnapshot) {
-          throw new Error(`Subscription for key ${snapshotId} not found`)
+          captureMessage(`Subscription for key ${snapshotId} not found`, {
+            level: 'warning',
+            extra: {
+              queryKey: query.queryKey,
+            },
+          })
+        } else {
+          closeSnapshot()
+          this.#onClose.delete(snapshotId)
         }
-
-        closeSnapshot()
-        this.#onClose.delete(snapshotId)
       }
     })
   }

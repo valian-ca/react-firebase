@@ -23,6 +23,9 @@ importers:
       '@lerna-lite/version':
         specifier: ^4.7.0
         version: 4.7.0(@lerna-lite/publish@4.7.0(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0))(@types/node@22.10.2)(babel-plugin-macros@3.1.0)(conventional-commits-filter@5.0.0)
+      '@nx/eslint':
+        specifier: 21.3.11
+        version: 21.3.11(@babel/traverse@7.28.0)(@zkochan/js-yaml@0.0.7)(eslint@9.31.0(jiti@2.4.2))(nx@21.3.11)
       '@nx/js':
         specifier: 21.3.11
         version: 21.3.11(@babel/traverse@7.28.0)(nx@21.3.11)
@@ -145,6 +148,9 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
+      vitest-mock-extended:
+        specifier: ^3.1.0
+        version: 3.1.0(typescript@5.8.3)(vitest@3.2.4(@types/debug@4.1.12)(@types/node@22.10.2)(jsdom@26.1.0))
       zod:
         specifier: ^4.0.17
         version: 4.0.17
@@ -1701,6 +1707,15 @@ packages:
     resolution: {integrity: sha512-JOV8TAa9K5+ZwTA/EUi0g5qcKEg5vmi0AyOUsrNUHlv3BgQnwZtPLDDTPPZ+ezq24o6YzgwueZWj3CLEdMHEDg==}
     peerDependencies:
       nx: 21.3.11
+
+  '@nx/eslint@21.3.11':
+    resolution: {integrity: sha512-9jeD8QuU3OMcItjtw0QHl5cwohLeA9R+lajNJoOjS2tUGXTHWb8NOcEZBXWMcML+eV1iloIDW8/P4jV4BYqP2w==}
+    peerDependencies:
+      '@zkochan/js-yaml': 0.0.7
+      eslint: ^8.0.0 || ^9.0.0
+    peerDependenciesMeta:
+      '@zkochan/js-yaml':
+        optional: true
 
   '@nx/js@21.3.11':
     resolution: {integrity: sha512-aN8g1TP3FMN6MFLvMrZNaoqSwAkBFH1PunKQV17w4nlPkimWICaCP2DhY5W3VoOpjQBbhQoqrRt4mVfgnEpyvA==}
@@ -8151,6 +8166,25 @@ snapshots:
       tmp: 0.2.3
       tslib: 2.7.0
       yargs-parser: 21.1.1
+
+  '@nx/eslint@21.3.11(@babel/traverse@7.28.0)(@zkochan/js-yaml@0.0.7)(eslint@9.31.0(jiti@2.4.2))(nx@21.3.11)':
+    dependencies:
+      '@nx/devkit': 21.3.11(nx@21.3.11)
+      '@nx/js': 21.3.11(@babel/traverse@7.28.0)(nx@21.3.11)
+      eslint: 9.31.0(jiti@2.4.2)
+      semver: 7.7.2
+      tslib: 2.7.0
+      typescript: 5.8.3
+    optionalDependencies:
+      '@zkochan/js-yaml': 0.0.7
+    transitivePeerDependencies:
+      - '@babel/traverse'
+      - '@swc-node/register'
+      - '@swc/core'
+      - debug
+      - nx
+      - supports-color
+      - verdaccio
 
   '@nx/js@21.3.11(@babel/traverse@7.28.0)(nx@21.3.11)':
     dependencies:

@@ -12,7 +12,7 @@ import {
   queryFnFromQuerySnapshotSubjectFactory,
   type QueryFnFromQuerySnapshotSubjectFactoryOptions,
 } from './queryFn/queryFnFromQuerySnapshotSubjectFactory'
-import { type FirestoreSnaphotManager } from './FirestoreSnaphotManager'
+import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
 
 export interface QuerySnapshotQueryOptions<
   AppModelType = DocumentData,
@@ -35,7 +35,7 @@ export interface QuerySnapshotQueryOptions<
     >,
     QueryFnFromQuerySnapshotSubjectFactoryOptions {
   query: FirestoreQuery<AppModelType, DbModelType>
-  options?: SnapshotListenOptions
+  snapshotOptions?: SnapshotListenOptions
   listener?: QuerySnapshotStateListener<AppModelType, DbModelType>
 }
 
@@ -56,17 +56,17 @@ export const querySnapshotQueryOptions = <
   TData = QuerySnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  snapshotManager: FirestoreSnaphotManager,
+  snapshotManager: FirestoreSnapshotManager,
   {
     query,
-    options,
+    snapshotOptions,
     listener,
     ...props
   }: QuerySnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>,
 ): QuerySnapshotQueryOptionsResult<AppModelType, DbModelType, TError, TData, TQueryKey> =>
   queryOptions({
     queryFn: queryFnFromQuerySnapshotSubjectFactory(
-      snapshotManager.querySnapshotSubjectFactory(query, options, listener),
+      snapshotManager.querySnapshotSubjectFactory(query, snapshotOptions, listener),
       props,
     ),
     staleTime: Infinity,

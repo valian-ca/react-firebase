@@ -12,7 +12,7 @@ import {
   queryFnFromDocumentSnapshotSubjectFactory,
   type QueryFnFromDocumentSnapshotSubjectFactoryOptions,
 } from './queryFn/queryFnFromDocumentSnapshotSubjectFactory'
-import { type FirestoreSnaphotManager } from './FirestoreSnaphotManager'
+import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
 
 export interface DocumentSnapshotQueryOptions<
   AppModelType = DocumentData,
@@ -56,7 +56,7 @@ export const documentSnapshotQueryOptions = <
   TData = DocumentSnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  snapshotManager: FirestoreSnaphotManager,
+  snapshotManager: FirestoreSnapshotManager,
   {
     ref,
     snapshotOptions,

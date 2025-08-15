@@ -16,12 +16,25 @@ export const queryFnFromDocumentSnapshotSubjectFactory =
     options?: QueryFnFromDocumentSnapshotSubjectFactoryOptions,
   ): QueryFunction<DocumentSnapshotState<AppModelType, DbModelType>, TQueryKey> =>
   async ({ client, queryKey, signal }) => {
-    const subject$ = subjectFactory(queryKey)
-    subject$.subscribe(documentSnapshotQueryClientObserver(client, queryKey))
+    if (signal.aborted) {
+      return {
+        isLoading: false,
+        hasError: false,
+        disabled: true,
+      } as const
+    }
 
-    signal.addEventListener('abort', () => {
-      subject$.close()
-    })
+    const subject$ = subjectFactory(queryKey)
+    const subscription = subject$.subscribe(documentSnapshotQueryClientObserver(client, queryKey))
+
+    signal.addEventListener(
+      'abort',
+      () => {
+        subscription.unsubscribe()
+        subject$.close()
+      },
+      { once: true },
+    )
 
     if (options?.waitForData) {
       return firstValueFrom(

@@ -45,17 +45,17 @@ export const db = getFirestore(app)
 
 ### React Query integration
 
-Use React Query options that keep cache entries in sync with Firestore subscriptions. Subscriptions are closed automatically when queries are removed from cache via `FirestoreSnaphotManager`.
+Use React Query options that keep cache entries in sync with Firestore subscriptions. Subscriptions are closed automatically when queries are removed from cache via `FirestoreSnapshotManager`.
 
 ```typescript
 import { QueryClient, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { doc } from 'firebase/firestore'
 import { db } from './firebase'
-import { documentSnapshotQueryOptions, FirestoreSnaphotManager } from '@valian/react-kitchen-sink/react-query'
+import { documentSnapshotQueryOptions, FirestoreSnapshotManager } from '@valian/react-kitchen-sink/react-query'
 
 export function UserProfile({ userId }: { userId: string }) {
   const client = useQueryClient()
-  const manager = new FirestoreSnaphotManager(client)
+  const manager = new FirestoreSnapshotManager(client)
 
   const ref = doc(db, 'users', userId)
   const query = documentSnapshotQueryOptions(manager, {

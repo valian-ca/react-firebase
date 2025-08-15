@@ -69,9 +69,9 @@
   "scripts": {
     "build": "rm -rf ./lib && rollup -c",
     "prepack": "pnpm run build",
+    "eslint": "eslint .",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
-    "eslint": "eslint .",
     "type-check": "tsc"
   }
 }

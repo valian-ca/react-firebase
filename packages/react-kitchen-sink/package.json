@@ -36,6 +36,7 @@
     "type-fest": "^4.41.0"
   },
   "devDependencies": {
+    "vitest-mock-extended": "^3.1.0",
     "@sentry/core": "^10.1.0",
     "@sentry/react": "^10.1.0",
     "@tanstack/react-query": "^5.84.2",
@@ -80,6 +81,8 @@
     "build": "rm -rf ./lib && rollup -c",
     "prepack": "pnpm run build",
     "eslint": "eslint .",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
     "type-check": "tsc"
   }
 }

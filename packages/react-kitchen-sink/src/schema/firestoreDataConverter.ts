@@ -1,4 +1,4 @@
-import { GeoPoint, type QueryDocumentSnapshot, Timestamp } from 'firebase/firestore'
+import { type DocumentData, GeoPoint, type QueryDocumentSnapshot, Timestamp } from 'firebase/firestore'
 
 const handleFirestoreDataTypes = <T>(value: T): T => {
   switch (true) {
@@ -19,4 +19,6 @@ const handleFirestoreDataTypes = <T>(value: T): T => {
   }
 }
 
-export const firestoreDataConverter = (snapshot: QueryDocumentSnapshot) => handleFirestoreDataTypes(snapshot.data())
+export const firestoreDataConverter = <AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>(
+  snapshot: QueryDocumentSnapshot<AppModelType, DbModelType>,
+) => handleFirestoreDataTypes(snapshot.data())
