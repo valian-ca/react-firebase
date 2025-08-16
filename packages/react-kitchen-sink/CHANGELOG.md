@@ -1,3 +1,13 @@
+## 1.0.5 (2025-08-16)
+
+### 🩹 Fixes
+
+- schemaDocumentSnapshotQueryOptions typing ([d8c3940](https://github.com/valian-ca/react-firebase/commit/d8c3940))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.0.4 (2025-08-16)
 
 ### 🚀 Features
