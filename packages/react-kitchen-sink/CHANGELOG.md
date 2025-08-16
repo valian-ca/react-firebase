@@ -1,3 +1,13 @@
+## 1.0.6 (2025-08-16)
+
+### 🩹 Fixes
+
+- stale snapshot query ([08f149f](https://github.com/valian-ca/react-firebase/commit/08f149f))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.0.5 (2025-08-16)
 
 ### 🩹 Fixes
