@@ -12,37 +12,13 @@ class MockDocumentSnapshotSubject<T> extends Subject<DocumentSnapshotState<T>> {
 }
 
 describe('queryFnFromDocumentSnapshotSubjectFactory', () => {
-  it('returns disabled state immediately when signal is already aborted', async () => {
-    const subjectFactory = vi.fn()
-    const queryFn = queryFnFromDocumentSnapshotSubjectFactory(subjectFactory)
-    const controller = new AbortController()
-    controller.abort()
-    const queryClient = mock<QueryClient>()
-    const result = await queryFn(
-      mock<QueryFunctionContext>({ signal: controller.signal, client: queryClient, queryKey: ['k'] }),
-    )
-    expect(result).toEqual({ isLoading: false, hasError: false, disabled: true })
-    expect(subjectFactory).not.toHaveBeenCalled()
-  })
   it('returns loading state when waitForData is false', async () => {
     const subject = new MockDocumentSnapshotSubject()
     const queryFn = queryFnFromDocumentSnapshotSubjectFactory(vi.fn().mockReturnValue(subject))
-    const controller = new AbortController()
     const queryClient = mock<QueryClient>()
-    const result = await queryFn(mock<QueryFunctionContext>({ signal: controller.signal, client: queryClient }))
+    const result = await queryFn(mock<QueryFunctionContext>({ client: queryClient }))
     expect(result).toEqual({ isLoading: true, hasError: false, disabled: false })
     expect(subject.close).not.toHaveBeenCalled()
-  })
-
-  it('closes subject on abort', async () => {
-    const subject = new MockDocumentSnapshotSubject()
-    const queryFn = queryFnFromDocumentSnapshotSubjectFactory(vi.fn().mockReturnValue(subject))
-    const controller = new AbortController()
-    const queryClient = mock<QueryClient>()
-    const promise = queryFn(mock<QueryFunctionContext>({ signal: controller.signal, client: queryClient }))
-    controller.abort()
-    await promise
-    expect(subject.close).toHaveBeenCalled()
   })
 
   it('waits for non-loading snapshot when waitForData is true', async () => {
@@ -52,9 +28,8 @@ describe('queryFnFromDocumentSnapshotSubjectFactory', () => {
       waitForData: true,
       waitForDataTimeout: 1000,
     })
-    const controller = new AbortController()
     const queryClient = mock<QueryClient>()
-    const promise = queryFn(mock<QueryFunctionContext>({ signal: controller.signal, client: queryClient, queryKey }))
+    const promise = queryFn(mock<QueryFunctionContext>({ client: queryClient, queryKey }))
 
     subject.next({ isLoading: true, hasError: false, disabled: false })
     expect(queryClient.setQueryData).toHaveBeenCalledWith(queryKey, {
@@ -99,11 +74,8 @@ describe('queryFnFromDocumentSnapshotSubjectFactory', () => {
       waitForData: true,
       waitForDataTimeout: 0,
     })
-    const controller = new AbortController()
     const queryClient = mock<QueryClient>()
-    await expect(
-      queryFn(mock<QueryFunctionContext>({ signal: controller.signal, client: queryClient, queryKey: ['k'] })),
-    ).rejects.toThrow()
+    await expect(queryFn(mock<QueryFunctionContext>({ client: queryClient, queryKey: ['k'] }))).rejects.toThrow()
   })
 
   it('uses default timeout when waitForDataTimeout is not provided and resolves before default timer', async () => {
@@ -111,11 +83,8 @@ describe('queryFnFromDocumentSnapshotSubjectFactory', () => {
     const queryFn = queryFnFromDocumentSnapshotSubjectFactory(vi.fn().mockReturnValue(subject), {
       waitForData: true,
     })
-    const controller = new AbortController()
     const queryClient = mock<QueryClient>()
-    const promise = queryFn(
-      mock<QueryFunctionContext>({ signal: controller.signal, client: queryClient, queryKey: ['k'] }),
-    )
+    const promise = queryFn(mock<QueryFunctionContext>({ client: queryClient, queryKey: ['k'] }))
     const snapshot = mock<DocumentSnapshot>()
     setTimeout(() => {
       subject.next({
