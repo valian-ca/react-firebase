@@ -1,7 +1,7 @@
 {
   "name": "@valian/zustand-firestore",
   "description": "zustand store for firestore queries and document snapshots",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/valian-ca/react-firebase.git"
