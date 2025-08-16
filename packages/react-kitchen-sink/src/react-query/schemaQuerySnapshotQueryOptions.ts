@@ -83,10 +83,10 @@ export const schemaQuerySnapshotQueryOptions = <
     gcTime: 10_000,
     ...props,
     meta: {
+      ...props.meta,
       type: 'snapshot',
       snapshotManager,
       collection: factory.collectionName,
       schemaQuery: query,
-      ...props.meta,
     },
   })

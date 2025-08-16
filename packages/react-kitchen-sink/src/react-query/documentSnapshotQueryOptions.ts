@@ -74,9 +74,9 @@ export const documentSnapshotQueryOptions = <
     gcTime: 10_000,
     ...props,
     meta: {
+      ...props.meta,
       type: 'snapshot',
       snapshotManager,
       documentRef: ref,
-      ...props.meta,
     },
   })

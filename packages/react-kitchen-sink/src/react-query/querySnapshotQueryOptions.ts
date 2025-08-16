@@ -75,9 +75,9 @@ export const querySnapshotQueryOptions = <
     initialData: undefined,
     ...props,
     meta: {
+      ...props.meta,
       type: 'snapshot',
       snapshotManager,
       query,
-      ...props.meta,
     },
   })
