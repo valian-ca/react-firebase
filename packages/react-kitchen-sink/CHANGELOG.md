@@ -1,3 +1,13 @@
+## 1.0.8 (2025-08-16)
+
+### 🩹 Fixes
+
+- remove the AbortController support from the queryFn ([0f2ada2](https://github.com/valian-ca/react-firebase/commit/0f2ada2))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.0.7 (2025-08-16)
 
 ### 🩹 Fixes

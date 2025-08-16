@@ -1,3 +1,7 @@
+## 1.0.8 (2025-08-16)
+
+This was a version bump only for @valian/zustand-firestore to align it with other projects, there were no code changes.
+
 ## 1.0.7 (2025-08-16)
 
 This was a version bump only for @valian/zustand-firestore to align it with other projects, there were no code changes.
