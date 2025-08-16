@@ -149,4 +149,22 @@ describe('FirestoreSnapshotManager', () => {
     const messageArg = vi.mocked(captureMessage).mock.calls.at(-1)?.[0]
     expect(String(messageArg)).toMatch(/Subscription for key/)
   })
+
+  it('isSnapshotAlive returns true for registered snapshots', () => {
+    const manager = new FirestoreSnapshotManager(queryClient)
+    const ref = mock<DocumentReference>({ id: 'doc' })
+    const queryKey = ['test']
+
+    // Register a snapshot
+    manager.documentSnapshotSubjectFactory(ref)(queryKey)
+
+    expect(manager.isSnapshotAlive(queryKey)).toBe(true)
+  })
+
+  it('isSnapshotAlive returns false for unregistered snapshots', () => {
+    const manager = new FirestoreSnapshotManager(queryClient)
+    const queryKey = ['unregistered']
+
+    expect(manager.isSnapshotAlive(queryKey)).toBe(false)
+  })
 })
