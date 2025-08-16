@@ -1,4 +1,5 @@
 export * from './documentSnapshotQueryOptions'
 export * from './FirestoreSnapshotManager'
 export * from './querySnapshotQueryOptions'
+export * from './schemaDocumentSnapshotQueryOptions'
 export * from './schemaQuerySnapshotQueryOptions'

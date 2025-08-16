@@ -23,7 +23,7 @@ import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
 
 export interface SchemaQuerySnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
   TError = DefaultError,
   TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
@@ -49,7 +49,7 @@ export interface SchemaQuerySnapshotQueryOptions<
 
 export interface SchemaQuerySnapshotQueryOptionsResult<
   TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
   TError = DefaultError,
   TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
@@ -59,7 +59,7 @@ export interface SchemaQuerySnapshotQueryOptionsResult<
 
 export const schemaQuerySnapshotQueryOptions = <
   TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions,
+  TOptions extends MetaOutputOptions = MetaOutputOptions,
   TError = DefaultError,
   TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
