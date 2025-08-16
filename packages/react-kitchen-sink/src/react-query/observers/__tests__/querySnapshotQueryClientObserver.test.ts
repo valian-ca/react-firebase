@@ -1,3 +1,4 @@
+import { addBreadcrumb } from '@sentry/react'
 import { type QueryClient } from '@tanstack/react-query'
 import { type QuerySnapshotState } from '@valian/rxjs-firebase'
 import { describe, expect, it, vi } from 'vitest'
@@ -5,7 +6,10 @@ import { mock } from 'vitest-mock-extended'
 
 import { querySnapshotQueryClientObserver } from '../querySnapshotQueryClientObserver'
 
-vi.mock('@sentry/react', () => ({ captureException: vi.fn() }))
+vi.mock('@sentry/react', () => ({
+  captureException: vi.fn(),
+  addBreadcrumb: vi.fn(),
+}))
 
 describe('querySnapshotQueryClientObserver', () => {
   it('sets data on next, error and complete', () => {
@@ -34,13 +38,12 @@ describe('querySnapshotQueryClientObserver', () => {
     })
 
     observer.complete()
-    expect(client.setQueryData).toHaveBeenCalledWith(queryKey, {
-      empty: true,
-      size: 0,
-      isLoading: false,
-      hasError: false,
-      disabled: true,
-      data: [],
+    expect(addBreadcrumb).toHaveBeenCalledWith({
+      level: 'debug',
+      message: 'Document snapshot query completed',
+      data: {
+        queryKey,
+      },
     })
   })
 })

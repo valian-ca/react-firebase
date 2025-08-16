@@ -59,6 +59,8 @@ export class FirestoreSnapshotManager {
     })
   }
 
+  isSnapshotAlive = (queryKey: QueryKey) => this.#onClose.has(hashKey(queryKey))
+
   registerSnapshotOnClose = (queryKey: QueryKey, onCloseSnapshot: () => void) => {
     const snapshotId = hashKey(queryKey)
     const closeSnapshot = this.#onClose.get(snapshotId)

@@ -39,4 +39,30 @@ describe('schemaQuerySnapshotQueryOptions', () => {
     )
     expect(opts.meta?.type).toBe('snapshot')
   })
+
+  it('sets staleTime to static when snapshot is alive', () => {
+    const snapshotManager = mock<FirestoreSnapshotManager>()
+    snapshotManager.isSnapshotAlive.mockReturnValue(true)
+    const opts = schemaQuerySnapshotQueryOptions(snapshotManager, {
+      factory: collections.users,
+      query: { name: 'q' },
+      queryKey: ['k'],
+    })
+
+    expect(typeof opts.staleTime).toBe('function')
+    expect((opts.staleTime as () => string | number)()).toBe('static')
+  })
+
+  it('sets staleTime to 0 when snapshot is not alive', () => {
+    const snapshotManager = mock<FirestoreSnapshotManager>()
+    snapshotManager.isSnapshotAlive.mockReturnValue(false)
+    const opts = schemaQuerySnapshotQueryOptions(snapshotManager, {
+      factory: collections.users,
+      query: { name: 'q' },
+      queryKey: ['k'],
+    })
+
+    expect(typeof opts.staleTime).toBe('function')
+    expect((opts.staleTime as () => string | number)()).toBe(0)
+  })
 })

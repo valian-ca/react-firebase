@@ -69,7 +69,7 @@ export const querySnapshotQueryOptions = <
       snapshotManager.querySnapshotSubjectFactory(query, snapshotOptions, listener),
       props,
     ),
-    staleTime: Infinity,
+    staleTime: () => (snapshotManager.isSnapshotAlive(props.queryKey) ? 'static' : 0),
     retry: false,
     gcTime: 10_000,
     initialData: undefined,

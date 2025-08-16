@@ -1,5 +1,5 @@
 import { type DocumentData } from '@firebase/firestore'
-import { captureException } from '@sentry/react'
+import { addBreadcrumb, captureException } from '@sentry/react'
 import { type QueryClient, type QueryKey } from '@tanstack/react-query'
 import { type DocumentSnapshotState } from '@valian/rxjs-firebase'
 import { type Observer } from 'rxjs'
@@ -23,10 +23,12 @@ export const documentSnapshotQueryClientObserver = <
     })
   },
   complete: () => {
-    client.setQueryData<DocumentSnapshotState<AppModelType, DbModelType>>(queryKey, {
-      isLoading: false,
-      hasError: false,
-      disabled: true,
+    addBreadcrumb({
+      level: 'debug',
+      message: 'Query snapshot query completed',
+      data: {
+        queryKey,
+      },
     })
   },
 })
