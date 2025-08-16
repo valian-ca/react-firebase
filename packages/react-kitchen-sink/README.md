@@ -23,23 +23,7 @@ Ensure these peers are installed as required by your setup:
 - `@tanstack/react-query` ^5.80.0
 - `@sentry/core` ^9 || ^10
 - `@sentry/react` ^9 || ^10
-- `zod-firebase` ^1.7.0 (only for schema utilities)
-
-## Setup
-
-Initialize Firebase in your app:
-
-```typescript
-import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
-
-const firebaseConfig = {
-  // your config
-}
-
-const app = initializeApp(firebaseConfig)
-export const db = getFirestore(app)
-```
+- `zod-firebase` ^2
 
 ## Usage
 
@@ -53,17 +37,25 @@ import { doc } from 'firebase/firestore'
 import { db } from './firebase'
 import { documentSnapshotQueryOptions, FirestoreSnapshotManager } from '@valian/react-kitchen-sink/react-query'
 
+const client = useQueryClient()
+const manager = new FirestoreSnapshotManager(client)
+
+const UserZod = z.object({
+  name: z.string(),
+})
+
+const collections = collectionsBuilder({
+  users: { zod: UserZod },
+})
+
+const userQuery = (userId: string) => documentSnapshotQueryOptions(manager, {
+  queryKey: ['user', userId],
+  ref: collections.users.ref(userId),
+  waitForData: true,
+})
+
 export function UserProfile({ userId }: { userId: string }) {
-  const client = useQueryClient()
-  const manager = new FirestoreSnapshotManager(client)
-
-  const ref = doc(db, 'users', userId)
-  const query = documentSnapshotQueryOptions(manager, {
-    ref,
-    waitForData: true,
-  })
-
-  const { data } = useSuspenseQuery(query)
+  const { data } = useSuspenseQuery(userQuery(userId))
 
   if (!data.exists) return <div>User not found</div>
   return (
@@ -75,7 +67,7 @@ export function UserProfile({ userId }: { userId: string }) {
 }
 ```
 
-### Schema-aware hooks (zod-firebase)
+### Zustand stores integration
 
 Hooks that produce Zustand stores for schema-validated documents and queries.
 
@@ -84,22 +76,20 @@ import { useStore } from 'zustand'
 import { useSchemaDocumentStore, useSchemaQueryStore } from '@valian/react-kitchen-sink/hooks'
 import { createFirestoreFactory, collectionSchema } from 'zod-firebase'
 
-const Todos = collectionSchema({
-  name: 'todos',
-  schema: (z) =>
-    z.object({
-      title: z.string(),
-      completed: z.boolean().default(false),
-      createdAt: z.date(),
-      userId: z.string(),
-    }),
+const TodoZod = z.object({
+  title: z.string(),
+  completed: z.boolean().default(false),
+  createdAt: z.date(),
+  userId: z.string(),
 })
 
-const factory = createFirestoreFactory(Todos)
+const collections = collectionsBuilder({
+  todos: { zod: TodoZod },
+})
 
 export function TypedTodos({ userId }: { userId: string }) {
   const queryStore = useSchemaQueryStore({
-    factory,
+    factory: collections.todos,
     query: { where: [['userId', '==', userId]] },
   })
   const { data, isLoading } = useStore(queryStore)
