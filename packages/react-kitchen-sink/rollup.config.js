@@ -12,6 +12,7 @@ const external = [
   'observable-hooks',
   'react',
   'rxjs',
+  'type-fest',
   'zod-firebase',
   'zustand',
 ]

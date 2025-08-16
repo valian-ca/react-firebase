@@ -8,15 +8,15 @@ import { of, switchMap } from 'rxjs'
 import {
   type CollectionSchema,
   type MetaOutputOptions,
-  type QuerySpecification,
   type SchemaDocumentInput,
   type SchemaDocumentOutput,
   type SchemaFirestoreQueryFactory,
+  type SchemaQuerySpecification,
 } from 'zod-firebase'
 import { type StoreApi } from 'zustand'
 
-import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/schemaTypes'
-import { sentrySchemaQuerySnapshotListener } from '../rxjs/sentrySchemaQuerySnapshotListener'
+import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/types'
+import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySnapshotListener'
 
 export interface UseSchemaQueryStoreOptions<
   TCollectionSchema extends CollectionSchema,
@@ -24,7 +24,7 @@ export interface UseSchemaQueryStoreOptions<
 > extends SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
     SnapshotListenOptions {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
-  query: QuerySpecification | null | undefined
+  query: SchemaQuerySpecification<TCollectionSchema, TOptions> | null | undefined
   metaOptions?: TOptions
 }
 

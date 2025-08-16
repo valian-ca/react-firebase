@@ -29,27 +29,38 @@
     "access": "public"
   },
   "dependencies": {
-    "@sentry/core": "^10.1.0",
-    "@sentry/react": "^10.1.0",
-    "@tanstack/react-query": "^5.84.2",
     "@valian/react-firestore": "workspace:*",
     "@valian/rxjs-firebase": "workspace:*",
     "@valian/zustand-firestore": "workspace:*",
     "observable-hooks": "^4.2.4",
-    "rxjs": "^7.8.2",
-    "type-fest": "^4.41.0",
-    "zod-firebase": "^1.7.0",
-    "zustand": "^5.0.7"
+    "type-fest": "^4.41.0"
   },
   "devDependencies": {
+    "vitest-mock-extended": "^3.1.0",
+    "@sentry/core": "^10.1.0",
+    "@sentry/react": "^10.1.0",
+    "@tanstack/react-query": "^5.84.2",
     "firebase": "^12.0.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "rxjs": "^7.8.2",
+    "zod": "^4.0.17",
+    "zod-firebase": "^2.0.0",
+    "zustand": "^5"
   },
   "peerDependencies": {
     "@firebase/firestore": "^4.7.0",
+    "@sentry/core": "^9 || ^10",
+    "@sentry/react": "^9 || ^10",
+    "@tanstack/react-query": "^5.80.0",
     "react": "^18 || ^19",
-    "react-dom": "^18 || ^19"
+    "react-dom": "^18 || ^19",
+    "rxjs": "^7.8.0",
+    "zod": "^3.23.0 || ^4.0.0",
+    "zod-firebase": "^2"
+  },
+  "optionalDependencies": {
+    "zustand": "^5"
   },
   "exports": {
     ".": {
@@ -70,6 +81,8 @@
     "build": "rm -rf ./lib && rollup -c",
     "prepack": "pnpm run build",
     "eslint": "eslint .",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
     "type-check": "tsc"
   }
 }

@@ -1,106 +1,92 @@
 import { type SnapshotListenOptions } from '@firebase/firestore'
-import { type DefinedInitialDataOptions, type QueryKey, queryOptions } from '@tanstack/react-query'
-import { firstValueFrom, skipWhile, takeUntil, timer } from 'rxjs'
+import {
+  type DataTag,
+  type DefaultError,
+  type QueryKey,
+  queryOptions,
+  type UnusedSkipTokenOptions,
+} from '@tanstack/react-query'
 import {
   type CollectionSchema,
   type MetaOutputOptions,
-  type QuerySpecification,
-  type SchemaDocumentInput,
-  type SchemaDocumentOutput,
   type SchemaFirestoreQueryFactory,
+  type SchemaQuerySpecification,
 } from 'zod-firebase'
 
-import { schemaQuerySnapshotSubject } from '../rxjs/schemaQuerySnapshotSubject'
-import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/schemaTypes'
+import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/types'
 
-import { type FirestoreSnaphotManager } from './FirestoreSnaphotManager'
-import { querySnapshotQueryClientObserver } from './querySnapshotQueryClientObserver'
+import {
+  queryFnFromQuerySnapshotSubjectFactory,
+  type QueryFnFromQuerySnapshotSubjectFactoryOptions,
+} from './queryFn/queryFnFromQuerySnapshotSubjectFactory'
+import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
 
 export interface SchemaQuerySnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions,
+  TError = DefaultError,
+  TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-    DefinedInitialDataOptions<
-      SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
-      Error,
-      SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
-      TQueryKey
+      UnusedSkipTokenOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>,
+      | 'queryFn'
+      | 'initialData'
+      | 'staleTime'
+      | 'refetchInterval'
+      | 'refetchIntervalInBackground'
+      | 'refetchOnWindowFocus'
+      | 'refetchOnMount'
+      | 'refetchOnReconnect'
+      | 'retryOnMount'
+      | 'retry'
     >,
-    'queryFn'
-  > {
+    QueryFnFromQuerySnapshotSubjectFactoryOptions {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
-  query: QuerySpecification
-  options?: TOptions & SnapshotListenOptions
+  query: SchemaQuerySpecification<TCollectionSchema, TOptions>
+  snapshotOptions?: TOptions & SnapshotListenOptions
   listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>
-  waitForData?: boolean
-  waitForDataTimeout?: number
+}
+
+export interface SchemaQuerySnapshotQueryOptionsResult<
+  TCollectionSchema extends CollectionSchema,
+  TOptions extends MetaOutputOptions,
+  TError = DefaultError,
+  TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
+  TQueryKey extends QueryKey = QueryKey,
+> extends UnusedSkipTokenOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey> {
+  queryKey: DataTag<TQueryKey, SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError>
 }
 
 export const schemaQuerySnapshotQueryOptions = <
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions,
+  TError = DefaultError,
+  TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  snapshotManager: FirestoreSnaphotManager,
+  snapshotManager: FirestoreSnapshotManager,
   {
     factory,
     query,
-    options,
+    snapshotOptions,
     listener,
-    waitForData,
-    waitForDataTimeout = 10_000,
-    ...otherOptions
-  }: SchemaQuerySnapshotQueryOptions<TCollectionSchema, TOptions, TQueryKey>,
-) =>
-  queryOptions<
-    SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
-    Error,
-    SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
-    TQueryKey
-  >({
-    queryFn: async ({ client, queryKey, signal }) => {
-      const subject$ = schemaQuerySnapshotSubject<TCollectionSchema, TOptions>(factory, query, options, listener)
-      subject$.subscribe(
-        querySnapshotQueryClientObserver<
-          SchemaDocumentOutput<TCollectionSchema, TOptions>,
-          SchemaDocumentInput<TCollectionSchema>
-        >(client, queryKey),
-      )
-
-      signal.addEventListener('abort', () => {
-        subject$.close()
-      })
-
-      snapshotManager.registerSnapshotOnClose(queryKey, () => {
-        subject$.close()
-      })
-
-      if (waitForData) {
-        return firstValueFrom(
-          subject$.pipe(
-            takeUntil(timer(waitForDataTimeout)),
-            skipWhile(({ isLoading }) => isLoading),
-          ),
-        )
-      }
-
-      return {
-        empty: true,
-        size: 0,
-        isLoading: true,
-        hasError: false,
-        disabled: false,
-        data: [],
-      } as const
-    },
+    ...props
+  }: SchemaQuerySnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>,
+): SchemaQuerySnapshotQueryOptionsResult<TCollectionSchema, TOptions, TError, TData, TQueryKey> =>
+  queryOptions({
+    queryFn: queryFnFromQuerySnapshotSubjectFactory(
+      snapshotManager.schemaQuerySnapshotSubjectFactory(factory, query, snapshotOptions, listener),
+      props,
+    ),
     staleTime: Infinity,
-    ...otherOptions,
+    retry: false,
+    gcTime: 10_000,
+    ...props,
     meta: {
+      ...props.meta,
       type: 'snapshot',
       snapshotManager,
       collection: factory.collectionName,
       schemaQuery: query,
-      ...otherOptions.meta,
     },
   })

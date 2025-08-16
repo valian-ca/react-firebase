@@ -34,22 +34,6 @@ This library requires the following peer dependencies:
 - `rxjs` ^7 || ^8
 - `firebase` ^11 || ^12
 
-### Setup
-
-Make sure you have Firebase initialized in your project:
-
-```typescript
-import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
-
-const firebaseConfig = {
-  // your config
-}
-
-const app = initializeApp(firebaseConfig)
-export const db = getFirestore(app)
-```
-
 ## Usage Examples
 
 ### queryState Operator

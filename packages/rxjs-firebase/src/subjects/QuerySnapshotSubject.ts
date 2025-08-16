@@ -12,7 +12,7 @@ export class QuerySnapshotSubject<
 
   constructor(
     snapshot$: Observable<QuerySnapshot<AppModelType, DbModelType>>,
-    options?: QuerySnapshotStateListener<AppModelType, DbModelType>,
+    listener?: QuerySnapshotStateListener<AppModelType, DbModelType>,
   ) {
     super({
       empty: true,
@@ -22,7 +22,7 @@ export class QuerySnapshotSubject<
       disabled: false,
       data: [],
     })
-    snapshot$.pipe(takeUntil(this.notification$), querySnapshotState(options)).subscribe(this)
+    snapshot$.pipe(takeUntil(this.notification$), querySnapshotState(listener)).subscribe(this)
   }
 
   get data(): AppModelType[] {
