@@ -27,7 +27,7 @@ describe('documentSnapshotQueryOptions', () => {
     const opts = documentSnapshotQueryOptions(snapshotManager, { ref, queryKey: ['k'] })
 
     expect(typeof opts.staleTime).toBe('function')
-    expect((opts.staleTime as () => string | number)()).toBe('static')
+    expect((opts.staleTime as () => string | number)()).toBe(Infinity)
   })
 
   it('sets staleTime to 0 when snapshot is not alive', () => {
