@@ -8,7 +8,7 @@ import {
   type SchemaFirestoreFactory,
 } from 'zod-firebase'
 
-import { type SchemaQuerySnapshotState } from '../rxjs/types'
+import { type SchemaDocumentSnapshotState } from '../rxjs/types'
 
 import { type QueryFnFromDocumentSnapshotSubjectFactoryOptions } from './queryFn/queryFnFromDocumentSnapshotSubjectFactory'
 import {
@@ -22,7 +22,7 @@ export interface SchemaDocumentSnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions = MetaOutputOptions,
   TError = DefaultError,
-  TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
+  TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
       DocumentSnapshotQueryOptions<
@@ -44,7 +44,7 @@ export type SchemaDocumentSnapshotQueryOptionsResult<
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions = MetaOutputOptions,
   TError = DefaultError,
-  TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
+  TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > = DocumentSnapshotQueryOptionsResult<
   SchemaDocumentOutput<TCollectionSchema, TOptions>,
@@ -58,7 +58,7 @@ export const schemaDocumentSnapshotQueryOptions = <
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions = MetaOutputOptions,
   TError = DefaultError,
-  TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
+  TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 >(
   snapshotManager: FirestoreSnapshotManager,
