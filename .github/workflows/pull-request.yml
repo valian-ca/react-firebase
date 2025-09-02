@@ -7,7 +7,7 @@ jobs:
     name: eslint & prettier
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: setup pnpm
         uses: valian-ca/github-workflows/.github/actions/setup-pnpm@main
       - name: eslint
@@ -19,7 +19,7 @@ jobs:
     name: type check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: setup pnpm
         uses: valian-ca/github-workflows/.github/actions/setup-pnpm@main
       - name: type-check
@@ -29,7 +29,7 @@ jobs:
     name: tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: setup pnpm
         uses: valian-ca/github-workflows/.github/actions/setup-pnpm@main
       - name: tests
@@ -39,7 +39,7 @@ jobs:
     name: markdown lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: DavidAnson/markdownlint-cli2-action@v20
         with:
           globs: '**/*.md'
