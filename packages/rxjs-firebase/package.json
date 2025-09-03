@@ -1,7 +1,7 @@
 {
   "name": "@valian/rxjs-firebase",
   "description": "rxjs firebase utilities",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/valian-ca/react-firebase.git"
