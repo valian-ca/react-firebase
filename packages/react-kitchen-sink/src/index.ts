@@ -1,3 +1,4 @@
+export * from './auth'
 export * from './hooks'
 export * from './react-query'
 export * from './rxjs'
