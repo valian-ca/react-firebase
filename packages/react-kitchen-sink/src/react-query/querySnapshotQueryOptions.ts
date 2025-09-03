@@ -34,7 +34,7 @@ export interface QuerySnapshotQueryOptions<
       | 'retry'
     >,
     QueryFnFromQuerySnapshotSubjectFactoryOptions {
-  query: FirestoreQuery<AppModelType, DbModelType>
+  query?: FirestoreQuery<AppModelType, DbModelType> | null
   snapshotOptions?: SnapshotListenOptions
   listener?: QuerySnapshotStateListener<AppModelType, DbModelType>
 }
@@ -65,10 +65,21 @@ export const querySnapshotQueryOptions = <
   }: QuerySnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>,
 ): QuerySnapshotQueryOptionsResult<AppModelType, DbModelType, TError, TData, TQueryKey> =>
   queryOptions({
-    queryFn: queryFnFromQuerySnapshotSubjectFactory(
-      snapshotManager.querySnapshotSubjectFactory(query, snapshotOptions, listener),
-      props,
-    ),
+    queryFn: query
+      ? queryFnFromQuerySnapshotSubjectFactory(
+          snapshotManager.querySnapshotSubjectFactory(query, snapshotOptions, listener),
+          props,
+        )
+      : () =>
+          Promise.resolve({
+            isLoading: false,
+            hasError: false,
+            empty: true,
+            size: 0,
+            data: [],
+            disabled: true,
+          } as const),
+    enabled: !!query,
     staleTime: () => (snapshotManager.isSnapshotAlive(props.queryKey) ? Infinity : 0),
     retry: false,
     gcTime: 10_000,

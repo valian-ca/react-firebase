@@ -42,7 +42,7 @@ export interface SchemaQuerySnapshotQueryOptions<
     >,
     QueryFnFromQuerySnapshotSubjectFactoryOptions {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
-  query: SchemaQuerySpecification<TCollectionSchema, TOptions>
+  query?: SchemaQuerySpecification<TCollectionSchema, TOptions> | null
   snapshotOptions?: TOptions & SnapshotListenOptions
   listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>
 }
@@ -74,10 +74,21 @@ export const schemaQuerySnapshotQueryOptions = <
   }: SchemaQuerySnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>,
 ): SchemaQuerySnapshotQueryOptionsResult<TCollectionSchema, TOptions, TError, TData, TQueryKey> =>
   queryOptions({
-    queryFn: queryFnFromQuerySnapshotSubjectFactory(
-      snapshotManager.schemaQuerySnapshotSubjectFactory(factory, query, snapshotOptions, listener),
-      props,
-    ),
+    queryFn: query
+      ? queryFnFromQuerySnapshotSubjectFactory(
+          snapshotManager.schemaQuerySnapshotSubjectFactory(factory, query, snapshotOptions, listener),
+          props,
+        )
+      : () =>
+          Promise.resolve({
+            empty: true,
+            size: 0,
+            data: [],
+            isLoading: false,
+            hasError: false,
+            disabled: true,
+          } as const),
+    enabled: !!query,
     staleTime: () => (snapshotManager.isSnapshotAlive(props.queryKey) ? Infinity : 0),
     retry: false,
     gcTime: 10_000,
