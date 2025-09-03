@@ -31,7 +31,7 @@
     "@lerna-lite/cli": "^4.7.0",
     "@lerna-lite/publish": "^4.7.0",
     "@lerna-lite/version": "^4.7.0",
-    "@nx/eslint": "21.3.11",
+    "@nx/eslint": "21.4.1",
     "@nx/js": "21.4.1",
     "@rollup/plugin-typescript": "12.1.4",
     "@tsconfig/vite-react": "7.0.0",
