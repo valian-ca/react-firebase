@@ -29,8 +29,9 @@ export class QuerySnapshotSubject<
     return this.value.data
   }
 
-  close(): void {
+  complete(): void {
     this.notification$.next()
     this.notification$.complete()
+    super.complete()
   }
 }
