@@ -1,7 +1,9 @@
 import { type DocumentData, type DocumentSnapshot } from '@firebase/firestore'
-import { catchError, map, of, type OperatorFunction, startWith, tap } from 'rxjs'
+import { catchError, map, type OperatorFunction, startWith, tap } from 'rxjs'
 
 import { type DocumentSnapshotState } from '../states/DocumentSnapshotState'
+
+import { documentSnapshotStateObservable } from './documentSnapshotStateObservable'
 
 export interface DocumentSnapshotStateListener<
   AppModelType = DocumentData,
@@ -43,11 +45,11 @@ export const documentSnapshotState =
         complete: listener?.onComplete,
       }),
       catchError(() =>
-        of({
+        documentSnapshotStateObservable<AppModelType, DbModelType>({
           isLoading: false,
           hasError: true,
           disabled: false,
-        } as const satisfies DocumentSnapshotState<AppModelType, DbModelType>),
+        }),
       ),
       startWith({
         isLoading: true,

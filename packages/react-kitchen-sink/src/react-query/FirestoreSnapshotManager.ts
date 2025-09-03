@@ -77,7 +77,7 @@ export class FirestoreSnapshotManager {
     (queryKey: QueryKey) => {
       const subject$ = documentSnapshotSubject(ref, options, listener)
       this.registerSnapshotOnClose(queryKey, () => {
-        subject$.close()
+        subject$.complete()
       })
       return subject$
     }
@@ -92,7 +92,7 @@ export class FirestoreSnapshotManager {
     (queryKey: QueryKey) => {
       const subject$ = schemaDocumentSnapshotSubject<TCollectionSchema, TOptions>(factory, id, options, listener)
       this.registerSnapshotOnClose(queryKey, () => {
-        subject$.close()
+        subject$.complete()
       })
       return subject$
     }
@@ -109,7 +109,7 @@ export class FirestoreSnapshotManager {
         listener,
       )
       this.registerSnapshotOnClose(queryKey, () => {
-        subject$.close()
+        subject$.complete()
       })
       return subject$
     }
@@ -124,7 +124,7 @@ export class FirestoreSnapshotManager {
     (queryKey: QueryKey) => {
       const subject$ = schemaQuerySnapshotSubject<TCollectionSchema, TOptions>(factory, query, options, listener)
       this.registerSnapshotOnClose(queryKey, () => {
-        subject$.close()
+        subject$.complete()
       })
       return subject$
     }

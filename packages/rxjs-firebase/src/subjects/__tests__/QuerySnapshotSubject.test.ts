@@ -134,11 +134,11 @@ describe('QuerySnapshotSubject', () => {
     })
   })
 
-  describe('close method', () => {
+  describe('complete method', () => {
     it('should complete the notification subject', () => {
       const subject = new QuerySnapshotSubject(snapshot$)
 
-      subject.close()
+      subject.complete()
 
       // Verify that the subject is closed by checking if it's completed
       expect(subject.closed).toBe(false) // BehaviorSubject doesn't close when notification$ completes
@@ -148,7 +148,7 @@ describe('QuerySnapshotSubject', () => {
       const subject = new QuerySnapshotSubject(snapshot$)
       const initialValue = subject.value
 
-      subject.close()
+      subject.complete()
       snapshot$.next(mockQuerySnapshot)
 
       // The value should remain the same since the subscription is terminated

@@ -1,4 +1,5 @@
 import { type DocumentReference, type DocumentSnapshot, type SnapshotListenOptions } from '@firebase/firestore'
+import { type Observer } from 'rxjs'
 import { TestScheduler } from 'rxjs/testing'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mock } from 'vitest-mock-extended'
@@ -27,9 +28,9 @@ describe('documentSnapshot operator', () => {
       snapshot.exists.mockReturnValue(true)
       snapshot.data.mockReturnValue(testData)
 
-      vi.mocked(fromDocumentRef).mockReturnValue(cold('-a|', { a: snapshot }))
+      vi.mocked(fromDocumentRef).mockReturnValue(cold('-s|', { s: snapshot }))
 
-      const source$ = cold('a|', { a: ref })
+      const source$ = cold('a----|', { a: ref })
       const result$ = source$.pipe(documentSnapshot())
 
       const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
@@ -43,19 +44,15 @@ describe('documentSnapshot operator', () => {
         data: testData,
       }
 
-      const events: DocumentSnapshotState[] = []
-      let completed = false
-      result$.subscribe({
-        next: (v) => events.push(v),
-        complete: () => {
-          completed = true
-        },
-      })
+      const mockObserver = mock<Observer<DocumentSnapshotState>>()
+      result$.subscribe(mockObserver)
 
       flush()
 
-      expect(events).toEqual([disabled, loading, withData])
-      expect(completed).toBe(true)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(1, disabled)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(2, loading)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(3, withData)
+      expect(mockObserver.complete).toHaveBeenCalledAfter(mockObserver.next)
     })
   })
 
@@ -66,19 +63,15 @@ describe('documentSnapshot operator', () => {
 
       const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
 
-      const events: DocumentSnapshotState[] = []
-      let completed = false
-      result$.subscribe({
-        next: (v) => events.push(v),
-        complete: () => {
-          completed = true
-        },
-      })
+      const mockObserver = mock<Observer<DocumentSnapshotState>>()
+      result$.subscribe(mockObserver)
 
       flush()
 
-      expect(events).toEqual([disabled, disabled, disabled])
-      expect(completed).toBe(true)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(1, disabled)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(2, disabled)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(3, disabled)
+      expect(mockObserver.complete).toHaveBeenCalledAfter(mockObserver.next)
     })
   })
 
@@ -90,9 +83,9 @@ describe('documentSnapshot operator', () => {
 
       const options: SnapshotListenOptions = { includeMetadataChanges: true }
 
-      const spy = vi.mocked(fromDocumentRef).mockReturnValue(cold('-a|', { a: snapshot }))
+      const spy = vi.mocked(fromDocumentRef).mockReturnValue(cold('-s|', { s: snapshot }))
 
-      const source$ = cold('a|', { a: ref })
+      const source$ = cold('a----|', { a: ref })
       const result$ = source$.pipe(documentSnapshot(undefined, options))
 
       const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
@@ -133,9 +126,9 @@ describe('documentSnapshot operator', () => {
       const onError = vi.fn()
       const onComplete = vi.fn()
 
-      vi.mocked(fromDocumentRef).mockReturnValue(cold('a|', { a: snapshot }))
+      vi.mocked(fromDocumentRef).mockReturnValue(cold('s|', { s: snapshot }))
 
-      const source$ = cold('a|', { a: ref })
+      const source$ = cold('a---|', { a: ref })
       const result$ = source$.pipe(documentSnapshot({ onSnapshot, onError, onComplete }))
 
       const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
@@ -176,7 +169,7 @@ describe('documentSnapshot operator', () => {
 
       vi.mocked(fromDocumentRef).mockReturnValue(cold('#', {}, error))
 
-      const source$ = cold('a|', { a: ref })
+      const source$ = cold('a---|', { a: ref })
       const result$ = source$.pipe(documentSnapshot({ onError }))
 
       const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
