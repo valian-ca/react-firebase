@@ -15,11 +15,11 @@ vi.mock('@valian/rxjs-firebase', () => ({
   fromDocumentRef: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
   fromQuery: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
   DocumentSnapshotSubject: class {
-    close = vi.fn()
+    complete = vi.fn()
     subscribe = vi.fn()
   },
   QuerySnapshotSubject: class {
-    close = vi.fn()
+    complete = vi.fn()
     subscribe = vi.fn()
   },
 }))
@@ -61,7 +61,7 @@ describe('FirestoreSnapshotManager', () => {
     subscribers.forEach((cb) => {
       cb(event)
     })
-    expect(subject.close).toHaveBeenCalled()
+    expect(subject.complete).toHaveBeenCalled()
   })
 
   it('querySnapshotSubjectFactory registers and closes on removal', () => {
@@ -79,7 +79,7 @@ describe('FirestoreSnapshotManager', () => {
     subscribers.forEach((cb) => {
       cb(event)
     })
-    expect(subject.close).toHaveBeenCalled()
+    expect(subject.complete).toHaveBeenCalled()
   })
 
   it('re-registering same key closes previous subject', () => {
@@ -89,8 +89,8 @@ describe('FirestoreSnapshotManager', () => {
     const queryKey = ['same']
     const subject1 = factory(queryKey)
     const subject2 = factory(queryKey)
-    expect(subject1.close).toHaveBeenCalled()
-    expect(subject2.close).not.toHaveBeenCalled()
+    expect(subject1.complete).toHaveBeenCalled()
+    expect(subject2.complete).not.toHaveBeenCalled()
   })
 
   it('schema schemaDocumentSnapshotSubjectFactory produce subjects and register closures', () => {
@@ -109,7 +109,7 @@ describe('FirestoreSnapshotManager', () => {
     subscribers.forEach((cb) => {
       cb(event)
     })
-    expect(subject.close).toHaveBeenCalled()
+    expect(subject.complete).toHaveBeenCalled()
   })
 
   it('schema schemaQuerySnapshotSubjectFactory produce subjects and register closures', () => {
@@ -128,7 +128,7 @@ describe('FirestoreSnapshotManager', () => {
     subscribers.forEach((cb) => {
       cb(event)
     })
-    expect(subject.close).toHaveBeenCalled()
+    expect(subject.complete).toHaveBeenCalled()
   })
 
   it('logs a warning when trying to close an unknown snapshot key', () => {

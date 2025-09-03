@@ -99,7 +99,7 @@ describe('querySnapshotState', () => {
       const source$ = cold<QuerySnapshot>('#', {}, error)
       const result$ = source$.pipe(querySnapshotState())
 
-      expectObservable(result$).toBe('(se|)', {
+      expectObservable(result$).toBe('(se)', {
         s: QuerySnapshotLoadingState,
         e: {
           size: 0,
@@ -162,7 +162,7 @@ describe('querySnapshotState', () => {
       const source$ = cold<QuerySnapshot>('#', {}, error)
       const result$ = source$.pipe(querySnapshotState(options))
 
-      expectObservable(result$).toBe('(se|)', {
+      expectObservable(result$).toBe('(se)', {
         s: QuerySnapshotLoadingState,
         e: {
           size: 0,

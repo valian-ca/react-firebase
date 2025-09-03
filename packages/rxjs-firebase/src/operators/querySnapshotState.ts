@@ -1,7 +1,9 @@
 import { type DocumentData, type QuerySnapshot } from '@firebase/firestore'
-import { catchError, map, of, type OperatorFunction, startWith, tap } from 'rxjs'
+import { catchError, map, type OperatorFunction, startWith, tap } from 'rxjs'
 
 import { type QuerySnapshotState } from '../states/QuerySnapshotState'
+
+import { querySnapshotStateObservable } from './querySnapshotStateObservable'
 
 export interface QuerySnapshotStateListener<
   AppModelType = DocumentData,
@@ -36,14 +38,14 @@ export const querySnapshotState =
         complete: listener?.onComplete,
       }),
       catchError(() =>
-        of({
+        querySnapshotStateObservable<AppModelType, DbModelType>({
           size: 0,
           empty: true,
           isLoading: false,
           hasError: true,
           disabled: false,
           data: [],
-        } as const satisfies QuerySnapshotState<AppModelType, DbModelType>),
+        }),
       ),
       startWith({
         empty: true,

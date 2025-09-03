@@ -89,7 +89,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold<DocumentSnapshot>('#', {}, error)
       const result$ = source$.pipe(documentSnapshotState())
 
-      expectObservable(result$).toBe('(se|)', {
+      expectObservable(result$).toBe('(se)', {
         s: { isLoading: true, hasError: false, disabled: false },
         e: {
           isLoading: false,
@@ -145,7 +145,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold<DocumentSnapshot>('#', {}, error)
       const result$ = source$.pipe(documentSnapshotState(options))
 
-      expectObservable(result$).toBe('(se|)', {
+      expectObservable(result$).toBe('(se)', {
         s: { isLoading: true, hasError: false, disabled: false },
         e: {
           isLoading: false,

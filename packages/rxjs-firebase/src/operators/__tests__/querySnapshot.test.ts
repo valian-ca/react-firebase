@@ -28,9 +28,9 @@ describe('querySnapshot operator', () => {
         docs: [{ data: () => ({ id: '1' }) }, { data: () => ({ id: '2' }) }],
       })
 
-      vi.mocked(fromQuery).mockReturnValue(cold('-a|', { a: snapshot }))
+      vi.mocked(fromQuery).mockReturnValue(cold('-s|', { s: snapshot }))
 
-      const source$ = cold('a|', { a: q })
+      const source$ = cold('a----|', { a: q })
       const result$ = source$.pipe(querySnapshot())
 
       const disabled: QuerySnapshotState = {
@@ -111,9 +111,9 @@ describe('querySnapshot operator', () => {
       const emptySnapshot = mock<QuerySnapshot>({ size: 0, empty: true, docs: [] })
       const options: SnapshotListenOptions = { includeMetadataChanges: true }
 
-      const spy = vi.mocked(fromQuery).mockReturnValue(cold('-a|', { a: emptySnapshot }))
+      const spy = vi.mocked(fromQuery).mockReturnValue(cold('-e|', { e: emptySnapshot }))
 
-      const source$ = cold('a|', { a: q })
+      const source$ = cold('a----|', { a: q })
       const result$ = source$.pipe(querySnapshot(undefined, options))
 
       const disabled: QuerySnapshotState = {
@@ -167,9 +167,9 @@ describe('querySnapshot operator', () => {
       const onError = vi.fn()
       const onComplete = vi.fn()
 
-      vi.mocked(fromQuery).mockReturnValue(cold('a|', { a: snapshot }))
+      vi.mocked(fromQuery).mockReturnValue(cold('s|', { s: snapshot }))
 
-      const source$ = cold('a|', { a: q })
+      const source$ = cold('a---|', { a: q })
       const result$ = source$.pipe(querySnapshot({ onSnapshot, onError, onComplete }))
 
       const disabled: QuerySnapshotState = {

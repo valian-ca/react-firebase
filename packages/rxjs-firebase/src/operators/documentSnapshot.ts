@@ -1,5 +1,5 @@
 import { type DocumentData, type DocumentReference, type SnapshotListenOptions } from '@firebase/firestore'
-import { of, type OperatorFunction, startWith, switchMap } from 'rxjs'
+import { defer, of, type OperatorFunction, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs'
 
 import { fromDocumentRef } from '../source'
 import { type DocumentSnapshotState } from '../states/DocumentSnapshotState'
@@ -15,18 +15,28 @@ export const documentSnapshot =
     DocumentSnapshotState<AppModelType, DbModelType>
   > =>
   (source$) =>
-    source$.pipe(
-      switchMap((ref) => {
-        if (!ref) {
-          return of({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
-            AppModelType,
-            DbModelType
-          >)
-        }
-        return fromDocumentRef(ref, options).pipe(documentSnapshotState(listener))
-      }),
-      startWith({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
-        AppModelType,
-        DbModelType
-      >),
-    )
+    defer(() => {
+      const closeSnapshot = new Subject<void>()
+      return source$.pipe(
+        tap({
+          complete: () => {
+            closeSnapshot.next()
+            closeSnapshot.complete()
+          },
+        }),
+        switchMap((ref) => {
+          if (!ref) {
+            return of({
+              isLoading: false,
+              hasError: false,
+              disabled: true,
+            } as const satisfies DocumentSnapshotState<AppModelType, DbModelType>)
+          }
+          return fromDocumentRef(ref, options).pipe(documentSnapshotState(listener), takeUntil(closeSnapshot))
+        }),
+        startWith({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
+          AppModelType,
+          DbModelType
+        >),
+      )
+    })

@@ -102,64 +102,11 @@ describe('DocumentSnapshotSubject', () => {
     })
   })
 
-  describe('exists method', () => {
-    it('should return true for existing document', async () => {
-      const subject = new DocumentSnapshotSubject(snapshot$)
-
-      snapshot$.next(mockDocumentSnapshot)
-
-      const exists = await subject.exsits()
-      expect(exists).toBe(true)
-    })
-
-    it('should return false for non-existing document', async () => {
-      const subject = new DocumentSnapshotSubject(snapshot$)
-      snapshot$.next(nonExistingSnapshot)
-
-      const exists = await subject.exsits()
-      expect(exists).toBe(false)
-    })
-
-    it('should wait for loading to complete', async () => {
-      const subject = new DocumentSnapshotSubject(snapshot$)
-
-      // Start the exists check before the snapshot is emitted
-      const existsPromise = subject.exsits()
-
-      // Emit the snapshot immediately
-      snapshot$.next(mockDocumentSnapshot)
-
-      const exists = await existsPromise
-      expect(exists).toBe(true)
-    })
-
-    it('should timeout after specified time', async () => {
-      const subject = new DocumentSnapshotSubject(snapshot$)
-
-      // Use a very short timeout
-      const existsPromise = subject.exsits(1)
-
-      await expect(existsPromise).rejects.toThrow()
-    })
-
-    it('should handle transitions between existing and non-existing', async () => {
-      const subject = new DocumentSnapshotSubject(snapshot$)
-
-      snapshot$.next(nonExistingSnapshot)
-      let exists = await subject.exsits()
-      expect(exists).toBe(false)
-
-      snapshot$.next(mockDocumentSnapshot)
-      exists = await subject.exsits()
-      expect(exists).toBe(true)
-    })
-  })
-
-  describe('close method', () => {
+  describe('complete method', () => {
     it('should complete the notification subject', () => {
       const subject = new DocumentSnapshotSubject(snapshot$)
 
-      subject.close()
+      subject.complete()
 
       // Verify that the subject is closed by checking if it's completed
       expect(subject.closed).toBe(false) // BehaviorSubject doesn't close when notification$ completes
@@ -170,7 +117,7 @@ describe('DocumentSnapshotSubject', () => {
 
       const initialValue = subject.value
 
-      subject.close()
+      subject.complete()
       snapshot$.next(mockDocumentSnapshot)
 
       // The value should remain the same since the subscription is terminated
@@ -293,32 +240,6 @@ describe('DocumentSnapshotSubject', () => {
 
       // Should not receive updates after unsubscribing
       expect(subscriber).toHaveBeenCalledTimes(2)
-    })
-  })
-
-  describe('edge cases', () => {
-    it('should handle rapid state changes', async () => {
-      const subject = new DocumentSnapshotSubject(snapshot$)
-
-      // Rapidly emit different states
-      snapshot$.next(mockDocumentSnapshot)
-      snapshot$.next(nonExistingSnapshot)
-      snapshot$.next(mockDocumentSnapshot)
-
-      const exists = await subject.exsits()
-      expect(exists).toBe(true)
-    })
-
-    it('should handle exists method called multiple times', async () => {
-      const subject = new DocumentSnapshotSubject(snapshot$)
-
-      snapshot$.next(mockDocumentSnapshot)
-
-      const exists1 = await subject.exsits()
-      const exists2 = await subject.exsits()
-
-      expect(exists1).toBe(true)
-      expect(exists2).toBe(true)
     })
   })
 })
