@@ -34,7 +34,7 @@ export interface DocumentSnapshotQueryOptions<
       | 'retry'
     >,
     QueryFnFromDocumentSnapshotSubjectFactoryOptions {
-  ref: DocumentReference<AppModelType, DbModelType>
+  ref?: DocumentReference<AppModelType, DbModelType> | null
   snapshotOptions?: SnapshotListenOptions
   listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>
 }
@@ -65,10 +65,18 @@ export const documentSnapshotQueryOptions = <
   }: DocumentSnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>,
 ): DocumentSnapshotQueryOptionsResult<AppModelType, DbModelType, TError, TData, TQueryKey> =>
   queryOptions({
-    queryFn: queryFnFromDocumentSnapshotSubjectFactory(
-      snapshotManager.documentSnapshotSubjectFactory(ref, snapshotOptions, listener),
-      props,
-    ),
+    queryFn: ref
+      ? queryFnFromDocumentSnapshotSubjectFactory(
+          snapshotManager.documentSnapshotSubjectFactory(ref, snapshotOptions, listener),
+          props,
+        )
+      : () =>
+          Promise.resolve({
+            isLoading: false,
+            hasError: false,
+            disabled: true,
+          } as const),
+    enabled: !!ref,
     staleTime: () => (snapshotManager.isSnapshotAlive(props.queryKey) ? Infinity : 0),
     retry: false,
     gcTime: 10_000,

@@ -36,7 +36,7 @@ export interface SchemaDocumentSnapshotQueryOptions<
     >,
     QueryFnFromDocumentSnapshotSubjectFactoryOptions {
   factory: SchemaFirestoreFactory<TCollectionSchema>
-  id: string
+  id?: string | null
   snapshotOptions?: TOptions & SnapshotListenOptions
 }
 
@@ -70,7 +70,7 @@ export const schemaDocumentSnapshotQueryOptions = <
   }: SchemaDocumentSnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>,
 ): SchemaDocumentSnapshotQueryOptionsResult<TCollectionSchema, TOptions, TError, TData, TQueryKey> =>
   documentSnapshotQueryOptions(snapshotManager, {
-    ref: factory.read.doc(id, snapshotOptions),
+    ref: id ? factory.read.doc(id, snapshotOptions) : null,
     snapshotOptions,
     ...props,
   })
