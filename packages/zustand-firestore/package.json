@@ -67,7 +67,7 @@
     "node": ">= 22"
   },
   "scripts": {
-    "build": "rm -rf ./lib && rollup -c",
+    "build": "tsdown",
     "prepack": "pnpm run build",
     "eslint": "eslint .",
     "test": "vitest run --coverage",
