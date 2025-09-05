@@ -10,3 +10,4 @@ eslint.config.mjs
 .gitignore
 firebase.json
 GEMINI.md
+tsdown.config.json
