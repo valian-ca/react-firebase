@@ -37,15 +37,18 @@
     "access": "public",
     "exports": {
       ".": {
+        "types": {
+          "import": "./lib/index.d.mts",
+          "require": "./lib/index.d.cts"
+        },
         "import": "./lib/index.mjs",
-        "types": "./lib/index.d.mts",
         "require": "./lib/index.cjs",
         "default": "./lib/index.mjs"
       }
     },
     "main": "./lib/index.cjs",
     "module": "./lib/index.mjs",
-    "types": "./lib/index.d.ts"
+    "types": "./lib/index.d.mts"
   },
   "exports": "./src/index.ts",
   "main": "./src/index.ts",
@@ -58,6 +61,7 @@
     "build": "tsdown",
     "prepack": "pnpm run build",
     "eslint": "eslint .",
+    "lint:publint": "pnpm build && publint",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
     "type-check": "tsc"
