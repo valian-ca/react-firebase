@@ -78,4 +78,55 @@ describe('useAuth and firebaseAuthSubscription', () => {
 
     sub.unsubscribe()
   })
+
+  it('calls onAuthStateChanged callback when user is null', () => {
+    const onAuthStateChanged = vi.fn()
+    vi.mocked(authState).mockReturnValue(of(null) as Observable<User | null>)
+
+    const sub = firebaseAuthSubscription(app, onAuthStateChanged)
+
+    expect(onAuthStateChanged).toHaveBeenCalledWith({ initialized: true, user: null })
+
+    sub.unsubscribe()
+  })
+
+  it('calls onAuthStateChanged callback when user is authenticated', () => {
+    const onAuthStateChanged = vi.fn()
+    const fakeUser = {
+      uid: 'uid-123',
+      email: 'user@example.com',
+      displayName: 'User Name',
+    } as unknown as User
+
+    vi.mocked(authState).mockReturnValue(of(fakeUser) as Observable<User | null>)
+
+    const sub = firebaseAuthSubscription(app, onAuthStateChanged)
+
+    expect(onAuthStateChanged).toHaveBeenCalledWith({ initialized: true, user: fakeUser })
+
+    sub.unsubscribe()
+  })
+
+  it('calls onAuthStateChanged callback when error occurs', () => {
+    const onAuthStateChanged = vi.fn()
+    const err = new Error('boom')
+    vi.mocked(authState).mockReturnValue(throwError(() => err) as Observable<User | null>)
+
+    const sub = firebaseAuthSubscription(app, onAuthStateChanged)
+
+    expect(onAuthStateChanged).toHaveBeenCalledWith({ initialized: false, user: null })
+
+    sub.unsubscribe()
+  })
+
+  it('works without onAuthStateChanged callback (undefined)', () => {
+    vi.mocked(authState).mockReturnValue(of(null) as Observable<User | null>)
+
+    const sub = firebaseAuthSubscription(app)
+
+    expect(useAuth.getState()).toEqual({ initialized: true, user: null })
+    expect(setSentryUser).toHaveBeenCalledWith(null)
+
+    sub.unsubscribe()
+  })
 })
