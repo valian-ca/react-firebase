@@ -1,4 +1,5 @@
-import { type DocumentData, GeoPoint, type QueryDocumentSnapshot, Timestamp } from 'firebase/firestore'
+import { type DocumentData, type QueryDocumentSnapshot } from '@firebase/firestore'
+import { GeoPoint, Timestamp } from 'firebase/firestore'
 
 const handleFirestoreDataTypes = <T>(value: T): T => {
   switch (true) {
