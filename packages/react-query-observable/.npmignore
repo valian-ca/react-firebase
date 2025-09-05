@@ -1,0 +1,13 @@
+/coverage/
+/src/
+!/lib/
+/tsconfig.json
+/tsconfig.*.json
+tsconfig.tsbuildinfo
+vitest.*
+rollup.config.js
+eslint.config.mjs
+.gitignore
+firebase.json
+GEMINI.md
+tsdown.config.json

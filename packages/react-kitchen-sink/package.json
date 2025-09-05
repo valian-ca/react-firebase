@@ -21,8 +21,9 @@
     "react",
     "firestore",
     "firebase",
-    "sentry",
-    "rxjs"
+    "react-query",
+    "rxjs",
+    "sentry"
   ],
   "license": "MIT",
   "publishConfig": {
