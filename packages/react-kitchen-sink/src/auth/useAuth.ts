@@ -22,7 +22,10 @@ export const useAuth = create<FirebaseAuthContextValue>(() => ({
   user: null,
 }))
 
-export const firebaseAuthSubscription = (app: ReturnType<typeof initializeApp>) =>
+export const firebaseAuthSubscription = (
+  app: ReturnType<typeof initializeApp>,
+  onAuthStateChanged?: (state: FirebaseAuthContextValue) => void,
+) =>
   authState(getAuth(app))
     .pipe(
       map((user) => ({ initialized: true, user }) as FirebaseAuthContextValue),
@@ -42,4 +45,5 @@ export const firebaseAuthSubscription = (app: ReturnType<typeof initializeApp>) 
             }
           : null,
       )
+      onAuthStateChanged?.(state)
     })
