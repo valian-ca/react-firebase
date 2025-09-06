@@ -1,0 +1,201 @@
+---
+description: Rules to write tests for this project.
+alwaysApply: false
+---
+When generating test files for this project, you MUST adhere to the following patterns for mocking dependencies with `vitest-mock-extended`. This library is required for its type-safety, deep mocking, and utility functions.
+
+---
+
+## 1. Core Imports and Setup
+Always import `mock`, `mockDeep`, `mockReset`, and `stub` as needed from `vitest-mock-extended`.
+Use a `beforeEach` hook to reset all mocks before each test runs. This is non-negotiable for ensuring test isolation.
+
+Declare mocks at the top level of your `describe` block so they are accessible to all tests within the suite.
+
+```typescript
+// CORRECT ✅
+import { mock, mockReset } from 'vitest-mock-extended';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { SomeService } from './SomeService';
+import { SomeDependency } from './SomeDependency';
+
+// Declare mocks here
+const mockDependency = mock<SomeDependency>();
+
+describe('SomeService', () => {
+  let service: SomeService;
+
+  beforeEach(() => {
+    // Reset mocks before each test
+    mockReset(mockDependency);
+
+    // Re-initialize the service with fresh mocks
+    service = new SomeService(mockDependency);
+  });
+
+  // ... your 'it' blocks go here
+});
+```
+
+---
+
+## 2. Mocking Method Return Values
+Use the standard Vitest/Jest `mockReturnValue` and `mockResolvedValue` functions to stub method implementations. Thanks to `vitest-mock-extended`, these are fully type-safe.
+
+- For synchronous methods: `.mockReturnValue(...)`
+- For async methods/Promises: `.mockResolvedValue(...)`
+- For methods that should throw an error: `.mockRejectedValue(...)`
+
+---
+
+## 3. Deep Mocks with `mockDeep`
+When you need to mock a dependency that has nested objects and methods (e.g., a database client like Prisma), you MUST use `mockDeep`. This allows you to mock chained calls in a type-safe way.
+
+```typescript
+// CORRECT ✅
+import { mockDeep, mockReset } from 'vitest-mock-extended';
+import { PrismaClient } from '@prisma/client';
+
+const mockPrisma = mockDeep<PrismaClient>();
+// Notice the deep, chained mocking is possible and type-safe
+mockPrisma.user.findUnique.mockResolvedValue({ id: 1, email: 'test@example.com', name: 'Test User' });
+```
+
+---
+
+## 4. Creating Partial Mocks and Stubs with `stub`
+When you don't need a full mock of a class/interface, but rather a simple test object with some mockable functions, use `stub()`. This is ideal for creating test data fixtures or configuration objects where only specific methods need to be mocked.
+
+```typescript
+// CORRECT ✅
+import { stub } from 'vitest-mock-extended';
+
+interface AppConfig {
+  getApiUrl: () => string;
+  timeout: number;
+}
+
+const configStub = stub<AppConfig>({ timeout: 5000 });
+configStub.getApiUrl.mockReturnValue('[https://api.test.com](https://api.test.com)');
+```
+
+---
+
+## 5. Using Argument Matchers for Flexible Assertions
+For assertions where the exact value of an argument is unknown or irrelevant, you MUST use the provided argument matchers. **Import them from `vitest-mock-extended/matchers`**.
+
+Here is the complete list of available matchers and their primary use cases:
+
+### `any()`
+- **What it does**: Matches any value, as long as it's not `null` or `undefined`.
+- **When to use it**: Use sparingly when you simply need to confirm that *some* argument was passed, and you don't care about its type or value.
+- `mockService.doSomething('action', any());`
+
+### `anyString()`
+- **What it does**: Matches any string value.
+- **When to use it**: Perfect for unpredictable strings like generated IDs, session tokens, or dynamic log messages.
+- `mockDb.createUser({ id: anyString(), name: 'John Doe' });`
+
+### `anyNumber()`
+- **What it does**: Matches any number value.
+- **When to use it**: Use for unpredictable numbers like timestamps (`Date.now()`), performance measurements, or calculated scores.
+- `mockLogger.info('Task finished', { durationMs: anyNumber() });`
+
+### `anyBoolean()`
+- **What it does**: Matches either `true` or `false`.
+- **When to use it**: Helpful when a boolean flag is determined by logic outside your current test's scope.
+- `mockFeatureService.isAllowed('new-feature', anyBoolean());`
+
+### `anyObject()`
+- **What it does**: Matches any object (but not `null`).
+- **When to use it**: Use when you need to verify that an object was passed, but you don't need to check its properties.
+- `mockAnalytics.trackEvent('user_signup', anyObject());`
+
+### `anyArray()`
+- **What it does**: Matches any array.
+- **When to use it**: When your function is expected to receive an array, but its contents are not relevant to the test.
+- `mockProcessor.run(anyArray());`
+
+### `anyOf(values)`
+- **What it does**: Matches if the argument is strictly equal (`===`) to any one of the values in the provided array.
+- **When to use it**: Excellent for checking against an `enum` or a set of allowed states (e.g., `'PROCESSING'`, `'SHIPPED'`).
+- `mockOrder.updateStatus(anyOf(['PROCESSING', 'SHIPPED']));`
+
+### `not(value)`
+- **What it does**: An inverse matcher. It succeeds if the argument is *not* strictly equal (`===`) to the provided value.
+- **When to use it**: Use when it's easier to assert what a value *shouldn't* be, like ensuring a default value was not used.
+- `mockTranslator.setLocale(not('en-US'));`
+
+---
+
+## 6. ❗ Critical Type Safety Mandate: NO `any`
+You MUST avoid using the TypeScript `any` type at all costs. It completely undermines the type-safety benefits of both TypeScript and `vitest-mock-extended`.
+
+If you encounter a dependency with an unknown or missing type definition, DO NOT default to `mock<any>()`. **Instead, you must define a minimal `interface` for it inside the test file.** This interface should only include the properties and method signatures that are relevant to the test you are writing.
+
+#### Example: How to Handle an Untyped Dependency
+
+**WRONG ❌: Using `any` is forbidden.**
+```typescript
+const mockLegacyApi = mock<any>(); // This is lazy and unsafe. DO NOT DO THIS.
+```
+
+**CORRECT ✅: Define a minimal, local interface.**
+```typescript
+// The dependency 'legacy-api' has no types.
+// So, we define the parts we're using right here in our test.
+interface LegacyApi {
+  fetchUserData: (id: string) => Promise<{ name: string }>;
+}
+
+// Now our mock is fully type-safe for the methods we care about.
+const mockLegacyApi = mock<LegacyApi>();
+```
+
+## 7. Using Mocked Type Helpers for Type Safety (`mocked`, `DeepMocked`)
+Sometimes, especially when passing mocks into helper functions, TypeScript's inference can lose track of the mock-specific methods like `.mockResolvedValue()`. To fix this and restore type-safety and autocompletion, use the `mocked` function and `DeepMocked<T>` type.
+
+### `DeepMocked<T>`
+Use the `DeepMocked<T>` generic type to correctly type variables or function parameters that are expected to be a deep mock. This is the preferred way to type mock instances that are passed between functions.
+
+```typescript
+// CORRECT ✅
+import { mockDeep, DeepMocked } from 'vitest-mock-extended';
+import { PrismaClient } from '@prisma/client';
+
+// Use DeepMocked<T> to correctly type the function parameter
+const setupUserMock = (prismaMock: DeepMocked<PrismaClient>, user: User) => {
+  // Now, TypeScript knows prismaMock.user.findUnique has mock methods
+  prismaMock.user.findUnique.mockResolvedValue(user);
+};
+
+it('should set up the mock correctly', () => {
+  const mockPrisma = mockDeep<PrismaClient>();
+  const fakeUser = { id: 1, name: 'Alice', email: 'a@b.com' };
+
+  setupUserMock(mockPrisma, fakeUser);
+
+  // ... assertions
+});
+```
+
+### `mocked(value, deep?)`
+Use the `mocked()` helper function to wrap a mock object and cast it to its fully typed mock version. This is most useful when you are using other mocking strategies (like `vi.mock`) and need to restore the mock types.
+
+While our rules prefer `mock()` over `vi.mock()`, if you must interact with an auto-mocked module, `mocked()` is the correct tool to use.
+
+```typescript
+// CORRECT ✅
+import { mocked } from 'vitest-mock-extended';
+import { someApi } from './someApi';
+
+// This module is being mocked by Vitest's configuration or a vi.mock call
+vi.mock('./someApi');
+
+it('should use the mocked API', () => {
+  // Without mocked(), TypeScript wouldn't know about .mockResolvedValue
+  mocked(someApi.fetchData).mockResolvedValue({ success: true });
+
+  // ... test logic
+});
+```

@@ -1,7 +1,5 @@
 ---
-description: Rules to manage package.json files.
-globs: package.json,**/package.json
-alwaysApply: false
+alwaysApply: true
 ---
 # Package Management with pnpm in a Monorepo
 
