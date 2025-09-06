@@ -40,4 +40,10 @@ export default [
       'vitest/expect-expect': ['error', { assertFunctionNames: ['expect', 'expectObservable'] }],
     },
   },
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      'unicorn/filename-case': ['error', { cases: { kebabCase: true } }],
+    },
+  },
 ]

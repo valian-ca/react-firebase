@@ -1,13 +1,6 @@
-import {
-  type DefaultError,
-  hashKey,
-  type QueryKey,
-  queryOptions,
-  type UnusedSkipTokenOptions,
-} from '@tanstack/react-query'
+import { type DefaultError, type QueryKey, queryOptions, type UnusedSkipTokenOptions } from '@tanstack/react-query'
 
 import { queryFnFromObservableFn } from './queryFn/observableQueryFn'
-import { queriesSubscriptions } from './queryFn/queriesWithObservable'
 import { type ObservableQueryFunction } from './types'
 
 export interface ObservableQueryOptions<
@@ -41,7 +34,7 @@ export const observableQueryOptions = <
   queryOptions({
     queryFn: queryFnFromObservableFn(options.observableFn),
     retry: false,
-    staleTime: () => (queriesSubscriptions.has(hashKey(options.queryKey)) ? Infinity : 0),
+    staleTime: ({ state }) => (state.dataUpdateCount > 0 ? Infinity : 0),
     gcTime: 10_000,
     ...options,
   })
