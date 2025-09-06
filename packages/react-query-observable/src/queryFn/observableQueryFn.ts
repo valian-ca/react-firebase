@@ -30,7 +30,23 @@ export const queryFnFromObservableFn =
             // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             reject(error)
           } else {
-            throw error
+            // After the first value has been resolved, propagate the error into the query state
+            const query = context.client.getQueryCache().find({ queryKey: context.queryKey })
+            if (!query) {
+              throw new Error('Query not found', { cause: error })
+            } else {
+              query.setState({
+                ...query.state,
+                data: undefined,
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                error,
+                errorUpdateCount: query.state.errorUpdateCount + 1,
+                errorUpdatedAt: Date.now(),
+                fetchStatus: 'idle',
+                isInvalidated: false,
+                status: 'error',
+              })
+            }
           }
         },
         complete: () => {
