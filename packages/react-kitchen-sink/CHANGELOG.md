@@ -1,3 +1,13 @@
+## 1.1.1 (2025-09-08)
+
+### 🚀 Features
+
+- add callback to firebaseAuthSubscription ([#47](https://github.com/valian-ca/react-firebase/pull/47))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.1.0 (2025-09-03)
 
 ### 🚀 Features
