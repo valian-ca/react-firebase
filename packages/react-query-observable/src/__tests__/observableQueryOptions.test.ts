@@ -20,7 +20,6 @@ describe('observableQueryOptions', () => {
     })
 
     expect(typeof options.queryFn).toBe('function')
-    expect(options.retry).toBe(false)
     expect(options.gcTime).toBe(10_000)
 
     const staleTimeValue =

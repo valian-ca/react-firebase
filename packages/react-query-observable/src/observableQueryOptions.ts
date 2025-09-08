@@ -1,4 +1,5 @@
 import { type DefaultError, type QueryKey, queryOptions, type UnusedSkipTokenOptions } from '@tanstack/react-query'
+import { type Observable } from 'rxjs'
 
 import { queryFnFromObservableFn } from './queryFn/observableQueryFn'
 import { type ObservableQueryFunction } from './types'
@@ -7,6 +8,7 @@ export interface ObservableQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
+  TObservable extends Observable<TQueryFnData> = Observable<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
     UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -17,24 +19,22 @@ export interface ObservableQueryOptions<
     | 'refetchOnWindowFocus'
     | 'refetchOnMount'
     | 'refetchOnReconnect'
-    | 'retryOnMount'
-    | 'retry'
   > {
-  observableFn: ObservableQueryFunction<TQueryFnData, TQueryKey>
+  observableFn: ObservableQueryFunction<TQueryFnData, TObservable, TQueryKey>
 }
 
 export const observableQueryOptions = <
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
+  TObservable extends Observable<TQueryFnData> = Observable<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: ObservableQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: ObservableQueryOptions<TQueryFnData, TError, TData, TObservable, TQueryKey>,
 ) =>
   queryOptions({
     queryFn: queryFnFromObservableFn(options.observableFn),
-    retry: false,
-    staleTime: ({ state }) => (state.dataUpdateCount > 0 ? Infinity : 0),
+    staleTime: ({ state }) => (state.dataUpdateCount === 0 || state.status === 'error' ? 0 : Infinity),
     gcTime: 10_000,
     ...options,
   })

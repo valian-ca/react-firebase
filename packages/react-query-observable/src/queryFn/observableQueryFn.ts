@@ -1,21 +1,32 @@
-import { hashKey, type QueryCacheNotifyEvent, type QueryFunction, type QueryKey } from '@tanstack/react-query'
+import {
+  hashKey,
+  type QueryCacheNotifyEvent,
+  type QueryFunction,
+  type QueryFunctionContext,
+  type QueryKey,
+} from '@tanstack/react-query'
+import { type Observable } from 'rxjs'
 
 import { type ObservableQueryFunction } from '../types'
 
 import { queriesSubscriptions } from './queriesWithObservable'
 
 export const queryFnFromObservableFn =
-  <T = unknown, TQueryKey extends QueryKey = QueryKey>(
-    observableFn: ObservableQueryFunction<T, TQueryKey>,
+  <T = unknown, TObservable extends Observable<T> = Observable<T>, TQueryKey extends QueryKey = QueryKey>(
+    observableFn: ObservableQueryFunction<T, TObservable, TQueryKey>,
+    onUnsubscribe?: (observable$: TObservable) => void,
   ): QueryFunction<T, TQueryKey> =>
   async (context) => {
     const queryKeyHash = hashKey(context.queryKey)
     queriesSubscriptions.get(queryKeyHash)?.unsubscribe()
-
-    const observable$ = observableFn(context)
     return new Promise<T>((resolve, reject) => {
+      if (context.signal.aborted) {
+        reject(new Error('Query aborted'))
+        return
+      }
       let firstValueReturned = false
-      const subcription = observable$.subscribe({
+      const observable$ = observableFn(context)
+      const subscription = observable$.subscribe({
         next: (data) => {
           if (!firstValueReturned) {
             firstValueReturned = true
@@ -50,9 +61,7 @@ export const queryFnFromObservableFn =
           }
         },
         complete: () => {
-          if (!firstValueReturned) {
-            reject(new Error('Observable completed without returning a value'))
-          }
+          if (!firstValueReturned) reject(new Error('Observable completed without returning a value'))
         },
       })
       const unsubscribeFromQueryCache = context.client.getQueryCache().subscribe((event: QueryCacheNotifyEvent) => {
@@ -62,9 +71,15 @@ export const queryFnFromObservableFn =
       })
       const unsubscribe = () => {
         unsubscribeFromQueryCache()
-        subcription.unsubscribe()
+        subscription.unsubscribe()
         queriesSubscriptions.delete(queryKeyHash)
+        onUnsubscribe?.(observable$)
       }
+      const abortListener = () => {
+        unsubscribe()
+        if (!firstValueReturned) reject(new Error('Query aborted'))
+      }
+      context.signal.addEventListener('abort', abortListener, { once: true })
       queriesSubscriptions.set(queryKeyHash, { unsubscribe })
     })
   }
