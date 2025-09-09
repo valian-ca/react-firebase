@@ -1,6 +1,6 @@
 ---
 description: Rules to use TypeScript in the project.
-globs: src/**/*.ts,src/**/*.tsx
+globs: **/*.ts
 alwaysApply: false
 ---
 - Utilize TypeScript's features to ensure type safety.
