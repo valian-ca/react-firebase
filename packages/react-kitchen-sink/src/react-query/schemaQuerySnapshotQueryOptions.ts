@@ -2,7 +2,7 @@ import { type SnapshotListenOptions } from '@firebase/firestore'
 import { type DefaultError, type QueryKey } from '@tanstack/react-query'
 import { type ObservableQueryOptions, observableQueryOptions } from '@valian/react-query-observable'
 import { fromQuery, querySnapshotState } from '@valian/rxjs-firebase'
-import { EMPTY } from 'rxjs'
+import { of } from 'rxjs'
 import {
   type CollectionSchema,
   type MetaOutputOptions,
@@ -48,7 +48,14 @@ export const schemaQuerySnapshotQueryOptions = <
   observableQueryOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>({
     observableFn: () =>
       !query
-        ? EMPTY
+        ? of({
+            empty: true,
+            size: 0,
+            isLoading: false,
+            hasError: false,
+            disabled: true,
+            data: [],
+          } as const satisfies SchemaQuerySnapshotState<TCollectionSchema, TOptions>)
         : fromQuery(factory.prepare(query, snapshotOptions), snapshotOptions).pipe(
             querySnapshotState(sentrySchemaQuerySnapshotListener(factory.collectionName, query, listener)),
           ),

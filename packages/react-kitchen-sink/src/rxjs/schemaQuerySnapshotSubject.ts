@@ -1,5 +1,5 @@
 import { type SnapshotListenOptions } from '@firebase/firestore'
-import { fromQuery, QuerySnapshotSubject } from '@valian/rxjs-firebase'
+import { QuerySnapshotSubject } from '@valian/rxjs-firebase'
 import {
   type CollectionSchema,
   type MetaOutputOptions,
@@ -19,8 +19,9 @@ export const schemaQuerySnapshotSubject = <
   query: SchemaQuerySpecification<TCollectionSchema, TOptions>,
   options?: TOptions & SnapshotListenOptions,
   listener?: SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
-): SchemaQuerySnapshotSubject<TCollectionSchema, TOptions> => {
-  const schemaQuery = factory.prepare(query, options)
-  const snapshot$ = fromQuery(schemaQuery, options)
-  return new QuerySnapshotSubject(snapshot$, sentrySchemaQuerySnapshotListener(factory.collectionName, query, listener))
-}
+): SchemaQuerySnapshotSubject<TCollectionSchema, TOptions> =>
+  QuerySnapshotSubject.fromQuery(
+    factory.prepare(query, options),
+    options,
+    sentrySchemaQuerySnapshotListener(factory.collectionName, query, listener),
+  )

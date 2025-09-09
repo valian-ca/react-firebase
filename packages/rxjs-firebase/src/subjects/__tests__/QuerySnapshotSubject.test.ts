@@ -1,9 +1,12 @@
-import { type QueryDocumentSnapshot, type QuerySnapshot } from '@firebase/firestore'
+import { type Query, type QueryDocumentSnapshot, type QuerySnapshot } from '@firebase/firestore'
 import { Subject } from 'rxjs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mock } from 'vitest-mock-extended'
 
+import { fromQuery } from '../../source/fromQuery'
 import { QuerySnapshotSubject } from '../QuerySnapshotSubject'
+
+vi.mock('../../source/fromQuery')
 
 interface TestData {
   id: string
@@ -288,6 +291,46 @@ describe('QuerySnapshotSubject', () => {
 
       // Should not receive updates after unsubscribing
       expect(subscriber).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  describe('factory methods', () => {
+    it('fromQuery should create subject wired to fromQuery observable', () => {
+      const q = mock<Query>()
+      const snapshot = new Subject<QuerySnapshot>()
+      const options = { includeMetadataChanges: true } as const
+
+      vi.mocked(fromQuery).mockReturnValue(snapshot)
+
+      const subject = QuerySnapshotSubject.fromQuery(q, options)
+
+      expect(vi.mocked(fromQuery)).toHaveBeenCalledWith(q, options)
+
+      // initial state
+      expect(subject.value).toEqual({
+        empty: true,
+        size: 0,
+        isLoading: true,
+        hasError: false,
+        disabled: false,
+        data: [],
+      })
+
+      // drive a snapshot through mocked observable
+      snapshot.next(mockQuerySnapshot)
+
+      expect(subject.value).toEqual({
+        snapshot: mockQuerySnapshot,
+        size: 2,
+        empty: false,
+        isLoading: false,
+        hasError: false,
+        disabled: false,
+        data: [
+          { id: '1', name: 'Test 1' },
+          { id: '2', name: 'Test 2' },
+        ],
+      })
     })
   })
 })

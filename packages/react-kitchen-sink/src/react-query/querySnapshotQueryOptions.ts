@@ -7,7 +7,7 @@ import {
   querySnapshotState,
   type QuerySnapshotStateListener,
 } from '@valian/rxjs-firebase'
-import { EMPTY } from 'rxjs'
+import { of } from 'rxjs'
 
 export interface QueryFnFromQuerySnapshotSubjectFactoryOptions {
   waitForData?: boolean
@@ -43,7 +43,17 @@ export const querySnapshotQueryOptions = <
   ...props
 }: QuerySnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>) =>
   observableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>({
-    observableFn: () => (!query ? EMPTY : fromQuery(query, snapshotOptions).pipe(querySnapshotState(listener))),
+    observableFn: () =>
+      !query
+        ? of({
+            empty: true,
+            size: 0,
+            isLoading: false,
+            hasError: false,
+            disabled: true,
+            data: [],
+          } as const satisfies QuerySnapshotState<AppModelType, DbModelType>)
+        : fromQuery(query, snapshotOptions).pipe(querySnapshotState(listener)),
     enabled: !!query,
     gcTime: 10_000,
     ...props,

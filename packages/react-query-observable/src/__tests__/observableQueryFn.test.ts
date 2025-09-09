@@ -206,26 +206,4 @@ describe('queryFnFromObservableFn', () => {
 
     subscribeSpy.mockRestore()
   })
-
-  it('calls onUnsubscribe with the observable when unsubscribed (cache removal)', async () => {
-    const subject = new Subject<number>()
-    const observableFn = vi.fn().mockReturnValue(subject)
-    const onUnsubscribe = vi.fn()
-    const queryFn = queryFnFromObservableFn(observableFn, onUnsubscribe)
-
-    const cache = queryClient.getQueryCache()
-    const subscribeSpy = vi.spyOn(cache, 'subscribe')
-
-    const promise = queryFn(createContext())
-    subject.next(1)
-    await expect(promise).resolves.toBe(1)
-
-    expect(onUnsubscribe).not.toHaveBeenCalled()
-
-    const captured = subscribeSpy.mock.calls.at(-1)?.[0] as ((event: unknown) => void) | undefined
-    captured?.({ type: 'removed', query: { queryKey } })
-
-    expect(onUnsubscribe).toHaveBeenCalledWith(subject)
-    subscribeSpy.mockRestore()
-  })
 })

@@ -20,7 +20,7 @@ describe('documentSnapshot operator', () => {
     vi.clearAllMocks()
   })
 
-  it('emits disabled start, then loading and data states when ref is provided', () => {
+  it('emits loading and data states when ref is provided', () => {
     testScheduler.run(({ cold, flush }) => {
       const ref = mock<DocumentReference>()
       const snapshot = mock<DocumentSnapshot>()
@@ -33,7 +33,6 @@ describe('documentSnapshot operator', () => {
       const source$ = cold('a----|', { a: ref })
       const result$ = source$.pipe(documentSnapshot())
 
-      const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
       const loading: DocumentSnapshotState = { isLoading: true, hasError: false, disabled: false }
       const withData: DocumentSnapshotState = {
         snapshot,
@@ -49,9 +48,8 @@ describe('documentSnapshot operator', () => {
 
       flush()
 
-      expect(mockObserver.next).toHaveBeenNthCalledWith(1, disabled)
-      expect(mockObserver.next).toHaveBeenNthCalledWith(2, loading)
-      expect(mockObserver.next).toHaveBeenNthCalledWith(3, withData)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(1, loading)
+      expect(mockObserver.next).toHaveBeenNthCalledWith(2, withData)
       expect(mockObserver.complete).toHaveBeenCalledAfter(mockObserver.next)
     })
   })
@@ -70,7 +68,6 @@ describe('documentSnapshot operator', () => {
 
       expect(mockObserver.next).toHaveBeenNthCalledWith(1, disabled)
       expect(mockObserver.next).toHaveBeenNthCalledWith(2, disabled)
-      expect(mockObserver.next).toHaveBeenNthCalledWith(3, disabled)
       expect(mockObserver.complete).toHaveBeenCalledAfter(mockObserver.next)
     })
   })
@@ -88,7 +85,6 @@ describe('documentSnapshot operator', () => {
       const source$ = cold('a----|', { a: ref })
       const result$ = source$.pipe(documentSnapshot(undefined, options))
 
-      const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
       const loading: DocumentSnapshotState = { isLoading: true, hasError: false, disabled: false }
       const notExists: DocumentSnapshotState = {
         snapshot,
@@ -108,7 +104,7 @@ describe('documentSnapshot operator', () => {
       })
 
       flush()
-      expect(events).toEqual([disabled, loading, notExists])
+      expect(events).toEqual([loading, notExists])
       expect(completed).toBe(true)
       expect(spy).toHaveBeenCalledWith(ref, options)
     })
@@ -131,7 +127,6 @@ describe('documentSnapshot operator', () => {
       const source$ = cold('a---|', { a: ref })
       const result$ = source$.pipe(documentSnapshot({ onSnapshot, onError, onComplete }))
 
-      const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
       const loading: DocumentSnapshotState = { isLoading: true, hasError: false, disabled: false }
 
       const events: DocumentSnapshotState[] = []
@@ -145,9 +140,8 @@ describe('documentSnapshot operator', () => {
 
       flush()
 
-      expect(events[0]).toEqual(disabled)
-      expect(events[1]).toEqual(loading)
-      expect(events[2]).toEqual(
+      expect(events[0]).toEqual(loading)
+      expect(events[1]).toEqual(
         expect.objectContaining({ exists: true, isLoading: false, hasError: false, data: testData }),
       )
       expect(completed).toBe(true)
@@ -172,7 +166,6 @@ describe('documentSnapshot operator', () => {
       const source$ = cold('a---|', { a: ref })
       const result$ = source$.pipe(documentSnapshot({ onError }))
 
-      const disabled: DocumentSnapshotState = { isLoading: false, hasError: false, disabled: true }
       const errorState: DocumentSnapshotState = { isLoading: false, hasError: true, disabled: false }
 
       const events: DocumentSnapshotState[] = []
@@ -186,10 +179,9 @@ describe('documentSnapshot operator', () => {
 
       flush()
 
-      expect(events[0]).toEqual(disabled)
-      expect(events[1]).toEqual({ isLoading: true, hasError: false, disabled: false })
-      expect(events[2]).toEqual(errorState)
-      expect(completed).toBe(true)
+      expect(events[0]).toEqual({ isLoading: true, hasError: false, disabled: false })
+      expect(events[1]).toEqual(errorState)
+      expect(completed).toBe(false)
       expect(onError).toHaveBeenCalledWith(expect.any(Error))
     })
   })

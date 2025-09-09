@@ -1,3 +1,3 @@
-import { type Unsubscribable } from 'rxjs'
+import { type Subscription } from 'rxjs'
 
-export const queriesSubscriptions = new Map<string, Unsubscribable>()
+export const queriesSubscriptions = new Map<string, Subscription>()

@@ -1,5 +1,4 @@
 import { type DefaultError, type QueryKey, queryOptions, type UnusedSkipTokenOptions } from '@tanstack/react-query'
-import { type Observable } from 'rxjs'
 
 import { queryFnFromObservableFn } from './queryFn/observableQueryFn'
 import { type ObservableQueryFunction } from './types'
@@ -19,7 +18,7 @@ export interface ObservableQueryOptions<
     | 'refetchOnMount'
     | 'refetchOnReconnect'
   > {
-  observableFn: ObservableQueryFunction<TQueryFnData, Observable<TQueryFnData>, TQueryKey>
+  observableFn: ObservableQueryFunction<TQueryFnData, TQueryKey>
 }
 
 export const observableQueryOptions = <

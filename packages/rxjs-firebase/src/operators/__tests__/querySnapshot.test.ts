@@ -19,7 +19,7 @@ describe('querySnapshot operator', () => {
     vi.clearAllMocks()
   })
 
-  it('emits disabled start, then loading and data states when query is provided', () => {
+  it('emits loading and data states when query is provided', () => {
     testScheduler.run(({ cold, flush }) => {
       const q = mock<Query>()
       const snapshot = mock<QuerySnapshot>({
@@ -33,14 +33,6 @@ describe('querySnapshot operator', () => {
       const source$ = cold('a----|', { a: q })
       const result$ = source$.pipe(querySnapshot())
 
-      const disabled: QuerySnapshotState = {
-        empty: true,
-        size: 0,
-        isLoading: false,
-        hasError: false,
-        disabled: true,
-        data: [],
-      }
       const loading: QuerySnapshotState = {
         empty: true,
         size: 0,
@@ -70,7 +62,7 @@ describe('querySnapshot operator', () => {
 
       flush()
 
-      expect(events).toEqual([disabled, loading, withData])
+      expect(events).toEqual([loading, withData])
       expect(completed).toBe(true)
     })
   })
@@ -100,7 +92,7 @@ describe('querySnapshot operator', () => {
 
       flush()
 
-      expect(events).toEqual([disabled, disabled, disabled])
+      expect(events).toEqual([disabled, disabled])
       expect(completed).toBe(true)
     })
   })
@@ -116,14 +108,6 @@ describe('querySnapshot operator', () => {
       const source$ = cold('a----|', { a: q })
       const result$ = source$.pipe(querySnapshot(undefined, options))
 
-      const disabled: QuerySnapshotState = {
-        empty: true,
-        size: 0,
-        isLoading: false,
-        hasError: false,
-        disabled: true,
-        data: [],
-      }
       const loading: QuerySnapshotState = {
         empty: true,
         size: 0,
@@ -152,7 +136,7 @@ describe('querySnapshot operator', () => {
       })
 
       flush()
-      expect(events).toEqual([disabled, loading, emptyState])
+      expect(events).toEqual([loading, emptyState])
       expect(completed).toBe(true)
       expect(spy).toHaveBeenCalledWith(q, options)
     })
@@ -172,14 +156,6 @@ describe('querySnapshot operator', () => {
       const source$ = cold('a---|', { a: q })
       const result$ = source$.pipe(querySnapshot({ onSnapshot, onError, onComplete }))
 
-      const disabled: QuerySnapshotState = {
-        empty: true,
-        size: 0,
-        isLoading: false,
-        hasError: false,
-        disabled: true,
-        data: [],
-      }
       const loading: QuerySnapshotState = {
         empty: true,
         size: 0,
@@ -200,9 +176,8 @@ describe('querySnapshot operator', () => {
 
       flush()
 
-      expect(events[0]).toEqual(disabled)
-      expect(events[1]).toEqual(loading)
-      expect(events[2]).toEqual(
+      expect(events[0]).toEqual(loading)
+      expect(events[1]).toEqual(
         expect.objectContaining({ size: 1, empty: false, isLoading: false, hasError: false, data: [{ id: '1' }] }),
       )
       expect(completed).toBe(true)
@@ -227,14 +202,6 @@ describe('querySnapshot operator', () => {
       const source$ = cold('a|', { a: q })
       const result$ = source$.pipe(querySnapshot({ onError }))
 
-      const disabled: QuerySnapshotState = {
-        empty: true,
-        size: 0,
-        isLoading: false,
-        hasError: false,
-        disabled: true,
-        data: [],
-      }
       const errorState: QuerySnapshotState = {
         size: 0,
         empty: true,
@@ -254,10 +221,9 @@ describe('querySnapshot operator', () => {
       })
 
       flush()
-      expect(events[0]).toEqual(disabled)
-      expect(events[1]).toEqual({ empty: true, size: 0, isLoading: true, hasError: false, disabled: false, data: [] })
-      expect(events[2]).toEqual(errorState)
-      expect(completed).toBe(true)
+      expect(events[0]).toEqual({ empty: true, size: 0, isLoading: true, hasError: false, disabled: false, data: [] })
+      expect(events[1]).toEqual(errorState)
+      expect(completed).toBe(false)
       expect(onError).toHaveBeenCalledWith(expect.any(Error))
     })
   })

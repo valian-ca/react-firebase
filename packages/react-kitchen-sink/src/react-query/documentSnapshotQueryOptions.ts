@@ -7,7 +7,7 @@ import {
   type DocumentSnapshotStateListener,
   fromDocumentRef,
 } from '@valian/rxjs-firebase'
-import { EMPTY } from 'rxjs'
+import { of } from 'rxjs'
 
 import { sentryDocumentSnapshotListener } from '../sentry'
 
@@ -47,7 +47,10 @@ export const documentSnapshotQueryOptions = <
   observableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>({
     observableFn: () =>
       !ref
-        ? EMPTY
+        ? of({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
+            AppModelType,
+            DbModelType
+          >)
         : fromDocumentRef(ref, snapshotOptions).pipe(
             documentSnapshotState(sentryDocumentSnapshotListener(ref, listener)),
           ),

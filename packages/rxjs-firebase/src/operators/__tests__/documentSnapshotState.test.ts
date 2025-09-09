@@ -25,8 +25,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a', { a: mockDocumentSnapshot })
       const result$ = source$.pipe(documentSnapshotState())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: mockDocumentSnapshot,
           exists: true,
@@ -47,8 +46,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a', { a: mockDocumentSnapshot })
       const result$ = source$.pipe(documentSnapshotState())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: mockDocumentSnapshot,
           exists: false,
@@ -69,8 +67,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a', { a: mockDocumentSnapshot })
       const result$ = source$.pipe(documentSnapshotState())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: mockDocumentSnapshot,
           exists: true,
@@ -89,8 +86,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold<DocumentSnapshot>('#', {}, error)
       const result$ = source$.pipe(documentSnapshotState())
 
-      expectObservable(result$).toBe('(se)', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('(e)', {
         e: {
           isLoading: false,
           hasError: true,
@@ -110,8 +106,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a', { a: mockDocumentSnapshot })
       const result$ = source$.pipe(documentSnapshotState({ onSnapshot }))
 
-      expectObservable(result$).toBe('(sx)', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: mockDocumentSnapshot,
           exists: true,
@@ -145,8 +140,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold<DocumentSnapshot>('#', {}, error)
       const result$ = source$.pipe(documentSnapshotState(options))
 
-      expectObservable(result$).toBe('(se)', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('(e)', {
         e: {
           isLoading: false,
           hasError: true,
@@ -171,8 +165,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a---|', { a: mockDocumentSnapshot })
       const result$ = source$.pipe(documentSnapshotState(options))
 
-      expectObservable(result$).toBe('(sx)|', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('x---|', {
         x: {
           snapshot: mockDocumentSnapshot,
           exists: true,
@@ -203,8 +196,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a', { a: mockDocumentSnapshot })
       const result$ = source$.pipe(documentSnapshotState<TestData>())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: mockDocumentSnapshot,
           exists: true,
@@ -233,8 +225,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a---b', { a: firstSnapshot, b: secondSnapshot })
       const result$ = source$.pipe(documentSnapshotState())
 
-      expectObservable(result$).toBe('(sx)y', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('x---y', {
         x: {
           snapshot: firstSnapshot,
           exists: true,
@@ -269,8 +260,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a---b', { a: existingSnapshot, b: nonExistingSnapshot })
       const result$ = source$.pipe(documentSnapshotState())
 
-      expectObservable(result$).toBe('(sx)y', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('x---y', {
         x: {
           snapshot: existingSnapshot,
           exists: true,
@@ -303,8 +293,7 @@ describe('documentSnapshotState', () => {
       const source$ = cold('a---|', { a: mockDocumentSnapshot })
       const result$ = source$.pipe(documentSnapshotState(options))
 
-      expectObservable(result$).toBe('(sx)|', {
-        s: { isLoading: true, hasError: false, disabled: false },
+      expectObservable(result$).toBe('x---|', {
         x: expect.objectContaining({
           snapshot: mockDocumentSnapshot,
           exists: true,
