@@ -7,26 +7,20 @@ import {
   type DocumentSnapshotErrorState,
 } from '../states/DocumentSnapshotState'
 
-export const catchDocumentSnapshotError =
-  <
-    AppModelType = DocumentData,
-    DbModelType extends DocumentData = DocumentData,
-    TState extends
-      | DocumentSnapshotDataState<AppModelType, DbModelType>
-      | DocumentDoesNotExistState<AppModelType, DbModelType> =
-      | DocumentSnapshotDataState<AppModelType, DbModelType>
-      | DocumentDoesNotExistState<AppModelType, DbModelType>,
-  >(): OperatorFunction<TState, TState | DocumentSnapshotErrorState> =>
-  (source$) =>
-    source$.pipe(
-      catchError(
-        () =>
-          new Observable<DocumentSnapshotErrorState>((subscriber) => {
-            subscriber.next({
-              isLoading: false,
-              hasError: true,
-              disabled: false,
-            })
-          }),
-      ),
-    )
+const ERROR_STATE = new Observable<DocumentSnapshotErrorState>((subscriber) => {
+  subscriber.next({
+    isLoading: false,
+    hasError: true,
+    disabled: false,
+  })
+})
+
+export const catchDocumentSnapshotError = <
+  AppModelType = DocumentData,
+  DbModelType extends DocumentData = DocumentData,
+  TState extends
+    | DocumentSnapshotDataState<AppModelType, DbModelType>
+    | DocumentDoesNotExistState<AppModelType, DbModelType> =
+    | DocumentSnapshotDataState<AppModelType, DbModelType>
+    | DocumentDoesNotExistState<AppModelType, DbModelType>,
+>(): OperatorFunction<TState, TState | DocumentSnapshotErrorState> => catchError(() => ERROR_STATE)
