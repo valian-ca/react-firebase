@@ -1,3 +1,13 @@
+## 1.1.1 (2025-09-09)
+
+### 🚀 Features
+
+- @valian/react-query-observable ([#48](https://github.com/valian-ca/react-firebase/pull/48))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.1.0 (2025-09-03)
 
 ### 🩹 Fixes
