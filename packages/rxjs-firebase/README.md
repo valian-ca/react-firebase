@@ -34,378 +34,204 @@ This library requires the following peer dependencies:
 - `rxjs` ^7 || ^8
 - `firebase` ^11 || ^12
 
-## Usage Examples
+---
 
-### queryState Operator
+## documentSnapshotState and querySnapshotState
 
-The `queryState` operator transforms a `QuerySnapshot` observable into a `QuerySnapshotState` observable with loading, error, and data states.
+These are the primary operators that map Firestore snapshots into well-typed state objects.
 
-#### Basic Usage
-
-```typescript
-import { fromQuery, queryState } from '@valian/rxjs-firebase'
-import { collection, query, where } from 'firebase/firestore'
-import { db } from './firebase'
-
-const todosQuery = query(collection(db, 'todos'), where('completed', '==', false))
-
-const todos$ = fromQuery(todosQuery).pipe(queryState())
-
-todos$.subscribe((state) => {
-  if (state.isLoading) {
-    console.log('Loading todos...')
-  } else if (state.hasError) {
-    console.log('Error loading todos')
-  } else {
-    console.log('Todos:', state.data)
-    console.log('Count:', state.size)
-  }
-})
-```
-
-#### With TypeScript
+### documentSnapshotState
 
 ```typescript
-interface Todo {
-  id: string
-  title: string
-  completed: boolean
-  createdAt: Date
-}
+import { doc } from '@firebase/firestore'
+import { fromDocumentRef, documentSnapshotState } from '@valian/rxjs-firebase'
 
-const todosQuery = query(collection(db, 'todos'))
-
-const todos$ = fromQuery<Todo>(todosQuery).pipe(queryState<Todo>())
-
-todos$.subscribe((state) => {
-  if (state.isLoading) {
-    console.log('Loading...')
-  } else if (state.hasError) {
-    console.log('Error occurred')
-  } else if (state.empty) {
-    console.log('No todos found')
-  } else {
-    console.log(`Found ${state.size} todos:`)
-    state.data.forEach((todo) => {
-      console.log(`- ${todo.title} (${todo.completed ? '✓' : '○'})`)
-    })
-  }
-})
-```
-
-#### With Error Handling
-
-```typescript
-const todos$ = fromQuery(todosQuery).pipe(
-  queryState({
-    onSnapshot: (state) => console.log('State updated:', state),
-    onError: (error) => {
-      console.error('Firestore error:', error)
-      // Handle error appropriately
-    },
+const userRef = doc(db, 'users', userId)
+const userState$ = fromDocumentRef(userRef).pipe(
+  documentSnapshotState({
+    onSnapshot: (state) => console.log('exists', state.exists),
+    onError: (error) => console.error(error),
   }),
 )
 ```
 
-### documentState Operator
-
-The `documentState` operator transforms a `DocumentSnapshot` observable into a `DocumentSnapshotState` observable with loading, error, and data states.
-
-#### Basic Usage
+With an immediate loading emission:
 
 ```typescript
-import { fromDocumentRef, documentState } from '@valian/rxjs-firebase'
-import { doc } from 'firebase/firestore'
-import { db } from './firebase'
+import { fromDocumentRef, documentSnapshotState, startWithDocumentSnapshotLoadingState } from '@valian/rxjs-firebase'
 
-function getUserProfile(userId: string) {
-  const userRef = doc(db, 'users', userId)
-  const user$ = fromDocumentRef(userRef).pipe(documentState())
-
-  return user$.subscribe((state) => {
-    if (state.isLoading) {
-      console.log('Loading user...')
-    } else if (state.hasError) {
-      console.log('Error loading user')
-    } else if (!state.exists) {
-      console.log('User not found')
-    } else {
-      console.log('User data:', state.data)
-    }
-  })
-}
+const userState$ = fromDocumentRef(userRef).pipe(documentSnapshotState(), startWithDocumentSnapshotLoadingState())
 ```
 
-#### With TypeScript
+This is useful when you want subscribers to get an initial `{ isLoading: true }` state synchronously before Firestore returns the first snapshot.
+
+### querySnapshotState
 
 ```typescript
-interface User {
-  name: string
-  email: string
-  avatar?: string
-  createdAt: Date
-}
+import { collection, query, where } from '@firebase/firestore'
+import { fromQuery, querySnapshotState } from '@valian/rxjs-firebase'
 
-function getTypedUserProfile(userId: string) {
-  const userRef = doc(db, 'users', userId)
-  const user$ = fromDocumentRef<User>(userRef).pipe(documentState<User>())
-
-  return user$.subscribe((state) => {
-    if (state.isLoading) {
-      console.log('Loading...')
-    } else if (state.hasError) {
-      console.log('Error loading user')
-    } else if (!state.exists) {
-      console.log('User not found')
-    } else {
-      const user = state.data
-      console.log(`User: ${user.name} (${user.email})`)
-      if (user.avatar) {
-        console.log(`Avatar: ${user.avatar}`)
-      }
-    }
-  })
-}
+const todosQuery = query(collection(db, 'todos'), where('userId', '==', userId))
+const todosState$ = fromQuery(todosQuery).pipe(
+  querySnapshotState({
+    onSnapshot: (state) => console.log('size', state.size),
+  }),
+)
 ```
 
-### Source Functions
-
-#### fromQuery
-
-Creates an observable from a Firestore query.
+With an immediate loading emission:
 
 ```typescript
+import { fromQuery, querySnapshotState, startWithQuerySnapshotLoadingState } from '@valian/rxjs-firebase'
+
+const todosState$ = fromQuery(todosQuery).pipe(querySnapshotState(), startWithQuerySnapshotLoadingState())
+```
+
+When queries or refs can be null/undefined at times, prefer the `documentSnapshot` / `querySnapshot` operators below.
+
+---
+
+## Source functions
+
+### fromDocumentRef
+
+Creates an observable of `DocumentSnapshot`.
+
+```typescript
+import { doc } from '@firebase/firestore'
+import { fromDocumentRef } from '@valian/rxjs-firebase'
+
+const user$ = fromDocumentRef(doc(db, 'users', 'user123'))
+```
+
+### fromQuery
+
+Creates an observable of `QuerySnapshot`.
+
+```typescript
+import { collection, orderBy, query, where } from '@firebase/firestore'
 import { fromQuery } from '@valian/rxjs-firebase'
-import { collection, query, where, orderBy } from '@firebase/firestore'
 
-// Basic collection
-const todos$ = fromQuery(collection(db, 'todos'))
+const base = query(collection(db, 'todos'))
+const todos$ = fromQuery(base)
 
-// With filters and ordering
 const activeTodos$ = fromQuery(
   query(collection(db, 'todos'), where('completed', '==', false), orderBy('createdAt', 'desc')),
 )
 ```
 
-#### fromDocumentRef
+### authState
 
-Creates an observable from a Firestore document reference.
-
-```typescript
-import { fromDocumentRef } from '@valian/rxjs-firebase'
-import { doc } from 'firebase/firestore'
-
-const user$ = fromDocumentRef(doc(db, 'users', 'user123'))
-```
-
-#### authState
-
-Creates an observable from Firebase Auth state changes.
+Creates an observable of Firebase Auth user.
 
 ```typescript
 import { authState } from '@valian/rxjs-firebase'
 
 const auth$ = authState()
-
-auth$.subscribe((user) => {
-  if (user) {
-    console.log('User signed in:', user.uid)
-  } else {
-    console.log('User signed out')
-  }
-})
 ```
 
-### Subjects
+---
 
-#### DocumentSnapshotSubject
-
-A `BehaviorSubject` that manages document snapshot state with loading, error, and data states. Provides convenient methods for working with document data.
-
-```typescript
-import { fromDocumentRef, DocumentSnapshotSubject } from '@valian/rxjs-firebase'
-import { doc } from 'firebase/firestore'
-
-const userRef = doc(db, 'users', 'user123')
-const doc$ = fromDocumentRef(userRef)
-
-const subject = new DocumentSnapshotSubject(doc$, {
-  onSnapshot: (state) => console.log('State updated:', state),
-  onError: (error) => console.error('Error:', error),
-})
-
-// Subscribe to state changes
-subject.subscribe((state) => {
-  if (state.isLoading) {
-    console.log('Loading...')
-  } else if (state.hasError) {
-    console.log('Error occurred')
-  } else if (state.exists) {
-    console.log('Document data:', state.data)
-  } else {
-    console.log('Document does not exist')
-  }
-})
-
-// Access current data directly
-const currentData = subject.data
-
-// Wait for document to exist (with timeout)
-const exists = await subject.exists(5000) // 5 second timeout
-
-// Clean up when done
-subject.close()
-```
-
-#### QuerySnapshotSubject
-
-A `BehaviorSubject` that manages query snapshot state with loading, error, and data states. Provides convenient methods for working with query results.
-
-```typescript
-import { fromQuery, QuerySnapshotSubject } from '@valian/rxjs-firebase'
-import { collection } from 'firebase/firestore'
-
-const todos$ = fromQuery(collection(db, 'todos'))
-
-const subject = new QuerySnapshotSubject(todos$, {
-  onSnapshot: (state) => console.log('State updated:', state),
-  onError: (error) => console.error('Error:', error),
-})
-
-// Subscribe to state changes
-subject.subscribe((state) => {
-  if (state.isLoading) {
-    console.log('Loading...')
-  } else if (state.hasError) {
-    console.log('Error occurred')
-  } else {
-    console.log('Query results:', state.data)
-    console.log('Count:', state.size)
-  }
-})
-
-// Access current data directly
-const currentData = subject.data
-
-// Clean up when done
-subject.close()
-```
-
-## API Reference
-
-### queryState
-
-```typescript
-const state$ = query$.pipe(
-  queryState<AppModelType, DbModelType>({
-    onSnapshot?: (state: QuerySnapshotState<AppModelType>) => void,
-    onError?: (error: unknown) => void
-  })
-)
-```
-
-#### Parameters
-
-- `onSnapshot`: Optional callback function called when state updates
-- `onError`: Optional error handler function
-
-#### Returns
-
-An observable that emits `QuerySnapshotState<AppModelType>` objects with:
-
-```typescript
-{
-  data: AppModelType[]        // Array of documents
-  snapshot?: QuerySnapshot    // Firestore snapshot
-  isLoading: boolean         // True while loading
-  isDisabled: boolean        // True when query is null
-  hasError: boolean          // True if error occurred
-  empty: boolean            // True if collection is empty
-  size: number              // Number of documents
-}
-```
-
-### documentState
-
-```typescript
-const state$ = doc$.pipe(
-  documentState<AppModelType, DbModelType>({
-    onSnapshot?: (state: DocumentSnapshotState<AppModelType>) => void,
-    onError?: (error: unknown) => void
-  })
-)
-```
-
-#### Parameters
-
-- `onSnapshot`: Optional callback function called when state updates
-- `onError`: Optional error handler function
-
-#### Returns
-
-An observable that emits `DocumentSnapshotState<AppModelType>` objects with:
-
-```typescript
-{
-  data?: AppModelType          // Document data (undefined if loading/error/not exists)
-  snapshot?: DocumentSnapshot  // Firestore snapshot
-  isLoading: boolean          // True while loading
-  isDisabled: boolean         // True when ref is null/undefined
-  hasError: boolean           // True if error occurred
-  exists?: boolean            // True if document exists
-}
-```
-
-### fromQuery
-
-```typescript
-const query$ = fromQuery<AppModelType, DbModelType>(
-  query: Query<AppModelType, DbModelType>
-)
-```
-
-Creates an observable that emits `QuerySnapshot` objects when the query results change.
-
-### fromDocumentRef
-
-```typescript
-const doc$ = fromDocumentRef<AppModelType, DbModelType>(
-  ref: DocumentReference<AppModelType, DbModelType>
-)
-```
-
-Creates an observable that emits `DocumentSnapshot` objects when the document changes.
-
-### authState
-
-```typescript
-const auth$ = authState()
-```
-
-Creates an observable that emits the current user or `null` when authentication state changes.
+## Subjects
 
 ### DocumentSnapshotSubject
 
+`BehaviorSubject` that tracks a document state.
+
 ```typescript
-class DocumentSnapshotSubject<AppModelType> extends BehaviorSubject<DocumentSnapshotState<AppModelType>>
+import { doc } from '@firebase/firestore'
+import { DocumentSnapshotSubject } from '@valian/rxjs-firebase'
+
+const subject = DocumentSnapshotSubject.fromDocumentRef(doc(db, 'users', 'user123'))
+
+const sub = subject.subscribe((state) => {
+  if (state.isLoading) return
+  if (!state.exists) return console.log('Not found')
+  console.log(state.data)
+})
+
+sub.unsubscribe()
+subject.complete()
 ```
-
-#### Methods
-
-- **`data`**: Getter that returns the current document data
-- **`exists(timeout?: number)`**: Returns a Promise that resolves to `true` if the document exists, `false` otherwise. Default timeout is 10 seconds.
-- **`close()`**: Unsubscribes from the underlying observable and completes the subject
 
 ### QuerySnapshotSubject
 
+`BehaviorSubject` that tracks a query state.
+
 ```typescript
-class QuerySnapshotSubject<AppModelType> extends BehaviorSubject<QuerySnapshotState<AppModelType>>
+import { collection, query } from '@firebase/firestore'
+import { QuerySnapshotSubject } from '@valian/rxjs-firebase'
+
+const subject = QuerySnapshotSubject.fromQuery(query(collection(db, 'todos')))
+
+const sub = subject.subscribe((state) => {
+  if (state.isLoading) return
+  console.log(state.size, state.data)
+})
+
+sub.unsubscribe()
+subject.complete()
 ```
 
-#### Methods
+---
 
-- **`data`**: Getter that returns the current query results as an array
-- **`close()`**: Unsubscribes from the underlying observable and completes the subject
+## Nullable-aware operators and async helpers
+
+### documentSnapshot
+
+Takes a stream of `DocumentReference | null | undefined` and emits a `DocumentSnapshotState`, yielding a `disabled` state when the ref is null/undefined.
+
+```typescript
+import { of } from 'rxjs'
+import { documentSnapshot } from '@valian/rxjs-firebase'
+
+of(userRef /* or null */)
+  .pipe(documentSnapshot())
+  .subscribe((state) => {
+    if (state.disabled) return
+    if (!state.exists) return
+    console.log(state.data)
+  })
+```
+
+### querySnapshot
+
+Takes a stream of `Query | null | undefined` and emits a `QuerySnapshotState`, yielding a `disabled` state when the query is null/undefined.
+
+```typescript
+import { of } from 'rxjs'
+import { querySnapshot } from '@valian/rxjs-firebase'
+
+of(todosQuery /* or null */)
+  .pipe(querySnapshot())
+  .subscribe((state) => {
+    if (state.disabled) return
+    console.log(state.size)
+  })
+```
+
+### documentExists
+
+Wait until a document exists or time out.
+
+```typescript
+import { doc } from '@firebase/firestore'
+import { documentExists, documentSnapshotState, fromDocumentRef } from '@valian/rxjs-firebase'
+
+const exists = await documentExists(fromDocumentRef(doc(db, 'users', userId)).pipe(documentSnapshotState()), 5_000)
+```
+
+### waitForData
+
+Await the first non-loading, non-disabled state for either document or query streams.
+
+```typescript
+import { waitForData } from '@valian/rxjs-firebase'
+
+const ready = await waitForData(state$)
+```
+
+---
 
 ## Advanced Usage
 
@@ -413,14 +239,13 @@ class QuerySnapshotSubject<AppModelType> extends BehaviorSubject<QuerySnapshotSt
 
 ```typescript
 import { combineLatest, switchMap } from 'rxjs'
-import { fromQuery, queryState } from '@valian/rxjs-firebase'
+import { fromQuery, querySnapshotState } from '@valian/rxjs-firebase'
 
 function createFilteredTodos(userId$: Observable<string>, completed$: Observable<boolean>) {
   return combineLatest([userId$, completed$]).pipe(
     switchMap(([userId, completed]) => {
-      const query = query(collection(db, 'todos'), where('userId', '==', userId), where('completed', '==', completed))
-
-      return fromQuery(query).pipe(queryState())
+      const q = query(collection(db, 'todos'), where('userId', '==', userId), where('completed', '==', completed))
+      return fromQuery(q).pipe(querySnapshotState())
     }),
   )
 }
@@ -431,12 +256,13 @@ function createFilteredTodos(userId$: Observable<string>, completed$: Observable
 ```typescript
 import { combineLatest } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { fromDocumentRef, fromQuery, documentState, queryState } from '@valian/rxjs-firebase'
+import { fromDocumentRef, fromQuery, documentSnapshotState, querySnapshotState } from '@valian/rxjs-firebase'
 
 function getUserWithTodos(userId: string) {
-  const user$ = fromDocumentRef(doc(db, 'users', userId)).pipe(documentState<User>())
-
-  const todos$ = fromQuery(query(collection(db, 'todos'), where('userId', '==', userId))).pipe(queryState<Todo>())
+  const user$ = fromDocumentRef(doc(db, 'users', userId)).pipe(documentSnapshotState<User>())
+  const todos$ = fromQuery(query(collection(db, 'todos'), where('userId', '==', userId))).pipe(
+    querySnapshotState<Todo>(),
+  )
 
   return combineLatest([user$, todos$]).pipe(
     map(([userState, todosState]) => ({
@@ -448,6 +274,8 @@ function getUserWithTodos(userId: string) {
   )
 }
 ```
+
+---
 
 ## License
 
