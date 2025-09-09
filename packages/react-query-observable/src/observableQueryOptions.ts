@@ -8,7 +8,6 @@ export interface ObservableQueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TObservable extends Observable<TQueryFnData> = Observable<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
     UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -20,17 +19,16 @@ export interface ObservableQueryOptions<
     | 'refetchOnMount'
     | 'refetchOnReconnect'
   > {
-  observableFn: ObservableQueryFunction<TQueryFnData, TObservable, TQueryKey>
+  observableFn: ObservableQueryFunction<TQueryFnData, Observable<TQueryFnData>, TQueryKey>
 }
 
 export const observableQueryOptions = <
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
-  TObservable extends Observable<TQueryFnData> = Observable<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: ObservableQueryOptions<TQueryFnData, TError, TData, TObservable, TQueryKey>,
+  options: ObservableQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ) =>
   queryOptions({
     queryFn: queryFnFromObservableFn(options.observableFn),

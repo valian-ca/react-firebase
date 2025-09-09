@@ -1,10 +1,4 @@
-import {
-  hashKey,
-  type QueryCacheNotifyEvent,
-  type QueryFunction,
-  type QueryFunctionContext,
-  type QueryKey,
-} from '@tanstack/react-query'
+import { hashKey, type QueryCacheNotifyEvent, type QueryFunction, type QueryKey } from '@tanstack/react-query'
 import { type Observable } from 'rxjs'
 
 import { type ObservableQueryFunction } from '../types'
@@ -69,17 +63,18 @@ export const queryFnFromObservableFn =
           unsubscribe()
         }
       })
-      const unsubscribe = () => {
-        unsubscribeFromQueryCache()
-        subscription.unsubscribe()
-        queriesSubscriptions.delete(queryKeyHash)
-        onUnsubscribe?.(observable$)
-      }
       const abortListener = () => {
         unsubscribe()
         if (!firstValueReturned) reject(new Error('Query aborted'))
       }
       context.signal.addEventListener('abort', abortListener, { once: true })
+      const unsubscribe = () => {
+        unsubscribeFromQueryCache()
+        subscription.unsubscribe()
+        queriesSubscriptions.delete(queryKeyHash)
+        context.signal.removeEventListener('abort', abortListener)
+        onUnsubscribe?.(observable$)
+      }
       queriesSubscriptions.set(queryKeyHash, { unsubscribe })
     })
   }
