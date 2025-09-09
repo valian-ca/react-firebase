@@ -1,23 +1,16 @@
 import { type DocumentReference } from '@firebase/firestore'
-import { DocumentSnapshotSubject, fromDocumentRef } from '@valian/rxjs-firebase'
+import { DocumentSnapshotSubject } from '@valian/rxjs-firebase'
 import { describe, expect, it, vi } from 'vitest'
-import { mock } from 'vitest-mock-extended'
+import { anyObject, mock } from 'vitest-mock-extended'
 
 import { documentSnapshotSubject } from '../documentSnapshotSubject'
 
-vi.mock('@valian/rxjs-firebase', () => ({
-  fromDocumentRef: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
-  DocumentSnapshotSubject: class {
-    close = vi.fn()
-    subscribe = vi.fn()
-  },
-}))
-
 describe('documentSnapshotSubject', () => {
   it('creates a DocumentSnapshotSubject with sentry listener', () => {
+    vi.spyOn(DocumentSnapshotSubject, 'fromDocumentRef')
     const ref = mock<DocumentReference>({ path: '/c/id' })
     const subject = documentSnapshotSubject(ref)
-    expect(fromDocumentRef).toHaveBeenCalledWith(ref, undefined)
+    expect(DocumentSnapshotSubject.fromDocumentRef).toHaveBeenCalledWith(ref, undefined, anyObject())
     expect(subject).toBeInstanceOf(DocumentSnapshotSubject)
   })
 })

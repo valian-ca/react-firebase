@@ -1,10 +1,11 @@
 import { type DocumentData, type DocumentReference, type SnapshotListenOptions } from '@firebase/firestore'
-import { defer, of, type OperatorFunction, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs'
+import { defer, finalize, of, type OperatorFunction, Subject, switchMap, takeUntil } from 'rxjs'
 
 import { fromDocumentRef } from '../source'
-import { type DocumentSnapshotState } from '../states/DocumentSnapshotState'
+import { type DocumentSnapshotDisabledState, type DocumentSnapshotState } from '../states/DocumentSnapshotState'
 
 import { documentSnapshotState, type DocumentSnapshotStateListener } from './documentSnapshotState'
+import { startWithDocumentSnapshotLoadingState } from './startWithDocumentSnapshotLoadingState'
 
 export const documentSnapshot =
   <AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>(
@@ -18,11 +19,9 @@ export const documentSnapshot =
     defer(() => {
       const closeSnapshot = new Subject<void>()
       return source$.pipe(
-        tap({
-          complete: () => {
-            closeSnapshot.next()
-            closeSnapshot.complete()
-          },
+        finalize(() => {
+          closeSnapshot.next()
+          closeSnapshot.complete()
         }),
         switchMap((ref) => {
           if (!ref) {
@@ -30,13 +29,13 @@ export const documentSnapshot =
               isLoading: false,
               hasError: false,
               disabled: true,
-            } as const satisfies DocumentSnapshotState<AppModelType, DbModelType>)
+            } as const satisfies DocumentSnapshotDisabledState)
           }
-          return fromDocumentRef(ref, options).pipe(documentSnapshotState(listener), takeUntil(closeSnapshot))
+          return fromDocumentRef(ref, options).pipe(
+            takeUntil(closeSnapshot),
+            documentSnapshotState(listener),
+            startWithDocumentSnapshotLoadingState<AppModelType, DbModelType>(),
+          )
         }),
-        startWith({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
-          AppModelType,
-          DbModelType
-        >),
       )
     })

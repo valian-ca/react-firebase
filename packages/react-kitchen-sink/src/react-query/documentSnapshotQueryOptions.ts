@@ -1,18 +1,15 @@
 import { type DocumentData, type DocumentReference, type SnapshotListenOptions } from '@firebase/firestore'
+import { type DefaultError, type QueryKey } from '@tanstack/react-query'
+import { type ObservableQueryOptions, observableQueryOptions } from '@valian/react-query-observable'
 import {
-  type DataTag,
-  type DefaultError,
-  type QueryKey,
-  queryOptions,
-  type UnusedSkipTokenOptions,
-} from '@tanstack/react-query'
-import { type DocumentSnapshotState, type DocumentSnapshotStateListener } from '@valian/rxjs-firebase'
+  type DocumentSnapshotState,
+  documentSnapshotState,
+  type DocumentSnapshotStateListener,
+  fromDocumentRef,
+} from '@valian/rxjs-firebase'
+import { of } from 'rxjs'
 
-import {
-  queryFnFromDocumentSnapshotSubjectFactory,
-  type QueryFnFromDocumentSnapshotSubjectFactoryOptions,
-} from './queryFn/queryFnFromDocumentSnapshotSubjectFactory'
-import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
+import { sentryDocumentSnapshotListener } from '../sentry'
 
 export interface DocumentSnapshotQueryOptions<
   AppModelType = DocumentData,
@@ -21,32 +18,12 @@ export interface DocumentSnapshotQueryOptions<
   TData = DocumentSnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      UnusedSkipTokenOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
-      | 'queryFn'
-      | 'initialData'
-      | 'staleTime'
-      | 'refetchInterval'
-      | 'refetchIntervalInBackground'
-      | 'refetchOnWindowFocus'
-      | 'refetchOnMount'
-      | 'refetchOnReconnect'
-      | 'retryOnMount'
-      | 'retry'
-    >,
-    QueryFnFromDocumentSnapshotSubjectFactoryOptions {
+    ObservableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+    'observableFn'
+  > {
   ref?: DocumentReference<AppModelType, DbModelType> | null
   snapshotOptions?: SnapshotListenOptions
   listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>
-}
-
-export interface DocumentSnapshotQueryOptionsResult<
-  AppModelType = DocumentData,
-  DbModelType extends DocumentData = DocumentData,
-  TError = DefaultError,
-  TData = DocumentSnapshotState<AppModelType, DbModelType>,
-  TQueryKey extends QueryKey = QueryKey,
-> extends UnusedSkipTokenOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey> {
-  queryKey: DataTag<TQueryKey, DocumentSnapshotState<AppModelType, DbModelType>, TError>
 }
 
 export const documentSnapshotQueryOptions = <
@@ -55,36 +32,28 @@ export const documentSnapshotQueryOptions = <
   TError = DefaultError,
   TData = DocumentSnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
->(
-  snapshotManager: FirestoreSnapshotManager,
-  {
-    ref,
-    snapshotOptions,
-    listener,
-    ...props
-  }: DocumentSnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>,
-): DocumentSnapshotQueryOptionsResult<AppModelType, DbModelType, TError, TData, TQueryKey> =>
-  queryOptions({
-    queryFn: ref
-      ? queryFnFromDocumentSnapshotSubjectFactory(
-          snapshotManager.documentSnapshotSubjectFactory(ref, snapshotOptions, listener),
-          props,
-        )
-      : () =>
-          Promise.resolve({
-            isLoading: false,
-            hasError: false,
-            disabled: true,
-          } as const),
+>({
+  ref,
+  snapshotOptions,
+  listener,
+  ...props
+}: DocumentSnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>) =>
+  observableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>({
+    observableFn: () =>
+      !ref
+        ? of({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
+            AppModelType,
+            DbModelType
+          >)
+        : fromDocumentRef(ref, snapshotOptions).pipe(
+            documentSnapshotState(sentryDocumentSnapshotListener(ref, listener)),
+          ),
     enabled: !!ref,
-    staleTime: () => (snapshotManager.isSnapshotAlive(props.queryKey) ? Infinity : 0),
-    retry: false,
     gcTime: 10_000,
     ...props,
     meta: {
       ...props.meta,
       type: 'snapshot',
-      snapshotManager,
       documentRef: ref,
     },
   })

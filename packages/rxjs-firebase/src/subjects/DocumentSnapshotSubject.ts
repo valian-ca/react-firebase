@@ -1,7 +1,13 @@
-import { type DocumentData, type DocumentSnapshot } from '@firebase/firestore'
+import {
+  type DocumentData,
+  type DocumentReference,
+  type DocumentSnapshot,
+  type SnapshotListenOptions,
+} from '@firebase/firestore'
 import { BehaviorSubject, type Observable, Subject, takeUntil } from 'rxjs'
 
-import { documentSnapshotState, type DocumentSnapshotStateListener } from '../operators'
+import { documentSnapshotState, type DocumentSnapshotStateListener } from '../operators/documentSnapshotState'
+import { fromDocumentRef } from '../source/fromDocumentRef'
 import { type DocumentSnapshotState } from '../states'
 
 export class DocumentSnapshotSubject<
@@ -30,5 +36,13 @@ export class DocumentSnapshotSubject<
     this.notification$.next()
     this.notification$.complete()
     super.complete()
+  }
+
+  static fromDocumentRef<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>(
+    ref: DocumentReference<AppModelType, DbModelType>,
+    options?: SnapshotListenOptions,
+    listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>,
+  ): DocumentSnapshotSubject<AppModelType, DbModelType> {
+    return new DocumentSnapshotSubject(fromDocumentRef(ref, options), listener)
   }
 }

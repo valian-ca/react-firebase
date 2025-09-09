@@ -3,17 +3,7 @@ import { TestScheduler } from 'rxjs/testing'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mock } from 'vitest-mock-extended'
 
-import { type QuerySnapshotState } from '../../states'
 import { querySnapshotState, type QuerySnapshotStateListener } from '../querySnapshotState'
-
-const QuerySnapshotLoadingState = {
-  empty: true,
-  size: 0,
-  isLoading: true,
-  hasError: false,
-  disabled: false,
-  data: [],
-} as const satisfies QuerySnapshotState
 
 describe('querySnapshotState', () => {
   let testScheduler: TestScheduler
@@ -33,8 +23,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a', { a: mockQuerySnapshot })
       const result$ = source$.pipe(querySnapshotState())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: mockQuerySnapshot,
           size: 2,
@@ -58,8 +47,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a', { a: emptySnapshot })
       const result$ = source$.pipe(querySnapshotState())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: emptySnapshot,
           size: 0,
@@ -82,8 +70,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a', { a: mockQuerySnapshot })
       const result$ = source$.pipe(querySnapshotState())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('(x)', {
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,
@@ -99,8 +86,7 @@ describe('querySnapshotState', () => {
       const source$ = cold<QuerySnapshot>('#', {}, error)
       const result$ = source$.pipe(querySnapshotState())
 
-      expectObservable(result$).toBe('(se)', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('(e)', {
         e: {
           size: 0,
           empty: true,
@@ -125,8 +111,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a', { a: mockQuerySnapshot })
       const result$ = source$.pipe(querySnapshotState(options))
 
-      expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('(x)', {
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,
@@ -162,8 +147,7 @@ describe('querySnapshotState', () => {
       const source$ = cold<QuerySnapshot>('#', {}, error)
       const result$ = source$.pipe(querySnapshotState(options))
 
-      expectObservable(result$).toBe('(se)', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('(e)', {
         e: {
           size: 0,
           empty: true,
@@ -192,8 +176,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a---|', { a: mockQuerySnapshot })
       const result$ = source$.pipe(querySnapshotState(options))
 
-      expectObservable(result$).toBe('(sx)|', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('x---|', {
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,
@@ -225,8 +208,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a', { a: typedSnapshot })
       const result$ = source$.pipe(querySnapshotState<TestData, TestData>())
 
-      expectObservable(result$).toBe('(sx)', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('(x)', {
         x: {
           snapshot: typedSnapshot,
           size: 2,
@@ -255,8 +237,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a---b', { a: firstSnapshot, b: secondSnapshot })
       const result$ = source$.pipe(querySnapshotState())
 
-      expectObservable(result$).toBe('(sx)y', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('x---y', {
         x: {
           snapshot: firstSnapshot,
           size: 2,
@@ -296,8 +277,7 @@ describe('querySnapshotState', () => {
       const source$ = cold('a---|', { a: mockQuerySnapshot })
       const result$ = source$.pipe(querySnapshotState(options))
 
-      expectObservable(result$).toBe('(sx)|', {
-        s: QuerySnapshotLoadingState,
+      expectObservable(result$).toBe('x---|', {
         x: expect.objectContaining({
           snapshot: mockQuerySnapshot,
           isLoading: false,

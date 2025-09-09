@@ -10,13 +10,7 @@ import {
 
 import { type SchemaDocumentSnapshotState } from '../rxjs/types'
 
-import { type QueryFnFromDocumentSnapshotSubjectFactoryOptions } from './queryFn/queryFnFromDocumentSnapshotSubjectFactory'
-import {
-  type DocumentSnapshotQueryOptions,
-  documentSnapshotQueryOptions,
-  type DocumentSnapshotQueryOptionsResult,
-} from './documentSnapshotQueryOptions'
-import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
+import { type DocumentSnapshotQueryOptions, documentSnapshotQueryOptions } from './documentSnapshotQueryOptions'
 
 export interface SchemaDocumentSnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
@@ -25,34 +19,19 @@ export interface SchemaDocumentSnapshotQueryOptions<
   TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      DocumentSnapshotQueryOptions<
-        SchemaDocumentOutput<TCollectionSchema, TOptions>,
-        SchemaDocumentInput<TCollectionSchema>,
-        TError,
-        TData,
-        TQueryKey
-      >,
-      'ref' | 'snapshotOptions'
+    DocumentSnapshotQueryOptions<
+      SchemaDocumentOutput<TCollectionSchema, TOptions>,
+      SchemaDocumentInput<TCollectionSchema>,
+      TError,
+      TData,
+      TQueryKey
     >,
-    QueryFnFromDocumentSnapshotSubjectFactoryOptions {
+    'ref' | 'snapshotOptions'
+  > {
   factory: SchemaFirestoreFactory<TCollectionSchema>
   id?: string | null
   snapshotOptions?: TOptions & SnapshotListenOptions
 }
-
-export type SchemaDocumentSnapshotQueryOptionsResult<
-  TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions = MetaOutputOptions,
-  TError = DefaultError,
-  TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
-  TQueryKey extends QueryKey = QueryKey,
-> = DocumentSnapshotQueryOptionsResult<
-  SchemaDocumentOutput<TCollectionSchema, TOptions>,
-  SchemaDocumentInput<TCollectionSchema>,
-  TError,
-  TData,
-  TQueryKey
->
 
 export const schemaDocumentSnapshotQueryOptions = <
   TCollectionSchema extends CollectionSchema,
@@ -60,16 +39,13 @@ export const schemaDocumentSnapshotQueryOptions = <
   TError = DefaultError,
   TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
->(
-  snapshotManager: FirestoreSnapshotManager,
-  {
-    factory,
-    id,
-    snapshotOptions,
-    ...props
-  }: SchemaDocumentSnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>,
-): SchemaDocumentSnapshotQueryOptionsResult<TCollectionSchema, TOptions, TError, TData, TQueryKey> =>
-  documentSnapshotQueryOptions(snapshotManager, {
+>({
+  factory,
+  id,
+  snapshotOptions,
+  ...props
+}: SchemaDocumentSnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>) =>
+  documentSnapshotQueryOptions({
     ref: id ? factory.read.doc(id, snapshotOptions) : null,
     snapshotOptions,
     ...props,

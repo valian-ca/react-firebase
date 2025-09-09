@@ -1,7 +1,13 @@
 import { useMemo } from 'react'
 
 import { type DocumentData, type DocumentReference, type SnapshotListenOptions } from '@firebase/firestore'
-import { documentSnapshotState, type DocumentSnapshotStateListener, fromDocumentRef } from '@valian/rxjs-firebase'
+import {
+  type DocumentSnapshotDisabledState,
+  documentSnapshotState,
+  type DocumentSnapshotStateListener,
+  fromDocumentRef,
+  startWithDocumentSnapshotLoadingState,
+} from '@valian/rxjs-firebase'
 import { useObservable } from 'observable-hooks'
 import { of, switchMap } from 'rxjs'
 
@@ -26,9 +32,16 @@ export const useDocumentStore = <AppModelType = DocumentData, DbModelType extend
       inputs$.pipe(
         switchMap(([ref, snapshotOptions]) => {
           if (!ref) {
-            return of({ isLoading: false, hasError: false, disabled: true } as const)
+            return of({
+              isLoading: false,
+              hasError: false,
+              disabled: true,
+            } as const satisfies DocumentSnapshotDisabledState)
           }
-          return fromDocumentRef(ref, snapshotOptions).pipe(documentSnapshotState(options))
+          return fromDocumentRef(ref, snapshotOptions).pipe(
+            documentSnapshotState(options),
+            startWithDocumentSnapshotLoadingState<AppModelType, DbModelType>(),
+          )
         }),
       ),
     [options.ref, snapshotListenOptions],

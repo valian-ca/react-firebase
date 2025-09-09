@@ -1,7 +1,13 @@
 import { useMemo } from 'react'
 
 import { type DocumentData, type Query, type SnapshotListenOptions } from '@firebase/firestore'
-import { fromQuery, querySnapshotState, type QuerySnapshotStateListener } from '@valian/rxjs-firebase'
+import {
+  fromQuery,
+  type QuerySnapshotDisabledState,
+  querySnapshotState,
+  type QuerySnapshotStateListener,
+  startWithQuerySnapshotLoadingState,
+} from '@valian/rxjs-firebase'
 import { useObservable } from 'observable-hooks'
 import { of, switchMap } from 'rxjs'
 
@@ -33,9 +39,12 @@ export const useQueryStore = <AppModelType = DocumentData, DbModelType extends D
               hasError: false,
               disabled: true,
               data: [],
-            } as const)
+            } as const satisfies QuerySnapshotDisabledState)
           }
-          return fromQuery(query, snapshotOptions).pipe(querySnapshotState(options))
+          return fromQuery(query, snapshotOptions).pipe(
+            querySnapshotState(options),
+            startWithQuerySnapshotLoadingState<AppModelType, DbModelType>(),
+          )
         }),
       ),
     [options.query, snapshotListenOptions],

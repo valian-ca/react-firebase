@@ -1,209 +1,60 @@
-import { type DocumentReference, type SnapshotListenOptions } from '@firebase/firestore'
-import { type DocumentSnapshotStateListener } from '@valian/rxjs-firebase'
-import { describe, expect, it, vi } from 'vitest'
-import { anyFunction, mock } from 'vitest-mock-extended'
-import { z } from 'zod'
-import { collectionsBuilder } from 'zod-firebase'
+import { type DocumentSnapshot } from '@firebase/firestore'
+import { QueryClient } from '@tanstack/react-query'
+import { fromDocumentRef } from '@valian/rxjs-firebase'
+import { Subject } from 'rxjs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mock, mockDeep } from 'vitest-mock-extended'
+import { type CollectionSchema, type SchemaFirestoreFactory } from 'zod-firebase'
 
-import { documentSnapshotQueryOptions } from '../documentSnapshotQueryOptions'
-import { type FirestoreSnapshotManager } from '../FirestoreSnapshotManager'
 import { schemaDocumentSnapshotQueryOptions } from '../schemaDocumentSnapshotQueryOptions'
 
-vi.mock('../documentSnapshotQueryOptions', () => ({
-  documentSnapshotQueryOptions: vi.fn(),
-}))
-
-const UserZod = z.object({
-  name: z.string(),
-  email: z.email(),
-})
-
-const collections = collectionsBuilder({
-  users: { zod: UserZod },
+vi.mock('@valian/rxjs-firebase', async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+  const actual = await importOriginal<typeof import('@valian/rxjs-firebase')>()
+  return {
+    ...actual,
+    fromDocumentRef: vi.fn(),
+  }
 })
 
 describe('schemaDocumentSnapshotQueryOptions', () => {
-  it('calls documentSnapshotQueryOptions with correct parameters', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const snapshotOptions = mock<SnapshotListenOptions>()
-    const listener = mock<DocumentSnapshotStateListener>()
-    const mockRef = mock<DocumentReference>({ id: 'test-id' })
+  let queryClient: QueryClient
 
-    const creatRefSpy = vi.spyOn(collections.users.read, 'doc').mockReturnValue(mockRef)
+  beforeEach(() => {
+    queryClient = new QueryClient()
+  })
 
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: 'test-id',
-      queryKey: ['test-key'],
-      snapshotOptions,
-      listener,
-    })
+  it('should return a snapshot when id and factory are provided', async () => {
+    const factory = mockDeep<SchemaFirestoreFactory<CollectionSchema>>()
+    factory.read.doc.mockReturnValue(mock())
+    const subject = new Subject<DocumentSnapshot>()
+    vi.mocked(fromDocumentRef).mockReturnValueOnce(subject)
 
-    expect(creatRefSpy).toHaveBeenCalledWith('test-id', snapshotOptions)
+    const options = schemaDocumentSnapshotQueryOptions<CollectionSchema>({ factory, id: '1', queryKey: ['schema-doc'] })
+    const promise = queryClient.fetchQuery(options)
 
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: mockRef,
-      snapshotOptions,
-      queryKey: ['test-key'],
-      listener,
+    const snapshot = mock<DocumentSnapshot>()
+    snapshot.exists.mockReturnValue(true)
+    snapshot.data.mockReturnValue({ foo: 'bar' })
+    subject.next(snapshot)
+    await expect(promise).resolves.toEqual({
+      exists: true,
+      isLoading: false,
+      hasError: false,
+      disabled: false,
+      data: { foo: 'bar' },
+      snapshot,
     })
   })
 
-  it('calls documentSnapshotQueryOptions with null ref when id is null', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const snapshotOptions = mock<SnapshotListenOptions>()
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: null,
-      queryKey: ['test-key'],
-      snapshotOptions,
+  it('should return disabled state when id is null', async () => {
+    const factory = mock<SchemaFirestoreFactory<CollectionSchema>>()
+    const options = schemaDocumentSnapshotQueryOptions<CollectionSchema>({
+      factory,
+      id: null as unknown as string,
+      enabled: true,
+      queryKey: ['schema-doc-empty'],
     })
-
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: null,
-      snapshotOptions,
-      queryKey: ['test-key'],
-    })
-  })
-
-  it('calls documentSnapshotQueryOptions with null ref when id is undefined', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const snapshotOptions = mock<SnapshotListenOptions>()
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: undefined,
-      queryKey: ['test-key'],
-      snapshotOptions,
-    })
-
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: null,
-      snapshotOptions,
-      queryKey: ['test-key'],
-    })
-  })
-
-  it('calls documentSnapshotQueryOptions with null ref when id is empty string', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const snapshotOptions = mock<SnapshotListenOptions>()
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: '',
-      queryKey: ['test-key'],
-      snapshotOptions,
-    })
-
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: null,
-      snapshotOptions,
-      queryKey: ['test-key'],
-    })
-  })
-
-  it('calls documentSnapshotQueryOptions without snapshotOptions when not provided', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const mockRef = mock<DocumentReference>({ id: 'test-id' })
-
-    vi.spyOn(collections.users.read, 'doc').mockReturnValue(mockRef)
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: 'test-id',
-      queryKey: ['test-key'],
-    })
-
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: mockRef,
-      snapshotOptions: undefined,
-      queryKey: ['test-key'],
-    })
-  })
-
-  it('calls documentSnapshotQueryOptions without listener when not provided', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const mockRef = mock<DocumentReference>({ id: 'test-id' })
-    const snapshotOptions = mock<SnapshotListenOptions>()
-
-    vi.spyOn(collections.users.read, 'doc').mockReturnValue(mockRef)
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: 'test-id',
-      queryKey: ['test-key'],
-      snapshotOptions,
-    })
-
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: mockRef,
-      snapshotOptions,
-      queryKey: ['test-key'],
-      listener: undefined,
-    })
-  })
-
-  it('passes through additional props to documentSnapshotQueryOptions', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const mockRef = mock<DocumentReference>({ id: 'test-id' })
-
-    vi.spyOn(collections.users.read, 'doc').mockReturnValue(mockRef)
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: 'test-id',
-      queryKey: ['test-key'],
-      select: (data) => data,
-      throwOnError: true,
-    })
-
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: mockRef,
-      snapshotOptions: undefined,
-      queryKey: ['test-key'],
-      select: anyFunction(),
-      throwOnError: true,
-    })
-  })
-
-  it('handles factory with different collection names', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const mockRef = mock<DocumentReference>({ id: 'test-id' })
-
-    const customCollections = collectionsBuilder({
-      posts: { zod: z.object({ title: z.string() }) },
-    })
-
-    vi.spyOn(customCollections.posts.read, 'doc').mockReturnValue(mockRef)
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: customCollections.posts,
-      id: 'test-id',
-      queryKey: ['test-key'],
-    })
-
-    expect(documentSnapshotQueryOptions).toHaveBeenCalledWith(snapshotManager, {
-      ref: mockRef,
-      snapshotOptions: undefined,
-      queryKey: ['test-key'],
-    })
-  })
-
-  it('calls factory.read.doc with correct parameters', () => {
-    const snapshotManager = mock<FirestoreSnapshotManager>()
-    const snapshotOptions = mock<SnapshotListenOptions>()
-    const mockRef = mock<DocumentReference>({ id: 'test-id' })
-
-    const docSpy = vi.spyOn(collections.users.read, 'doc').mockReturnValue(mockRef)
-
-    schemaDocumentSnapshotQueryOptions(snapshotManager, {
-      factory: collections.users,
-      id: 'test-id',
-      queryKey: ['test-key'],
-      snapshotOptions,
-    })
-
-    expect(docSpy).toHaveBeenCalledWith('test-id', snapshotOptions)
+    await expect(queryClient.fetchQuery(options)).resolves.toMatchObject({ disabled: true })
   })
 })

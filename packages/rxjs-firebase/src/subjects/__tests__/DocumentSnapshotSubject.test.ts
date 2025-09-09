@@ -1,9 +1,12 @@
-import { type DocumentSnapshot } from '@firebase/firestore'
+import { type DocumentReference, type DocumentSnapshot } from '@firebase/firestore'
 import { Subject } from 'rxjs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mock } from 'vitest-mock-extended'
 
+import { fromDocumentRef } from '../../source/fromDocumentRef'
 import { DocumentSnapshotSubject } from '../DocumentSnapshotSubject'
+
+vi.mock('../../source/fromDocumentRef')
 
 const testData = { id: '1', name: 'Test Document' }
 
@@ -240,6 +243,38 @@ describe('DocumentSnapshotSubject', () => {
 
       // Should not receive updates after unsubscribing
       expect(subscriber).toHaveBeenCalledTimes(2)
+    })
+  })
+
+  describe('factory methods', () => {
+    it('fromDocumentRef should create subject wired to fromDocumentRef observable', () => {
+      const ref = mock<DocumentReference>()
+      const snapshot = new Subject<DocumentSnapshot>()
+      const options = { includeMetadataChanges: true } as const
+
+      vi.mocked(fromDocumentRef).mockReturnValue(snapshot)
+
+      const subject = DocumentSnapshotSubject.fromDocumentRef(ref, options)
+
+      expect(vi.mocked(fromDocumentRef)).toHaveBeenCalledWith(ref, options)
+
+      // initial state
+      expect(subject.value).toEqual({ isLoading: true, hasError: false, disabled: false })
+
+      // drive a snapshot through mocked observable
+      const doc = mock<DocumentSnapshot>()
+      doc.exists.mockReturnValue(true)
+      doc.data.mockReturnValue(testData)
+      snapshot.next(doc)
+
+      expect(subject.value).toEqual({
+        snapshot: doc,
+        exists: true,
+        isLoading: false,
+        hasError: false,
+        disabled: false,
+        data: testData,
+      })
     })
   })
 })

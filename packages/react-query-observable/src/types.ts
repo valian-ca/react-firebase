@@ -3,6 +3,6 @@ import { type Observable } from 'rxjs'
 
 export type ObservableQueryFunction<
   T = unknown,
-  TObservable extends Observable<T> = Observable<T>,
   TQueryKey extends QueryKey = QueryKey,
+  TObservable extends Observable<T> = Observable<T>,
 > = (context: QueryFunctionContext<TQueryKey>) => TObservable

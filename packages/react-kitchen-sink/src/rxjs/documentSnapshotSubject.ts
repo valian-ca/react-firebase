@@ -1,5 +1,5 @@
 import { type DocumentData, type DocumentReference, type SnapshotListenOptions } from '@firebase/firestore'
-import { type DocumentSnapshotStateListener, DocumentSnapshotSubject, fromDocumentRef } from '@valian/rxjs-firebase'
+import { type DocumentSnapshotStateListener, DocumentSnapshotSubject } from '@valian/rxjs-firebase'
 
 import { sentryDocumentSnapshotListener } from '../sentry/sentryDocumentSnapshotListener'
 
@@ -8,7 +8,8 @@ export const documentSnapshotSubject = <AppModelType = DocumentData, DbModelType
   options?: SnapshotListenOptions,
   listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>,
 ) =>
-  new DocumentSnapshotSubject<AppModelType, DbModelType>(
-    fromDocumentRef(ref, options),
+  DocumentSnapshotSubject.fromDocumentRef<AppModelType, DbModelType>(
+    ref,
+    options,
     sentryDocumentSnapshotListener(ref, listener),
   )
