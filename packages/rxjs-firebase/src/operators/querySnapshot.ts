@@ -1,10 +1,11 @@
 import { type DocumentData, type Query, type SnapshotListenOptions } from '@firebase/firestore'
-import { defer, of, type OperatorFunction, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs'
+import { defer, finalize, of, type OperatorFunction, Subject, switchMap, takeUntil } from 'rxjs'
 
 import { fromQuery } from '../source'
-import { type QuerySnapshotState } from '../states/QuerySnapshotState'
+import { type QuerySnapshotDisabledState, type QuerySnapshotState } from '../states/QuerySnapshotState'
 
 import { querySnapshotState, type QuerySnapshotStateListener } from './querySnapshotState'
+import { startWithQuerySnapshotLoadingState } from './startWithQuerySnapshotLoadingState'
 
 export const querySnapshot =
   <AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>(
@@ -18,11 +19,9 @@ export const querySnapshot =
     defer(() => {
       const closeSnapshot = new Subject<void>()
       return source$.pipe(
-        tap({
-          complete: () => {
-            closeSnapshot.next()
-            closeSnapshot.complete()
-          },
+        finalize(() => {
+          closeSnapshot.next()
+          closeSnapshot.complete()
         }),
         switchMap((query) => {
           if (!query) {
@@ -33,17 +32,13 @@ export const querySnapshot =
               hasError: false,
               disabled: true,
               data: [],
-            } as const satisfies QuerySnapshotState<AppModelType, DbModelType>)
+            } as const satisfies QuerySnapshotDisabledState)
           }
-          return fromQuery(query, options).pipe(querySnapshotState(listener), takeUntil(closeSnapshot))
+          return fromQuery(query, options).pipe(
+            takeUntil(closeSnapshot),
+            querySnapshotState(listener),
+            startWithQuerySnapshotLoadingState<AppModelType, DbModelType>(),
+          )
         }),
-        startWith({
-          empty: true,
-          size: 0,
-          isLoading: false,
-          hasError: false,
-          disabled: true,
-          data: [],
-        } as const satisfies QuerySnapshotState<AppModelType, DbModelType>),
       )
     })

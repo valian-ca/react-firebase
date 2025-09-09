@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 
 import { type SnapshotListenOptions } from '@firebase/firestore'
-import { fromQuery, querySnapshotState } from '@valian/rxjs-firebase'
+import {
+  fromQuery,
+  type QuerySnapshotDisabledState,
+  querySnapshotState,
+  startWithQuerySnapshotLoadingState,
+} from '@valian/rxjs-firebase'
 import { createQuerySnapshotStore, useSnapshotListenOptions, useStoreSubscription } from '@valian/zustand-firestore'
 import { useObservable } from 'observable-hooks'
 import { of, switchMap } from 'rxjs'
@@ -51,11 +56,15 @@ export const useSchemaQueryStore = <TCollectionSchema extends CollectionSchema, 
               hasError: false,
               disabled: true,
               data: [],
-            } as const)
+            } as const satisfies QuerySnapshotDisabledState)
           }
           const firestoreQuery = factory.prepare(query, metaOptions)
           return fromQuery(firestoreQuery, snapshotOptions).pipe(
             querySnapshotState(sentrySchemaQuerySnapshotListener(factory.collectionName, query, options)),
+            startWithQuerySnapshotLoadingState<
+              SchemaDocumentOutput<TCollectionSchema, TOptions>,
+              SchemaDocumentInput<TCollectionSchema>
+            >(),
           )
         }),
       ),

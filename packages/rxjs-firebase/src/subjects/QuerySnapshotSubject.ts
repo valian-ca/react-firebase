@@ -1,7 +1,8 @@
-import { type DocumentData, type QuerySnapshot } from '@firebase/firestore'
+import { type DocumentData, type Query, type QuerySnapshot, type SnapshotListenOptions } from '@firebase/firestore'
 import { BehaviorSubject, type Observable, Subject, takeUntil } from 'rxjs'
 
-import { querySnapshotState, type QuerySnapshotStateListener } from '../operators'
+import { querySnapshotState, type QuerySnapshotStateListener } from '../operators/querySnapshotState'
+import { fromQuery } from '../source/fromQuery'
 import { type QuerySnapshotState } from '../states'
 
 export class QuerySnapshotSubject<
@@ -33,5 +34,13 @@ export class QuerySnapshotSubject<
     this.notification$.next()
     this.notification$.complete()
     super.complete()
+  }
+
+  static fromQuery<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>(
+    query: Query<AppModelType, DbModelType>,
+    options?: SnapshotListenOptions,
+    listener?: QuerySnapshotStateListener<AppModelType, DbModelType>,
+  ): QuerySnapshotSubject<AppModelType, DbModelType> {
+    return new QuerySnapshotSubject(fromQuery(query, options), listener)
   }
 }

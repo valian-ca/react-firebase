@@ -1,47 +1,47 @@
 import { type DocumentData, type QuerySnapshot } from '@firebase/firestore'
 
-interface QuerySnapshotDisabledState {
-  snapshot?: undefined
-  empty: true
-  size: 0
-  isLoading: false
-  hasError: false
-  disabled: true
-  data: []
+export interface QuerySnapshotDisabledState {
+  readonly snapshot?: undefined
+  readonly empty: true
+  readonly size: 0
+  readonly isLoading: false
+  readonly hasError: false
+  readonly disabled: true
+  readonly data: []
 }
 
-interface QuerySnapshotLoadingState {
-  snapshot?: undefined
-  empty: true
-  size: 0
-  isLoading: true
-  hasError: false
-  disabled: false
-  data: []
+export interface QuerySnapshotLoadingState {
+  readonly snapshot?: undefined
+  readonly empty: true
+  readonly size: 0
+  readonly isLoading: true
+  readonly hasError: false
+  readonly disabled: false
+  readonly data: []
 }
 
-interface QuerySnapshotErrorState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
-  snapshot?: QuerySnapshot<AppModelType, DbModelType>
-  empty: boolean
-  size: number
-  isLoading: false
-  hasError: true
-  disabled: false
-  data: []
+export interface QuerySnapshotErrorState {
+  readonly snapshot?: undefined
+  readonly empty: boolean
+  readonly size: number
+  readonly isLoading: false
+  readonly hasError: true
+  readonly disabled: false
+  readonly data: []
 }
 
-interface QuerySnapshotDataState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
-  snapshot: QuerySnapshot<AppModelType, DbModelType>
-  empty: boolean
-  size: number
-  isLoading: false
-  hasError: false
-  disabled: false
-  data: AppModelType[]
+export interface QuerySnapshotDataState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
+  readonly snapshot: QuerySnapshot<AppModelType, DbModelType>
+  readonly empty: boolean
+  readonly size: number
+  readonly isLoading: false
+  readonly hasError: false
+  readonly disabled: false
+  readonly data: AppModelType[]
 }
 
 export type QuerySnapshotState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> =
   | QuerySnapshotDisabledState
   | QuerySnapshotLoadingState
-  | QuerySnapshotErrorState<AppModelType, DbModelType>
+  | QuerySnapshotErrorState
   | QuerySnapshotDataState<AppModelType, DbModelType>

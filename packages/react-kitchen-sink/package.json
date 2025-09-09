@@ -30,6 +30,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@valian/react-query-observable": "workspace:*",
     "@valian/react-firestore": "workspace:*",
     "@valian/rxjs-firebase": "workspace:*",
     "@valian/zustand-firestore": "workspace:*",

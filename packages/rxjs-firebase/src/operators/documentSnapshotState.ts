@@ -1,15 +1,23 @@
 import { type DocumentData, type DocumentSnapshot } from '@firebase/firestore'
-import { catchError, map, type OperatorFunction, startWith, tap } from 'rxjs'
+import { finalize, identity, map, type OperatorFunction, tap } from 'rxjs'
 
-import { type DocumentSnapshotState } from '../states/DocumentSnapshotState'
+import {
+  type DocumentDoesNotExistState,
+  type DocumentSnapshotDataState,
+  type DocumentSnapshotErrorState,
+} from '../states/DocumentSnapshotState'
 
-import { documentSnapshotStateObservable } from './documentSnapshotStateObservable'
+import { catchDocumentSnapshotError } from './catchDocumentSnapshotError'
 
 export interface DocumentSnapshotStateListener<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
 > {
-  onSnapshot?: (snapshot: DocumentSnapshotState<AppModelType, DbModelType>) => void
+  onSnapshot?: (
+    snapshot:
+      | DocumentSnapshotDataState<AppModelType, DbModelType>
+      | DocumentDoesNotExistState<AppModelType, DbModelType>,
+  ) => void
   onError?: (error: unknown) => void
   onComplete?: () => void
 }
@@ -17,7 +25,12 @@ export interface DocumentSnapshotStateListener<
 export const documentSnapshotState =
   <AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>(
     listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>,
-  ): OperatorFunction<DocumentSnapshot<AppModelType, DbModelType>, DocumentSnapshotState<AppModelType, DbModelType>> =>
+  ): OperatorFunction<
+    DocumentSnapshot<AppModelType, DbModelType>,
+    | DocumentSnapshotDataState<AppModelType, DbModelType>
+    | DocumentDoesNotExistState<AppModelType, DbModelType>
+    | DocumentSnapshotErrorState
+  > =>
   (source$) =>
     source$.pipe(
       map((snapshot) => {
@@ -29,7 +42,7 @@ export const documentSnapshotState =
             hasError: false,
             disabled: false,
             data: snapshot.data(),
-          } as const satisfies DocumentSnapshotState<AppModelType, DbModelType>
+          } as const satisfies DocumentSnapshotDataState<AppModelType, DbModelType>
         }
         return {
           snapshot,
@@ -37,23 +50,12 @@ export const documentSnapshotState =
           isLoading: false,
           hasError: false,
           disabled: false,
-        } as const satisfies DocumentSnapshotState<AppModelType, DbModelType>
+        } as const satisfies DocumentDoesNotExistState<AppModelType, DbModelType>
       }),
       tap({
         next: listener?.onSnapshot,
         error: listener?.onError,
-        complete: listener?.onComplete,
       }),
-      catchError(() =>
-        documentSnapshotStateObservable<AppModelType, DbModelType>({
-          isLoading: false,
-          hasError: true,
-          disabled: false,
-        }),
-      ),
-      startWith({
-        isLoading: true,
-        hasError: false,
-        disabled: false,
-      } as const satisfies DocumentSnapshotState<AppModelType, DbModelType>),
+      listener?.onComplete ? finalize(listener.onComplete) : identity,
+      catchDocumentSnapshotError<AppModelType, DbModelType>(),
     )

@@ -111,6 +111,9 @@ importers:
       '@valian/react-firestore':
         specifier: workspace:*
         version: link:../react-firestore
+      '@valian/react-query-observable':
+        specifier: workspace:*
+        version: link:../react-query-observable
       '@valian/rxjs-firebase':
         specifier: workspace:*
         version: link:../rxjs-firebase

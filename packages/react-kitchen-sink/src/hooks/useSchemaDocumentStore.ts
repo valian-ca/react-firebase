@@ -1,7 +1,12 @@
 import { useMemo } from 'react'
 
 import { type SnapshotListenOptions } from '@firebase/firestore'
-import { documentSnapshotState, fromDocumentRef } from '@valian/rxjs-firebase'
+import {
+  type DocumentSnapshotDisabledState,
+  documentSnapshotState,
+  fromDocumentRef,
+  startWithDocumentSnapshotLoadingState,
+} from '@valian/rxjs-firebase'
 import { createDocumentSnapshotStore, useSnapshotListenOptions, useStoreSubscription } from '@valian/zustand-firestore'
 import { useObservable } from 'observable-hooks'
 import { of, switchMap } from 'rxjs'
@@ -43,11 +48,19 @@ export const useSchemaDocumentStore = <TCollectionSchema extends CollectionSchem
       inputs$.pipe(
         switchMap(([id, snapshotOptions]) => {
           if (!id) {
-            return of({ isLoading: false, hasError: false, disabled: true } as const)
+            return of({
+              isLoading: false,
+              hasError: false,
+              disabled: true,
+            } as const satisfies DocumentSnapshotDisabledState)
           }
           const ref = factory.read.doc(id, metaOptions)
           return fromDocumentRef(ref, snapshotOptions).pipe(
             documentSnapshotState(sentryDocumentSnapshotListener(ref, options)),
+            startWithDocumentSnapshotLoadingState<
+              SchemaDocumentOutput<TCollectionSchema, TOptions>,
+              SchemaDocumentInput<TCollectionSchema>
+            >(),
           )
         }),
       ),

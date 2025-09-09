@@ -1,6 +1,6 @@
 import { type DocumentData, type DocumentSnapshot } from '@firebase/firestore'
 
-interface DocumentSnapshotDisabledState {
+export interface DocumentSnapshotDisabledState {
   snapshot?: undefined
   exists?: undefined
   isLoading: false
@@ -9,7 +9,7 @@ interface DocumentSnapshotDisabledState {
   data?: undefined
 }
 
-interface DocumentSnapshotLoadingState {
+export interface DocumentSnapshotLoadingState {
   snapshot?: undefined
   exists?: undefined
   isLoading: true
@@ -18,8 +18,8 @@ interface DocumentSnapshotLoadingState {
   data?: undefined
 }
 
-interface DocumentSnapshotErrorState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
-  snapshot?: DocumentSnapshot<AppModelType, DbModelType>
+export interface DocumentSnapshotErrorState {
+  snapshot?: undefined
   exists?: boolean
   isLoading: false
   hasError: true
@@ -27,7 +27,10 @@ interface DocumentSnapshotErrorState<AppModelType = DocumentData, DbModelType ex
   data?: undefined
 }
 
-interface DocumentDoesNotExistState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
+export interface DocumentDoesNotExistState<
+  AppModelType = DocumentData,
+  DbModelType extends DocumentData = DocumentData,
+> {
   snapshot: DocumentSnapshot<AppModelType, DbModelType>
   exists: false
   isLoading: false
@@ -36,7 +39,10 @@ interface DocumentDoesNotExistState<AppModelType = DocumentData, DbModelType ext
   data?: undefined
 }
 
-interface DocumentSnapshotDataState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> {
+export interface DocumentSnapshotDataState<
+  AppModelType = DocumentData,
+  DbModelType extends DocumentData = DocumentData,
+> {
   snapshot: DocumentSnapshot<AppModelType, DbModelType>
   exists: true
   isLoading: false
@@ -48,6 +54,6 @@ interface DocumentSnapshotDataState<AppModelType = DocumentData, DbModelType ext
 export type DocumentSnapshotState<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> =
   | DocumentSnapshotDisabledState
   | DocumentSnapshotLoadingState
-  | DocumentSnapshotErrorState<AppModelType, DbModelType>
+  | DocumentSnapshotErrorState
   | DocumentDoesNotExistState<AppModelType, DbModelType>
   | DocumentSnapshotDataState<AppModelType, DbModelType>

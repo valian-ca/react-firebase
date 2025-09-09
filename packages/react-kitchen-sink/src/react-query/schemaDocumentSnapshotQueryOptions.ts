@@ -10,13 +10,11 @@ import {
 
 import { type SchemaDocumentSnapshotState } from '../rxjs/types'
 
-import { type QueryFnFromDocumentSnapshotSubjectFactoryOptions } from './queryFn/queryFnFromDocumentSnapshotSubjectFactory'
 import {
   type DocumentSnapshotQueryOptions,
   documentSnapshotQueryOptions,
-  type DocumentSnapshotQueryOptionsResult,
+  type QueryFnFromDocumentSnapshotSubjectFactoryOptions,
 } from './documentSnapshotQueryOptions'
-import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
 
 export interface SchemaDocumentSnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
@@ -40,36 +38,19 @@ export interface SchemaDocumentSnapshotQueryOptions<
   snapshotOptions?: TOptions & SnapshotListenOptions
 }
 
-export type SchemaDocumentSnapshotQueryOptionsResult<
-  TCollectionSchema extends CollectionSchema,
-  TOptions extends MetaOutputOptions = MetaOutputOptions,
-  TError = DefaultError,
-  TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
-  TQueryKey extends QueryKey = QueryKey,
-> = DocumentSnapshotQueryOptionsResult<
-  SchemaDocumentOutput<TCollectionSchema, TOptions>,
-  SchemaDocumentInput<TCollectionSchema>,
-  TError,
-  TData,
-  TQueryKey
->
-
 export const schemaDocumentSnapshotQueryOptions = <
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions = MetaOutputOptions,
   TError = DefaultError,
   TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
->(
-  snapshotManager: FirestoreSnapshotManager,
-  {
-    factory,
-    id,
-    snapshotOptions,
-    ...props
-  }: SchemaDocumentSnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>,
-): SchemaDocumentSnapshotQueryOptionsResult<TCollectionSchema, TOptions, TError, TData, TQueryKey> =>
-  documentSnapshotQueryOptions(snapshotManager, {
+>({
+  factory,
+  id,
+  snapshotOptions,
+  ...props
+}: SchemaDocumentSnapshotQueryOptions<TCollectionSchema, TOptions, TError, TData, TQueryKey>) =>
+  documentSnapshotQueryOptions({
     ref: id ? factory.read.doc(id, snapshotOptions) : null,
     snapshotOptions,
     ...props,

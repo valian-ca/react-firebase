@@ -1,18 +1,18 @@
 import { type DocumentData, type Query as FirestoreQuery, type SnapshotListenOptions } from '@firebase/firestore'
+import { type DefaultError, type QueryKey } from '@tanstack/react-query'
+import { type ObservableQueryOptions, observableQueryOptions } from '@valian/react-query-observable'
 import {
-  type DataTag,
-  type DefaultError,
-  type QueryKey,
-  queryOptions,
-  type UnusedSkipTokenOptions,
-} from '@tanstack/react-query'
-import { type QuerySnapshotState, type QuerySnapshotStateListener } from '@valian/rxjs-firebase'
+  fromQuery,
+  type QuerySnapshotState,
+  querySnapshotState,
+  type QuerySnapshotStateListener,
+} from '@valian/rxjs-firebase'
+import { EMPTY } from 'rxjs'
 
-import {
-  queryFnFromQuerySnapshotSubjectFactory,
-  type QueryFnFromQuerySnapshotSubjectFactoryOptions,
-} from './queryFn/queryFnFromQuerySnapshotSubjectFactory'
-import { type FirestoreSnapshotManager } from './FirestoreSnapshotManager'
+export interface QueryFnFromQuerySnapshotSubjectFactoryOptions {
+  waitForData?: boolean
+  waitForDataTimeout?: number
+}
 
 export interface QuerySnapshotQueryOptions<
   AppModelType = DocumentData,
@@ -21,32 +21,13 @@ export interface QuerySnapshotQueryOptions<
   TData = QuerySnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      UnusedSkipTokenOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
-      | 'queryFn'
-      | 'initialData'
-      | 'staleTime'
-      | 'refetchInterval'
-      | 'refetchIntervalInBackground'
-      | 'refetchOnWindowFocus'
-      | 'refetchOnMount'
-      | 'refetchOnReconnect'
-      | 'retryOnMount'
-      | 'retry'
+      ObservableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+      'observableFn'
     >,
     QueryFnFromQuerySnapshotSubjectFactoryOptions {
   query?: FirestoreQuery<AppModelType, DbModelType> | null
   snapshotOptions?: SnapshotListenOptions
   listener?: QuerySnapshotStateListener<AppModelType, DbModelType>
-}
-
-export interface QuerySnapshotQueryOptionsResult<
-  AppModelType = DocumentData,
-  DbModelType extends DocumentData = DocumentData,
-  TError = DefaultError,
-  TData = QuerySnapshotState<AppModelType, DbModelType>,
-  TQueryKey extends QueryKey = QueryKey,
-> extends UnusedSkipTokenOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey> {
-  queryKey: DataTag<TQueryKey, QuerySnapshotState<AppModelType, DbModelType>, TError>
 }
 
 export const querySnapshotQueryOptions = <
@@ -55,40 +36,20 @@ export const querySnapshotQueryOptions = <
   TError = DefaultError,
   TData = QuerySnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
->(
-  snapshotManager: FirestoreSnapshotManager,
-  {
-    query,
-    snapshotOptions,
-    listener,
-    ...props
-  }: QuerySnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>,
-): QuerySnapshotQueryOptionsResult<AppModelType, DbModelType, TError, TData, TQueryKey> =>
-  queryOptions({
-    queryFn: query
-      ? queryFnFromQuerySnapshotSubjectFactory(
-          snapshotManager.querySnapshotSubjectFactory(query, snapshotOptions, listener),
-          props,
-        )
-      : () =>
-          Promise.resolve({
-            isLoading: false,
-            hasError: false,
-            empty: true,
-            size: 0,
-            data: [],
-            disabled: true,
-          } as const),
+>({
+  query,
+  snapshotOptions,
+  listener,
+  ...props
+}: QuerySnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>) =>
+  observableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>({
+    observableFn: () => (!query ? EMPTY : fromQuery(query, snapshotOptions).pipe(querySnapshotState(listener))),
     enabled: !!query,
-    staleTime: () => (snapshotManager.isSnapshotAlive(props.queryKey) ? Infinity : 0),
-    retry: false,
     gcTime: 10_000,
-    initialData: undefined,
     ...props,
     meta: {
       ...props.meta,
       type: 'snapshot',
-      snapshotManager,
       query,
     },
   })
