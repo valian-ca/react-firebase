@@ -11,11 +11,6 @@ import { of } from 'rxjs'
 
 import { sentryDocumentSnapshotListener } from '../sentry'
 
-export interface QueryFnFromDocumentSnapshotSubjectFactoryOptions {
-  waitForData?: boolean
-  waitForDataTimeout?: number
-}
-
 export interface DocumentSnapshotQueryOptions<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
@@ -23,10 +18,9 @@ export interface DocumentSnapshotQueryOptions<
   TData = DocumentSnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      ObservableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
-      'observableFn'
-    >,
-    QueryFnFromDocumentSnapshotSubjectFactoryOptions {
+    ObservableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+    'observableFn'
+  > {
   ref?: DocumentReference<AppModelType, DbModelType> | null
   snapshotOptions?: SnapshotListenOptions
   listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>

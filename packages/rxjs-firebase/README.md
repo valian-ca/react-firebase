@@ -43,7 +43,7 @@ These are the primary operators that map Firestore snapshots into well-typed sta
 ### documentSnapshotState
 
 ```typescript
-import { doc } from '@firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { fromDocumentRef, documentSnapshotState } from '@valian/rxjs-firebase'
 
 const userRef = doc(db, 'users', userId)
@@ -68,7 +68,7 @@ This is useful when you want subscribers to get an initial `{ isLoading: true }`
 ### querySnapshotState
 
 ```typescript
-import { collection, query, where } from '@firebase/firestore'
+import { collection, query, where } from 'firebase/firestore'
 import { fromQuery, querySnapshotState } from '@valian/rxjs-firebase'
 
 const todosQuery = query(collection(db, 'todos'), where('userId', '==', userId))
@@ -98,7 +98,7 @@ When queries or refs can be null/undefined at times, prefer the `documentSnapsho
 Creates an observable of `DocumentSnapshot`.
 
 ```typescript
-import { doc } from '@firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { fromDocumentRef } from '@valian/rxjs-firebase'
 
 const user$ = fromDocumentRef(doc(db, 'users', 'user123'))
@@ -109,7 +109,7 @@ const user$ = fromDocumentRef(doc(db, 'users', 'user123'))
 Creates an observable of `QuerySnapshot`.
 
 ```typescript
-import { collection, orderBy, query, where } from '@firebase/firestore'
+import { collection, orderBy, query, where } from 'firebase/firestore'
 import { fromQuery } from '@valian/rxjs-firebase'
 
 const base = query(collection(db, 'todos'))
@@ -139,7 +139,7 @@ const auth$ = authState()
 `BehaviorSubject` that tracks a document state.
 
 ```typescript
-import { doc } from '@firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { DocumentSnapshotSubject } from '@valian/rxjs-firebase'
 
 const subject = DocumentSnapshotSubject.fromDocumentRef(doc(db, 'users', 'user123'))
@@ -159,7 +159,7 @@ subject.complete()
 `BehaviorSubject` that tracks a query state.
 
 ```typescript
-import { collection, query } from '@firebase/firestore'
+import { collection, query } from 'firebase/firestore'
 import { QuerySnapshotSubject } from '@valian/rxjs-firebase'
 
 const subject = QuerySnapshotSubject.fromQuery(query(collection(db, 'todos')))
@@ -215,7 +215,7 @@ of(todosQuery /* or null */)
 Wait until a document exists or time out.
 
 ```typescript
-import { doc } from '@firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { documentExists, documentSnapshotState, fromDocumentRef } from '@valian/rxjs-firebase'
 
 const exists = await documentExists(fromDocumentRef(doc(db, 'users', userId)).pipe(documentSnapshotState()), 5_000)

@@ -13,8 +13,6 @@ import {
 import { type SchemaQuerySnapshotState, type SchemaQuerySnapshotStateListener } from '../rxjs/types'
 import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySnapshotListener'
 
-import { type QueryFnFromQuerySnapshotSubjectFactoryOptions } from './querySnapshotQueryOptions'
-
 export interface SchemaQuerySnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions = MetaOutputOptions,
@@ -22,10 +20,9 @@ export interface SchemaQuerySnapshotQueryOptions<
   TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      ObservableQueryOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>,
-      'observableFn'
-    >,
-    QueryFnFromQuerySnapshotSubjectFactoryOptions {
+    ObservableQueryOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>,
+    'observableFn'
+  > {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
   query?: SchemaQuerySpecification<TCollectionSchema, TOptions> | null
   snapshotOptions?: TOptions & SnapshotListenOptions

@@ -9,11 +9,6 @@ import {
 } from '@valian/rxjs-firebase'
 import { of } from 'rxjs'
 
-export interface QueryFnFromQuerySnapshotSubjectFactoryOptions {
-  waitForData?: boolean
-  waitForDataTimeout?: number
-}
-
 export interface QuerySnapshotQueryOptions<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
@@ -21,10 +16,9 @@ export interface QuerySnapshotQueryOptions<
   TData = QuerySnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      ObservableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
-      'observableFn'
-    >,
-    QueryFnFromQuerySnapshotSubjectFactoryOptions {
+    ObservableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+    'observableFn'
+  > {
   query?: FirestoreQuery<AppModelType, DbModelType> | null
   snapshotOptions?: SnapshotListenOptions
   listener?: QuerySnapshotStateListener<AppModelType, DbModelType>

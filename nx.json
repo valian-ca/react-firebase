@@ -8,9 +8,6 @@
         "file": false,
         "createRelease": "github"
       }
-    },
-    "git": {
-      "tag": false
     }
   },
   "plugins": [

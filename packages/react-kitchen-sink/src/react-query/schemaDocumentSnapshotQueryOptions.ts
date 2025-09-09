@@ -10,11 +10,7 @@ import {
 
 import { type SchemaDocumentSnapshotState } from '../rxjs/types'
 
-import {
-  type DocumentSnapshotQueryOptions,
-  documentSnapshotQueryOptions,
-  type QueryFnFromDocumentSnapshotSubjectFactoryOptions,
-} from './documentSnapshotQueryOptions'
+import { type DocumentSnapshotQueryOptions, documentSnapshotQueryOptions } from './documentSnapshotQueryOptions'
 
 export interface SchemaDocumentSnapshotQueryOptions<
   TCollectionSchema extends CollectionSchema,
@@ -23,16 +19,15 @@ export interface SchemaDocumentSnapshotQueryOptions<
   TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-      DocumentSnapshotQueryOptions<
-        SchemaDocumentOutput<TCollectionSchema, TOptions>,
-        SchemaDocumentInput<TCollectionSchema>,
-        TError,
-        TData,
-        TQueryKey
-      >,
-      'ref' | 'snapshotOptions'
+    DocumentSnapshotQueryOptions<
+      SchemaDocumentOutput<TCollectionSchema, TOptions>,
+      SchemaDocumentInput<TCollectionSchema>,
+      TError,
+      TData,
+      TQueryKey
     >,
-    QueryFnFromDocumentSnapshotSubjectFactoryOptions {
+    'ref' | 'snapshotOptions'
+  > {
   factory: SchemaFirestoreFactory<TCollectionSchema>
   id?: string | null
   snapshotOptions?: TOptions & SnapshotListenOptions

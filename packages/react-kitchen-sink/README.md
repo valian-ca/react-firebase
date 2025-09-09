@@ -35,7 +35,7 @@ Use the provided options builders to integrate Firestore snapshots with TanStack
 #### Document snapshot
 
 ```typescript
-import { doc } from '@firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { documentSnapshotQueryOptions } from '@valian/react-kitchen-sink/react-query'
 
@@ -68,7 +68,7 @@ const { data } = useSuspenseQuery(
 #### Query snapshot
 
 ```typescript
-import { collection, query, where } from '@firebase/firestore'
+import { collection, query, where } from 'firebase/firestore'
 import { useQuery } from '@tanstack/react-query'
 import { querySnapshotQueryOptions } from '@valian/react-kitchen-sink'
 
@@ -130,7 +130,7 @@ export function SchemaTodos({ userId }: { userId: string }) {
 ### RxJS subjects integration
 
 ```typescript
-import { doc } from '@firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { documentSnapshotSubject } from '@valian/react-kitchen-sink'
 
 const subject = documentSnapshotSubject(doc(db, 'users', 'user123'))
