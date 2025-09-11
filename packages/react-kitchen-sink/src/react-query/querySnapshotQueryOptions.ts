@@ -9,20 +9,30 @@ import {
 } from '@valian/rxjs-firebase'
 import { of } from 'rxjs'
 
-export interface QuerySnapshotQueryOptions<
+type QuerySnapshotQueryRef<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> =
+  | {
+      query?: FirestoreQuery<AppModelType, DbModelType> | null
+      queryFn?: never
+    }
+  | {
+      query?: never
+      queryFn: () => FirestoreQuery<AppModelType, DbModelType>
+    }
+
+export type QuerySnapshotQueryOptions<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
   TError = DefaultError,
   TData = QuerySnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
-> extends Omit<
-    ObservableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
-    'observableFn'
-  > {
-  query?: FirestoreQuery<AppModelType, DbModelType> | null
-  snapshotOptions?: SnapshotListenOptions
-  listener?: QuerySnapshotStateListener<AppModelType, DbModelType>
-}
+> = Omit<
+  ObservableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+  'observableFn'
+> &
+  QuerySnapshotQueryRef<AppModelType, DbModelType> & {
+    snapshotOptions?: SnapshotListenOptions
+    listener?: QuerySnapshotStateListener<AppModelType, DbModelType>
+  }
 
 export const querySnapshotQueryOptions = <
   AppModelType = DocumentData,
@@ -32,22 +42,28 @@ export const querySnapshotQueryOptions = <
   TQueryKey extends QueryKey = QueryKey,
 >({
   query,
+  queryFn,
   snapshotOptions,
   listener,
   ...props
 }: QuerySnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>) =>
   observableQueryOptions<QuerySnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>({
-    observableFn: () =>
-      !query
-        ? of({
-            empty: true,
-            size: 0,
-            isLoading: false,
-            hasError: false,
-            disabled: true,
-            data: [],
-          } as const satisfies QuerySnapshotState<AppModelType, DbModelType>)
-        : fromQuery(query, snapshotOptions).pipe(querySnapshotState(listener)),
+    observableFn: () => {
+      if (queryFn) {
+        return fromQuery(queryFn(), snapshotOptions).pipe(querySnapshotState(listener))
+      }
+      if (query) {
+        return fromQuery(query, snapshotOptions).pipe(querySnapshotState(listener))
+      }
+      return of({
+        empty: true,
+        size: 0,
+        isLoading: false,
+        hasError: false,
+        disabled: true,
+        data: [],
+      } as const satisfies QuerySnapshotState<AppModelType, DbModelType>)
+    },
     enabled: !!query,
     gcTime: 10_000,
     ...props,

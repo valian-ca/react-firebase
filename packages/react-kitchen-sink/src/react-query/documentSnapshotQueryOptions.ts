@@ -11,20 +11,30 @@ import { of } from 'rxjs'
 
 import { sentryDocumentSnapshotListener } from '../sentry'
 
-export interface DocumentSnapshotQueryOptions<
+type DocumentSnapshotQueryRef<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData> =
+  | {
+      ref?: DocumentReference<AppModelType, DbModelType> | null
+      refFn?: never
+    }
+  | {
+      ref?: never
+      refFn: () => DocumentReference<AppModelType, DbModelType>
+    }
+
+export type DocumentSnapshotQueryOptions<
   AppModelType = DocumentData,
   DbModelType extends DocumentData = DocumentData,
   TError = DefaultError,
   TData = DocumentSnapshotState<AppModelType, DbModelType>,
   TQueryKey extends QueryKey = QueryKey,
-> extends Omit<
-    ObservableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
-    'observableFn'
-  > {
-  ref?: DocumentReference<AppModelType, DbModelType> | null
-  snapshotOptions?: SnapshotListenOptions
-  listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>
-}
+> = Omit<
+  ObservableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>,
+  'observableFn'
+> &
+  DocumentSnapshotQueryRef<AppModelType, DbModelType> & {
+    snapshotOptions?: SnapshotListenOptions
+    listener?: DocumentSnapshotStateListener<AppModelType, DbModelType>
+  }
 
 export const documentSnapshotQueryOptions = <
   AppModelType = DocumentData,
@@ -34,20 +44,28 @@ export const documentSnapshotQueryOptions = <
   TQueryKey extends QueryKey = QueryKey,
 >({
   ref,
+  refFn,
   snapshotOptions,
   listener,
   ...props
 }: DocumentSnapshotQueryOptions<AppModelType, DbModelType, TError, TData, TQueryKey>) =>
   observableQueryOptions<DocumentSnapshotState<AppModelType, DbModelType>, TError, TData, TQueryKey>({
-    observableFn: () =>
-      !ref
-        ? of({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
-            AppModelType,
-            DbModelType
-          >)
-        : fromDocumentRef(ref, snapshotOptions).pipe(
-            documentSnapshotState(sentryDocumentSnapshotListener(ref, listener)),
-          ),
+    observableFn: () => {
+      if (refFn) {
+        return fromDocumentRef(refFn(), snapshotOptions).pipe(
+          documentSnapshotState(sentryDocumentSnapshotListener(refFn(), listener)),
+        )
+      }
+      if (ref) {
+        return fromDocumentRef(ref, snapshotOptions).pipe(
+          documentSnapshotState(sentryDocumentSnapshotListener(ref, listener)),
+        )
+      }
+      return of({ isLoading: false, hasError: false, disabled: true } as const satisfies DocumentSnapshotState<
+        AppModelType,
+        DbModelType
+      >)
+    },
     enabled: !!ref,
     gcTime: 10_000,
     ...props,
