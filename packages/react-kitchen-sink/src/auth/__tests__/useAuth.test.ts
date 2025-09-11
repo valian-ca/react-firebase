@@ -129,4 +129,63 @@ describe('useAuth and firebaseAuthSubscription', () => {
 
     sub.unsubscribe()
   })
+
+  it('handles user without email', () => {
+    const fakeUser = {
+      uid: 'uid-123',
+      email: null,
+      displayName: 'User Name',
+    } as unknown as User
+
+    vi.mocked(authState).mockReturnValue(of(fakeUser) as Observable<User | null>)
+
+    const sub = firebaseAuthSubscription(app)
+
+    expect(setSentryUser).toHaveBeenCalledWith({
+      id: fakeUser.uid,
+      displayName: fakeUser.displayName,
+    })
+    expect(useAuth.getState()).toEqual({ initialized: true, user: fakeUser })
+
+    sub.unsubscribe()
+  })
+
+  it('handles user without displayName', () => {
+    const fakeUser = {
+      uid: 'uid-123',
+      email: 'user@example.com',
+      displayName: null,
+    } as unknown as User
+
+    vi.mocked(authState).mockReturnValue(of(fakeUser) as Observable<User | null>)
+
+    const sub = firebaseAuthSubscription(app)
+
+    expect(setSentryUser).toHaveBeenCalledWith({
+      id: fakeUser.uid,
+      email: fakeUser.email,
+    })
+    expect(useAuth.getState()).toEqual({ initialized: true, user: fakeUser })
+
+    sub.unsubscribe()
+  })
+
+  it('handles user without email and displayName', () => {
+    const fakeUser = {
+      uid: 'uid-123',
+      email: null,
+      displayName: null,
+    } as unknown as User
+
+    vi.mocked(authState).mockReturnValue(of(fakeUser) as Observable<User | null>)
+
+    const sub = firebaseAuthSubscription(app)
+
+    expect(setSentryUser).toHaveBeenCalledWith({
+      id: fakeUser.uid,
+    })
+    expect(useAuth.getState()).toEqual({ initialized: true, user: fakeUser })
+
+    sub.unsubscribe()
+  })
 })

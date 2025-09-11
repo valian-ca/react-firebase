@@ -53,4 +53,30 @@ describe('querySnapshotQueryOptions', () => {
     const options = querySnapshotQueryOptions({ query: null, enabled: true, queryKey: ['q-empty'] })
     await expect(queryClient.fetchQuery(options)).resolves.toMatchObject({ disabled: true })
   })
+
+  it('should return a snapshot when queryFn is provided', async () => {
+    const subject = new Subject<QuerySnapshot>()
+    const queryFn = vi.fn().mockReturnValue(stub<FirestoreQuery>())
+    vi.mocked(fromQuery).mockReturnValueOnce(subject)
+
+    const options = querySnapshotQueryOptions({ queryFn, queryKey: ['q-fn'] })
+    const promise = queryClient.fetchQuery(options)
+
+    const snapshot = mock<QuerySnapshot>({
+      size: 1,
+      empty: false,
+      docs: [{ data: () => ({ id: '1' }) }],
+    })
+    subject.next(snapshot)
+    await expect(promise).resolves.toEqual({
+      snapshot,
+      size: 1,
+      empty: false,
+      isLoading: false,
+      hasError: false,
+      disabled: false,
+      data: [{ id: '1' }],
+    })
+    expect(queryFn).toHaveBeenCalledOnce()
+  })
 })
