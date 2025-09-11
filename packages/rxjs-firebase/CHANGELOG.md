@@ -1,3 +1,7 @@
+## 1.2.1 (2025-09-11)
+
+This was a version bump only for @valian/rxjs-firebase to align it with other projects, there were no code changes.
+
 ## 1.2.0 (2025-09-09)
 
 ### 🚀 Features

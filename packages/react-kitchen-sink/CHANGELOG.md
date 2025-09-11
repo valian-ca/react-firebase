@@ -1,3 +1,13 @@
+## 1.2.1 (2025-09-11)
+
+### 🚀 Features
+
+- refFn and queryFn ([#50](https://github.com/valian-ca/react-firebase/pull/50))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.2.0 (2025-09-09)
 
 ### 🚀 Features
