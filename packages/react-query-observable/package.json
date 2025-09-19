@@ -1,7 +1,7 @@
 {
   "name": "@valian/react-query-observable",
   "description": "react query rxjs observable",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/valian-ca/react-firebase.git"
