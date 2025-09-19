@@ -6,4 +6,5 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   target: 'es2020',
   fixedExtension: true,
+  external: [/^firebase\//, /^@firebase\//, /^zustand\//],
 })
