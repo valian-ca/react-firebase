@@ -11,15 +11,6 @@
       matchManagers: ['npm'],
     },
     {
-      groupName: 'Node.js',
-      matchPackageNames: ['pnpm'],
-    },
-    {
-      groupName: 'Node.js',
-      matchPackageNames: ['node'],
-      allowedVersions: '<23.0.0',
-    },
-    {
       groupName: 'main dependencies',
       matchPackageNames: ['firebase', '/react/'],
     },
@@ -33,11 +24,28 @@
     },
     {
       groupName: 'Tests',
-      matchPackageNames: ['/jest/'],
+      matchPackageNames: ['/vitest/'],
     },
     {
       groupName: 'Linters',
-      matchPackageNames: ['/eslint/', '/prettier/', '/commitlint/'],
+      matchPackageNames: ['/eslint/'],
+    },
+    {
+      groupName: 'Node.js',
+      matchPackageNames: ['pnpm'],
+    },
+    {
+      groupName: 'Node.js',
+      matchPackageNames: ['node'],
+      allowedVersions: '<23.0.0',
+    },
+    {
+      groupName: 'Project Tools',
+      matchPackageNames: ['/@commitlint/', '/@tsconfig/', '/markdownlint/', '/@nx/', '/@swc/'],
+    },
+    {
+      groupName: 'Project Tools',
+      matchPackageNames: ['nx', 'prettier'],
     },
   ],
 }
