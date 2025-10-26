@@ -156,6 +156,19 @@ describe('queryFnFromObservableFn', () => {
     await expect(queryFn(createContext())).rejects.toThrow('Observable completed without returning a value')
   })
 
+  it('completes successfully if observable completes after emitting a value', async () => {
+    const observableFn = vi.fn(
+      () =>
+        new Observable<number>((subscriber) => {
+          subscriber.next(42)
+          subscriber.complete()
+        }),
+    )
+    const queryFn = queryFnFromObservableFn(observableFn)
+
+    await expect(queryFn(createContext())).resolves.toBe(42)
+  })
+
   it('cleans up subscription when query is removed from cache', async () => {
     const subject = new Subject<number>()
     const observableFn = vi.fn().mockReturnValue(subject)
