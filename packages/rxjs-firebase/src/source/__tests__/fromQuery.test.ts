@@ -1,4 +1,10 @@
-import { onSnapshot, type Query, type QuerySnapshot, type SnapshotListenOptions } from '@firebase/firestore'
+import {
+  onSnapshot,
+  type Query,
+  type QuerySnapshot,
+  type SnapshotListenOptions,
+  type Unsubscribe,
+} from '@firebase/firestore'
 import { Observable } from 'rxjs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { anyFunction, mock } from 'vitest-mock-extended'
@@ -12,7 +18,7 @@ vi.mock('@firebase/firestore', () => ({
 describe('fromQuery', () => {
   let mockQuery: Query
   let mockSnapshot: QuerySnapshot
-  let mockUnsubscribe: ReturnType<typeof vi.fn>
+  let mockUnsubscribe: ReturnType<typeof vi.fn<Unsubscribe>>
 
   beforeEach(() => {
     vi.clearAllMocks()

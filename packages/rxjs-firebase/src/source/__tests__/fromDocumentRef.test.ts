@@ -3,6 +3,7 @@ import {
   type DocumentSnapshot,
   onSnapshot,
   type SnapshotListenOptions,
+  type Unsubscribe,
 } from '@firebase/firestore'
 import { Observable } from 'rxjs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -17,7 +18,7 @@ vi.mock('@firebase/firestore', () => ({
 describe('fromDocumentRef', () => {
   let mockRef: DocumentReference
   let mockSnapshot: DocumentSnapshot
-  let mockUnsubscribe: ReturnType<typeof vi.fn>
+  let mockUnsubscribe: ReturnType<typeof vi.fn<Unsubscribe>>
 
   beforeEach(() => {
     mockUnsubscribe = vi.fn()
