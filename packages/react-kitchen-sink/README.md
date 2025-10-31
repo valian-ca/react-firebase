@@ -23,7 +23,7 @@ Ensure these peers are installed as required by your setup:
 - `@sentry/core` ^9 || ^10
 - `@sentry/react` ^9 || ^10
 - `zod` ^3.23 || ^4
-- `zod-firebase` ^2
+- `zod-firebase` ^2.1.0
 - `zustand` ^5 (optional)
 
 ## Usage
