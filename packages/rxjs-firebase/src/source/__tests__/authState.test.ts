@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged, type User } from 'firebase/auth'
+import { getAuth, onAuthStateChanged, type Unsubscribe, type User } from 'firebase/auth'
 import { Observable } from 'rxjs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { anyFunction, mock } from 'vitest-mock-extended'
@@ -16,7 +16,7 @@ type Auth = ReturnType<typeof getAuth>
 describe('authState', () => {
   let mockAuth: Auth
   let mockUser: User
-  let mockUnsubscribe: ReturnType<typeof vi.fn>
+  let mockUnsubscribe: ReturnType<typeof vi.fn<Unsubscribe>>
 
   beforeEach(() => {
     vi.clearAllMocks()
