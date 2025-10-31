@@ -1,3 +1,9 @@
+## 1.3.0 (2025-10-31)
+
+### 🩹 Fixes
+
+- **deps:** update dependency type-fest to v5 ([#55](https://github.com/valian-ca/react-firebase/pull/55))
+
 ## 1.2.2 (2025-09-19)
 
 This was a version bump only for @valian/zustand-firestore to align it with other projects, there were no code changes.
