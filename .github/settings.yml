@@ -1,6 +1,6 @@
 repository:
   name: react-firebase
-  description: react firebase utilities
+  description: firebase react utilities
   topics: firebase, firestore, react
 
   default_branch: main

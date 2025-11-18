@@ -1,7 +1,7 @@
 {
-  "name": "@valian/firebase-utilities",
+  "name": "@valian/react-firebase-utilities",
   "private": true,
-  "description": "Valian Firebase Utilities",
+  "description": "Valian Firebase React Utilities",
   "author": {
     "name": "Valian",
     "url": "https://valian.ca",
@@ -46,7 +46,6 @@
     "nx": "22.0.2",
     "prettier": "3.6.2",
     "publint": "0.3.15",
-    "ts-node": "10.9.2",
     "tsdown": "0.15.12",
     "typescript": "5.9.3",
     "vitest": "4.0.6"
