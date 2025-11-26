@@ -1,26 +1,17 @@
-import { config } from '@valian/eslint-config'
+import { base } from '@valian/eslint-config/base'
+import { importSort } from '@valian/eslint-config/import-sort'
+import { react } from '@valian/eslint-config/react'
+import { typescript } from '@valian/eslint-config/typescript'
+import { vitest } from '@valian/eslint-config/vitest'
+import { defineConfig, globalIgnores } from 'eslint/config'
 
-export default [
-  ...config.base,
-  ...config.typescript,
-  ...config.importSort,
-  ...config.vitest,
-  {
-    ignores: ['coverage/', 'dist/', 'lib/'],
-  },
-  {
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.json'],
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-    linterOptions: {
-      reportUnusedDisableDirectives: true,
-    },
-  },
+export default defineConfig([
+  ...base,
+  ...typescript,
+  ...importSort,
+  ...react,
+  ...vitest,
+  globalIgnores(['coverage/', 'dist/', 'lib/']),
   {
     files: ['**/*.ts'],
     rules: {
@@ -35,4 +26,4 @@ export default [
       'vitest/expect-expect': ['error', { assertFunctionNames: ['expect', 'expectObservable'] }],
     },
   },
-]
+])

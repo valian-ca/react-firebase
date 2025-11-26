@@ -2,7 +2,7 @@ import { type DocumentSnapshot } from '@firebase/firestore'
 import { DocumentSnapshotSubject } from '@valian/rxjs-firebase'
 import { describe, expect, it, vi } from 'vitest'
 import { anyObject, mock } from 'vitest-mock-extended'
-import { z } from 'zod'
+import * as z from 'zod'
 import { collectionsBuilder } from 'zod-firebase'
 
 import { schemaDocumentSnapshotSubject } from '../schemaDocumentSnapshotSubject'

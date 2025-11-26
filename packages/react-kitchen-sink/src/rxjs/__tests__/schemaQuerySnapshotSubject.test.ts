@@ -1,7 +1,7 @@
 import { QuerySnapshotSubject } from '@valian/rxjs-firebase'
 import { describe, expect, it, vi } from 'vitest'
 import { anyObject } from 'vitest-mock-extended'
-import { z } from 'zod'
+import * as z from 'zod'
 import { collectionsBuilder } from 'zod-firebase'
 
 import { schemaQuerySnapshotSubject } from '../schemaQuerySnapshotSubject'
