@@ -1,9 +1,0 @@
----
-description: Rules to use TypeScript in the project.
-globs: **/*.ts
-alwaysApply: false
----
-- Utilize TypeScript's features to ensure type safety.
-- Prefer interfaces over types when defining object shapes.
-- Use generics to create reusable components and functions.
-- Enforce strict typing and avoid 'any' type as much as possible.

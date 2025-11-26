@@ -96,7 +96,7 @@ export function Todos({ userId }: { userId: string }) {
 #### Schema-aware variants (zod-firebase)
 
 ```typescript
-import { z } from 'zod'
+import * as z from 'zod';
 import { createFirestoreFactory } from 'zod-firebase'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { schemaDocumentSnapshotQueryOptions, schemaQuerySnapshotQueryOptions } from '@valian/react-kitchen-sink'

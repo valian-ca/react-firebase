@@ -57,4 +57,67 @@ describe('schemaDocumentSnapshotQueryOptions', () => {
     })
     await expect(queryClient.fetchQuery(options)).resolves.toMatchObject({ disabled: true })
   })
+
+  it('should return disabled state when id is undefined', async () => {
+    const factory = mock<SchemaFirestoreFactory<CollectionSchema>>()
+    const options = schemaDocumentSnapshotQueryOptions<CollectionSchema>({
+      factory,
+      id: undefined,
+      enabled: true,
+      queryKey: ['schema-doc-undefined'],
+    })
+    await expect(queryClient.fetchQuery(options)).resolves.toMatchObject({ disabled: true })
+  })
+
+  it('should pass snapshotOptions to factory.read.doc', async () => {
+    const factory = mockDeep<SchemaFirestoreFactory<CollectionSchema>>()
+    factory.read.doc.mockReturnValue(mock())
+    const subject = new Subject<DocumentSnapshot>()
+    vi.mocked(fromDocumentRef).mockReturnValueOnce(subject)
+
+    const snapshotOptions = { includeMetadataChanges: true }
+    const options = schemaDocumentSnapshotQueryOptions<CollectionSchema>({
+      factory,
+      id: '1',
+      snapshotOptions,
+      queryKey: ['schema-doc-options'],
+    })
+    const promise = queryClient.fetchQuery(options)
+
+    const snapshot = mock<DocumentSnapshot>()
+    snapshot.exists.mockReturnValue(true)
+    snapshot.data.mockReturnValue({ foo: 'bar' })
+    subject.next(snapshot)
+    await promise
+
+    expect(factory.read.doc).toHaveBeenCalledWith('1', snapshotOptions)
+  })
+
+  it('should handle non-existent document', async () => {
+    const factory = mockDeep<SchemaFirestoreFactory<CollectionSchema>>()
+    factory.read.doc.mockReturnValue(mock())
+    const subject = new Subject<DocumentSnapshot>()
+    vi.mocked(fromDocumentRef).mockReturnValueOnce(subject)
+
+    const options = schemaDocumentSnapshotQueryOptions<CollectionSchema>({
+      factory,
+      id: '999',
+      queryKey: ['schema-doc-missing'],
+    })
+    const promise = queryClient.fetchQuery(options)
+
+    const snapshot = mock<DocumentSnapshot>()
+    snapshot.exists.mockReturnValue(false)
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    snapshot.data.mockReturnValue(undefined)
+    subject.next(snapshot)
+    const result = await promise
+    expect(result).toMatchObject({
+      exists: false,
+      isLoading: false,
+      hasError: false,
+      disabled: false,
+    })
+    expect(result.snapshot).toBe(snapshot)
+  })
 })

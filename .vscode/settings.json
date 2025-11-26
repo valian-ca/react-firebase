@@ -8,6 +8,5 @@
   "eslint.useFlatConfig": true,
   "prettier.enable": true,
   "prettier.documentSelectors": ["**/*.ts", "**/*.tsx", "**/*.js"],
-  "nxConsole.generateAiAgentRules": true,
   "editor.accessibilitySupport": "off"
 }
