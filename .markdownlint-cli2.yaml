@@ -5,6 +5,6 @@ config:
 ignores:
   - CHANGELOG.md
   - packages/**/CHANGELOG.md
-  - GEMINI.md
-  - packages/**/GEMINI.md
+  - AGENTS.md
+  - packages/**/AGENTS.md
   - packages/**/node_modules/**/*.md
