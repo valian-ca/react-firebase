@@ -1,3 +1,13 @@
+## 1.3.1 (2025-11-27)
+
+### 🚀 Features
+
+- add schemaSingleDocumentSnapshotQueryOptions ([#70](https://github.com/valian-ca/react-firebase/pull/70))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.3.0 (2025-10-31)
 
 ### 🩹 Fixes
