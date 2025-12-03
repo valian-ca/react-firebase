@@ -20,9 +20,9 @@ export interface SchemaQuerySnapshotQueryOptions<
   TData = SchemaQuerySnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-    ObservableQueryOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>,
-    'observableFn'
-  > {
+  ObservableQueryOptions<SchemaQuerySnapshotState<TCollectionSchema, TOptions>, TError, TData, TQueryKey>,
+  'observableFn'
+> {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
   query?: SchemaQuerySpecification<TCollectionSchema, TOptions> | null
   snapshotOptions?: TOptions & SnapshotListenOptions

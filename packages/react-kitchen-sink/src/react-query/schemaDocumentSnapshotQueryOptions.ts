@@ -19,15 +19,15 @@ export interface SchemaDocumentSnapshotQueryOptions<
   TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-    DocumentSnapshotQueryOptions<
-      SchemaDocumentOutput<TCollectionSchema, TOptions>,
-      SchemaDocumentInput<TCollectionSchema>,
-      TError,
-      TData,
-      TQueryKey
-    >,
-    'ref' | 'refFn' | 'snapshotOptions'
-  > {
+  DocumentSnapshotQueryOptions<
+    SchemaDocumentOutput<TCollectionSchema, TOptions>,
+    SchemaDocumentInput<TCollectionSchema>,
+    TError,
+    TData,
+    TQueryKey
+  >,
+  'ref' | 'refFn' | 'snapshotOptions'
+> {
   factory: SchemaFirestoreFactory<TCollectionSchema>
   id?: string | null
   snapshotOptions?: TOptions & SnapshotListenOptions
