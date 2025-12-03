@@ -9,15 +9,15 @@ export interface ObservableQueryOptions<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-    UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>,
-    | 'queryFn'
-    | 'staleTime'
-    | 'refetchInterval'
-    | 'refetchIntervalInBackground'
-    | 'refetchOnWindowFocus'
-    | 'refetchOnMount'
-    | 'refetchOnReconnect'
-  > {
+  UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>,
+  | 'queryFn'
+  | 'staleTime'
+  | 'refetchInterval'
+  | 'refetchIntervalInBackground'
+  | 'refetchOnWindowFocus'
+  | 'refetchOnMount'
+  | 'refetchOnReconnect'
+> {
   observableFn: ObservableQueryFunction<TQueryFnData, TQueryKey>
 }
 

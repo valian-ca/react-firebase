@@ -19,15 +19,15 @@ export interface SchemaSingleDocumentSnapshotQueryOptions<
   TData = SchemaDocumentSnapshotState<TCollectionSchema, TOptions>,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<
-    DocumentSnapshotQueryOptions<
-      SchemaDocumentOutput<TCollectionSchema, TOptions>,
-      SchemaDocumentInput<TCollectionSchema>,
-      TError,
-      TData,
-      TQueryKey
-    >,
-    'ref' | 'refFn' | 'snapshotOptions'
-  > {
+  DocumentSnapshotQueryOptions<
+    SchemaDocumentOutput<TCollectionSchema, TOptions>,
+    SchemaDocumentInput<TCollectionSchema>,
+    TError,
+    TData,
+    TQueryKey
+  >,
+  'ref' | 'refFn' | 'snapshotOptions'
+> {
   factory: SingleDocumentCollectionFactory<TCollectionSchema>
   snapshotOptions?: TOptions & SnapshotListenOptions
 }

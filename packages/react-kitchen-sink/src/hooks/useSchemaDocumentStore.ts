@@ -25,8 +25,8 @@ import { sentryDocumentSnapshotListener } from '../sentry/sentryDocumentSnapshot
 export interface UseSchemaDocumentStoreOptions<
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions,
-> extends SchemaDocumentSnapshotStateListener<TCollectionSchema, TOptions>,
-    SnapshotListenOptions {
+>
+  extends SchemaDocumentSnapshotStateListener<TCollectionSchema, TOptions>, SnapshotListenOptions {
   factory: SchemaFirestoreFactory<TCollectionSchema>
   id: string | null | undefined
   metaOptions?: TOptions

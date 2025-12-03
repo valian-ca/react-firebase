@@ -26,8 +26,8 @@ import { sentrySchemaQuerySnapshotListener } from '../sentry/sentrySchemaQuerySn
 export interface UseSchemaQueryStoreOptions<
   TCollectionSchema extends CollectionSchema,
   TOptions extends MetaOutputOptions,
-> extends SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>,
-    SnapshotListenOptions {
+>
+  extends SchemaQuerySnapshotStateListener<TCollectionSchema, TOptions>, SnapshotListenOptions {
   factory: SchemaFirestoreQueryFactory<TCollectionSchema>
   query: SchemaQuerySpecification<TCollectionSchema, TOptions> | null | undefined
   metaOptions?: TOptions

@@ -18,8 +18,7 @@ import { useSnapshotListenOptions } from './useSnapshotListenOptions'
 export { type DocumentSnapshotStateListener } from '@valian/rxjs-firebase'
 
 export interface UseDocumentStoreOptions<AppModelType = DocumentData, DbModelType extends DocumentData = DocumentData>
-  extends DocumentSnapshotStateListener<AppModelType, DbModelType>,
-    SnapshotListenOptions {
+  extends DocumentSnapshotStateListener<AppModelType, DbModelType>, SnapshotListenOptions {
   ref: DocumentReference<AppModelType, DbModelType> | null | undefined
 }
 
