@@ -1,3 +1,7 @@
+## 1.3.2 (2025-12-03)
+
+This was a version bump only for @valian/react-kitchen-sink to align it with other projects, there were no code changes.
+
 ## 1.3.1 (2025-11-27)
 
 ### 🚀 Features
