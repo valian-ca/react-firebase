@@ -6,11 +6,11 @@ import { vitest } from '@valian/eslint-config/vitest'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  ...base,
-  ...typescript,
-  ...importSort,
-  ...react,
-  ...vitest,
+  base,
+  typescript,
+  importSort,
+  react,
+  vitest,
   globalIgnores(['coverage/', 'dist/', 'lib/']),
   {
     files: ['**/*.{ts,tsx}'],

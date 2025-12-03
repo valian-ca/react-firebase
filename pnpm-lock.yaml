@@ -74,6 +74,9 @@ importers:
       vitest:
         specifier: 4.0.14
         version: 4.0.14(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.2.0)(yaml@2.8.1)
+      vitest-mock-extended:
+        specifier: 3.1.0
+        version: 3.1.0(typescript@5.9.3)(vitest@4.0.14(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.2.0)(yaml@2.8.1))
 
   packages/react-firestore:
     dependencies:
@@ -93,9 +96,6 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
-      vitest-mock-extended:
-        specifier: ^3.1.0
-        version: 3.1.0(typescript@5.9.3)(vitest@4.0.14(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.2.0)(yaml@2.8.1))
 
   packages/react-kitchen-sink:
     dependencies:
@@ -142,9 +142,6 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
-      vitest-mock-extended:
-        specifier: ^3.1.0
-        version: 3.1.0(typescript@5.9.3)(vitest@4.0.14(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.2.0)(yaml@2.8.1))
       zod:
         specifier: ^4.0.17
         version: 4.1.12
@@ -170,9 +167,6 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
-      vitest-mock-extended:
-        specifier: ^3.1.0
-        version: 3.1.0(typescript@5.9.3)(vitest@4.0.14(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.2.0)(yaml@2.8.1))
 
   packages/rxjs-firebase:
     dependencies:
@@ -186,9 +180,6 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
-      vitest-mock-extended:
-        specifier: ^3.1.0
-        version: 3.1.0(typescript@5.9.3)(vitest@4.0.14(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.2.0)(yaml@2.8.1))
 
   packages/zustand-firestore:
     dependencies:
@@ -217,9 +208,6 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
-      vitest-mock-extended:
-        specifier: ^3.1.0
-        version: 3.1.0(typescript@5.9.3)(vitest@4.0.14(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.2.0)(yaml@2.8.1))
       zustand:
         specifier: ^5.0.7
         version: 5.0.7(@types/react@19.2.7)(react@19.1.0)
