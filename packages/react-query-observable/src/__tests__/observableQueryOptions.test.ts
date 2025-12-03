@@ -1,5 +1,5 @@
-import { type Query } from '@tanstack/react-query'
-import { of } from 'rxjs'
+import { hashKey, type Query } from '@tanstack/react-query'
+import { of, type Subscription } from 'rxjs'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { mock } from 'vitest-mock-extended'
 
@@ -31,11 +31,16 @@ describe('observableQueryOptions', () => {
     expect(staleTimeValue).toBe(0)
   })
 
-  it('should set staleTime to Infinity when the query has updated data', () => {
+  it('should set staleTime to Infinity when the query has an active subscription', () => {
     const options = observableQueryOptions({
       queryKey,
       observableFn: () => of('value'),
     })
+
+    // Add a subscription to simulate an active query subscription
+    const mockSubscription = mock<Subscription>()
+    const queryKeyHash = hashKey(queryKey)
+    queriesSubscriptions.set(queryKeyHash, mockSubscription)
 
     const staleTimeValue =
       typeof options.staleTime === 'function'
