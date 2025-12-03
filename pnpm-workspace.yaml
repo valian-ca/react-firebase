@@ -7,3 +7,6 @@ onlyBuiltDependencies:
   - nx
   - protobufjs
   - unrs-resolver
+
+publicHoistPattern:
+  - vitest-mock-extended
