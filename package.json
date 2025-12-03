@@ -29,9 +29,9 @@
   "devDependencies": {
     "@commitlint/cli": "20.1.0",
     "@commitlint/config-conventional": "20.0.0",
-    "@lerna-lite/cli": "4.9.3",
-    "@lerna-lite/publish": "4.9.3",
-    "@lerna-lite/version": "4.9.3",
+    "@lerna-lite/cli": "4.9.4",
+    "@lerna-lite/publish": "4.9.4",
+    "@lerna-lite/version": "4.9.4",
     "@nx/eslint": "22.1.2",
     "@nx/js": "22.1.2",
     "@tsconfig/vite-react": "7.0.2",
@@ -46,7 +46,7 @@
     "nx": "22.1.2",
     "prettier": "3.6.2",
     "publint": "0.3.15",
-    "tsdown": "0.16.7",
+    "tsdown": "0.16.8",
     "typescript": "5.9.3",
     "vitest": "4.0.14"
   },
