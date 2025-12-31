@@ -38,7 +38,7 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@valian/eslint-config": "2.0.6",
-    "@vitest/coverage-v8": "4.0.14",
+    "@vitest/coverage-v8": "4.0.16",
     "eslint": "9.39.1",
     "husky": "9.1.7",
     "jsdom": "27.2.0",
@@ -48,7 +48,7 @@
     "publint": "0.3.15",
     "tsdown": "0.16.8",
     "typescript": "5.9.3",
-    "vitest": "4.0.14",
+    "vitest": "4.0.16",
     "vitest-mock-extended": "3.1.0"
   },
   "engines": {
