@@ -1,3 +1,13 @@
+## 1.3.3 (2026-01-08)
+
+### 🩹 Fixes
+
+- issue with enabled query should not use refFn ([#84](https://github.com/valian-ca/react-firebase/pull/84))
+
+### ❤️ Thank You
+
+- Julien Marcil
+
 ## 1.3.2 (2025-12-03)
 
 This was a version bump only for @valian/react-kitchen-sink to align it with other projects, there were no code changes.

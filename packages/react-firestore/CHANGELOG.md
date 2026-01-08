@@ -1,3 +1,7 @@
+## 1.3.3 (2026-01-08)
+
+This was a version bump only for @valian/react-firestore to align it with other projects, there were no code changes.
+
 ## 1.3.2 (2025-12-03)
 
 This was a version bump only for @valian/react-firestore to align it with other projects, there were no code changes.
