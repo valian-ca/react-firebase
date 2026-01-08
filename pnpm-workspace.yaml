@@ -1,9 +1,14 @@
 packages:
   - packages/*
 
+peerDependencyRules:
+  allowAny:
+    - storybook
+
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@valian/eslint-config'
+  - esbuild
   - nx
   - protobufjs
   - unrs-resolver
