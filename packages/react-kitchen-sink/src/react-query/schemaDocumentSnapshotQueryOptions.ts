@@ -48,5 +48,6 @@ export const schemaDocumentSnapshotQueryOptions = <
   documentSnapshotQueryOptions({
     ...(id ? { refFn: () => factory.read.doc(id, snapshotOptions) } : {}),
     snapshotOptions,
+    enabled: !!id,
     ...props,
   })
