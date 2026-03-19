@@ -38,3 +38,4 @@ junit.xml
 !/src/
 /lib
 /dist/
+.claude/settings.local.json
