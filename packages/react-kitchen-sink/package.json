@@ -1,7 +1,7 @@
 {
   "name": "@valian/react-kitchen-sink",
   "description": "Valian React Kitchen Sink",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/valian-ca/react-firebase.git"
@@ -30,8 +30,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@valian/react-query-observable": "workspace:*",
     "@valian/react-firestore": "workspace:*",
+    "@valian/react-query-observable": "workspace:*",
     "@valian/rxjs-firebase": "workspace:*",
     "@valian/zustand-firestore": "workspace:*",
     "observable-hooks": "^4.2.4",
