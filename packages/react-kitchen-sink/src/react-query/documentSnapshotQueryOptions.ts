@@ -66,7 +66,7 @@ export const documentSnapshotQueryOptions = <
         DbModelType
       >)
     },
-    enabled: !!ref,
+    enabled: !!(ref ?? refFn),
     gcTime: 10_000,
     ...props,
     meta: {

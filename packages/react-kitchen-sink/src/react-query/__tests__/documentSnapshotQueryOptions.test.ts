@@ -45,6 +45,22 @@ describe('documentSnapshotQueryOptions', () => {
     })
   })
 
+  it('should return a snapshot when refFn is provided', async () => {
+    const subject = new Subject<DocumentSnapshot>()
+    vi.mocked(fromDocumentRef).mockReturnValueOnce(subject)
+
+    const ref = stub<DocumentReference>()
+    const options = documentSnapshotQueryOptions({ refFn: () => ref, queryKey: ['doc-refFn'] })
+    const promise = queryClient.fetchQuery(options)
+
+    const snapshot = mock<DocumentSnapshot>()
+    snapshot.exists.mockReturnValue(true)
+    snapshot.data.mockReturnValue({ foo: 'bar' })
+    subject.next(snapshot)
+
+    await expect(promise).resolves.toMatchObject({ disabled: false, exists: true })
+  })
+
   it('should return disabled state when ref is null', async () => {
     const options = documentSnapshotQueryOptions({ ref: null, enabled: true, queryKey: ['doc-empty'] })
     await expect(queryClient.fetchQuery(options)).resolves.toMatchObject({ disabled: true })
