@@ -39,9 +39,9 @@
   },
   "devDependencies": {
     "@sentry/core": "^10.1.0",
-    "@sentry/react": "^10.1.0",
+    "@sentry/react": "^11.0.0",
     "@tanstack/react-query": "^5.84.2",
-    "firebase": "^12.0.0",
+    "firebase": "^13.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "rxjs": "^7.8.2",
@@ -52,7 +52,7 @@
   "peerDependencies": {
     "@firebase/firestore": "^4.7.0",
     "@sentry/core": "^9 || ^10",
-    "@sentry/react": "^9 || ^10",
+    "@sentry/react": "^11.0.0",
     "@tanstack/react-query": "^5.80.0",
     "react": "^18 || ^19",
     "react-dom": "^18 || ^19",
