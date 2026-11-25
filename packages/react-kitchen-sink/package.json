@@ -35,7 +35,7 @@
     "@valian/rxjs-firebase": "workspace:*",
     "@valian/zustand-firestore": "workspace:*",
     "observable-hooks": "^4.2.4",
-    "type-fest": "^5.0.0"
+    "type-fest": "^6.0.0"
   },
   "devDependencies": {
     "@sentry/core": "^10.1.0",
